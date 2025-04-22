@@ -19,9 +19,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderItem extends BaseEntity {
+public class OrderProduct extends BaseEntity {
 
     @Id
+    @Column(name = "order_product_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -37,13 +38,13 @@ public class OrderItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders orders;
 
     @Builder
-    public OrderItem(Integer quantity, Integer price, Product product, Order order) {
+    public OrderProduct(Integer quantity, Integer price, Product product, Orders orders) {
         this.quantity = quantity;
         this.price = price;
         this.product = product;
-        this.order = order;
+        this.orders = orders;
     }
 }
