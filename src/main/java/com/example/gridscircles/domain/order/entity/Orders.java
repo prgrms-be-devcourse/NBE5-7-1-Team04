@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseEntity {
+public class Orders extends BaseEntity {
 
     @Id
     @Column(name = "order_id")
@@ -42,7 +42,7 @@ public class Order extends BaseEntity {
     private OrderStatus orderStatus;
 
     @Builder
-    public Order(String email, String address, String zipcode, Integer totalPrice,
+    public Orders(String email, String address, String zipcode, Integer totalPrice,
         OrderStatus orderStatus) {
         this.email = email;
         this.address = address;
