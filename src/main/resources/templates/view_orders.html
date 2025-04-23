@@ -107,8 +107,8 @@
   <h1 th:text="${email != null} ? ${email} + '님의 주문 내역' : '주문 내역'">주문 내역</h1>
 
   <form class="search-form" th:action="@{/orders/id}" method="get">
-    <input type="hidden" name="email" th:value="${email}"/>
     <input type="number" name="orderId" placeholder="주문 ID" required>
+    <input type="hidden" name="email" th:value="${email}"/>
     <button type="submit">조회</button>
   </form>
 
