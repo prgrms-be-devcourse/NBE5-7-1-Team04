@@ -30,7 +30,7 @@ public class OrdersController {
         BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "이메일 형식이 올바르지 않습니다.");
-            return "error";
+            return "email_form";
         }
         List<Orders> orders = ordersService.getOrdersByEmail(request.getEmail());
         System.out.println(orders);
