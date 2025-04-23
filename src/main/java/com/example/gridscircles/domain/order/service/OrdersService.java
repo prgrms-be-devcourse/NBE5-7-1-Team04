@@ -1,7 +1,7 @@
 package com.example.gridscircles.domain.order.service;
 
-import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
-import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderDetailDto;
+import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class OrderService {
+public class OrdersService {
 
     private final OrderProductRepository orderProductRepository;
 
     @Transactional(readOnly = true)
-    public OrderDetailResponse findOrder(Long orderId) {
+    public OrderDetailDto findOrder(Long orderId) {
 
         List<OrderProduct> products = orderProductRepository
             .findByOrdersIdWithProductAndOrder(orderId);
@@ -29,15 +29,15 @@ public class OrderService {
 
         Orders order = products.getFirst().getOrders();
 
-        List<OrderProductDetailResponse> orderProducts = products.stream()
-            .map(op -> OrderProductDetailResponse.builder()
+        List<OrderProductDetailDto> orderProducts = products.stream()
+            .map(op -> OrderProductDetailDto.builder()
                 .productName(op.getProduct().getName())
                 .price(op.getPrice())
                 .quantity(op.getQuantity())
                 .build())
             .toList();
 
-        return OrderDetailResponse.builder()
+        return OrderDetailDto.builder()
             .orderProducts(orderProducts)
             .totalQuantity(calculateTotalQuantity(orderProducts))
             .totalPrice(calculateTotalPrice(orderProducts))
@@ -47,13 +47,13 @@ public class OrderService {
             .build();
     }
 
-    private static int calculateTotalQuantity(List<OrderProductDetailResponse> items) {
+    private static int calculateTotalQuantity(List<OrderProductDetailDto> items) {
         return items.stream()
-            .mapToInt(OrderProductDetailResponse::getQuantity)
+            .mapToInt(OrderProductDetailDto::getQuantity)
             .sum();
     }
 
-    private static int calculateTotalPrice(List<OrderProductDetailResponse> items) {
+    private static int calculateTotalPrice(List<OrderProductDetailDto> items) {
         return items.stream()
             .mapToInt(op -> op.getPrice() * op.getQuantity())
             .sum();
