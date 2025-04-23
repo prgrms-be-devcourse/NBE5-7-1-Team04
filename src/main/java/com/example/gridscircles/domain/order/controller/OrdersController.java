@@ -33,7 +33,6 @@ public class OrdersController {
             return "email_form";
         }
         List<Orders> orders = ordersService.getOrdersByEmail(request.getEmail());
-        System.out.println(orders);
         model.addAttribute("orders", orders);
         return "view_orders";
     }
