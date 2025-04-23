@@ -6,7 +6,6 @@ import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
-import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,16 +13,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderService {
 
-    private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
 
     @Transactional(readOnly = true)
     public OrderDetailResponse findOrder(Long orderId) {
-        Orders findOrder = getOrder(orderId);
 
-        List<OrderProduct> products = getOrderProducts(orderId);
+        List<OrderProduct> products = orderProductRepository
+            .findByOrdersIdWithProductAndOrder(orderId);
+
+        if (products.isEmpty()) {
+            throw new OrderNotFoundException("주문 정보를 조회할 수 없습니다.");
+        }
+
+        Orders order = products.getFirst().getOrders();
 
         List<OrderProductDetailResponse> orderProducts = products.stream()
             .map(op -> OrderProductDetailResponse.builder()
@@ -35,32 +40,25 @@ public class OrderService {
 
         return OrderDetailResponse.builder()
             .orderProducts(orderProducts)
-            .orderStatus(findOrder.getOrderStatus())
-            .totalPrice(calculateTotalPrice(orderProducts))
             .totalQuantity(calculateTotalQuantity(orderProducts))
-            .address(findOrder.getAddress())
-            .zipcode(findOrder.getZipcode())
+            .totalPrice(calculateTotalPrice(orderProducts))
+            .address(order.getAddress())
+            .zipcode(order.getZipcode())
+            .orderStatus(order.getOrderStatus())
             .build();
     }
 
-    private List<OrderProduct> getOrderProducts(Long orderId) {
-        return orderProductRepository.findByOrdersIdWithProduct(orderId);
-    }
-
-    private Orders getOrder(Long orderId) {
-        return ordersRepository.findById(orderId)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
-    }
-
-    private static int calculateTotalPrice(List<OrderProductDetailResponse> orderProducts) {
-        return orderProducts.stream()
-            .mapToInt(op -> op.getPrice() * op.getQuantity())
-            .sum();
-    }
-
-    private static int calculateTotalQuantity(List<OrderProductDetailResponse> orderProducts) {
-        return orderProducts.stream()
+    private static int calculateTotalQuantity(List<OrderProductDetailResponse> items) {
+        return items.stream()
             .mapToInt(OrderProductDetailResponse::getQuantity)
             .sum();
     }
+
+    private static int calculateTotalPrice(List<OrderProductDetailResponse> items) {
+        return items.stream()
+            .mapToInt(op -> op.getPrice() * op.getQuantity())
+            .sum();
+    }
 }
+
+
