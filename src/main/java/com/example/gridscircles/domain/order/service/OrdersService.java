@@ -11,6 +11,8 @@ import com.example.gridscircles.domain.product.repository.ProductRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +28,6 @@ public class OrdersService {
     public Long saveOrders(CreateOrdersDto createOrdersDto) {
         // 주문 생성
         Orders createOrders = Orders.from(createOrdersDto);
-
         // 주문 상품 생성
         List<OrderProduct> orderProducts = createOrderProducts(createOrdersDto.getProducts(),
             createOrders);
@@ -40,6 +41,14 @@ public class OrdersService {
 
         orderProductRepository.saveAll(orderProducts);
         return ordersRepository.save(createOrders).getId();
+    }
+
+    public Page<Orders> getOrdersByEmail(String email, Pageable pageable) {
+        return ordersRepository.findByEmailOrderByCreatedAtDesc(email, pageable);
+    }
+
+    public List<Orders> getOrderById(Long id, String email) {
+        return ordersRepository.findByIdAndEmailOrderByCreatedAt(id, email);
     }
 
     // 주문 상품 생성
