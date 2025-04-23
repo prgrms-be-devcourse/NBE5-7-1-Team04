@@ -11,7 +11,9 @@
   <thead>
   <tr>
     <th>주문 ID</th>
-    <th>가격</th>
+    <th>주소</th>
+    <th>우편번호</th>
+    <th>총 가격</th>
     <th>주문 상태</th>
     <th>주문일</th>
   </tr>
@@ -19,6 +21,8 @@
   <tbody>
   <tr th:each="order : ${orders}">
     <td th:text="${order.getId()}"></td>
+    <td th:text="${order.getAddress()}"></td>
+    <td th:text="${order.getZipcode()}"></td>
     <td th:text="${order.getTotalPrice()}"></td>
     <td th:text="${order.getOrderStatus()}"></td>
     <td th:text="${order.getCreatedAt()}"></td>
