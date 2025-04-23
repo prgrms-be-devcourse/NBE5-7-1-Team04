@@ -28,7 +28,7 @@ public class OrdersController {
         return "email_form";
     }
 
-    @GetMapping
+    @GetMapping("/email")
     public String viewOrders(@Validated @ModelAttribute EmailDto request,
         BindingResult bindingResult, @RequestParam(defaultValue = "0") int page, Model model) {
         if (bindingResult.hasErrors()) {

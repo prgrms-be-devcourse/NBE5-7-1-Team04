@@ -60,7 +60,7 @@
 
 <div class="form-container">
     <h1>주문 내역 조회</h1>
-    <form th:action="@{/orders}" method="get">
+    <form th:action="@{/orders/email}" method="get">
         <label for="email">이메일</label><br/>
         <input type="email" id="email" name="email" required><br/>
         <button type="submit">조회하기</button>

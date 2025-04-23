@@ -138,7 +138,7 @@
   <div class="pagination" style="text-align: center; margin-top: 20px;" th:if="${totalPages > 1}">
     <div style="display: inline-block;">
       <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-         th:href="@{/orders(email=${email}, page=${i})}"
+         th:href="@{/orders/email(email=${email}, page=${i})}"
          th:text="${i + 1}"
          th:classappend="${i == currentPage} ? ' button' : ''"></a>
     </div>
