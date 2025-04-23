@@ -43,8 +43,9 @@ public class OrdersController {
     }
 
     @GetMapping("/id")
-    public String viewOrderById(@RequestParam Long orderId, Model model) {
-        List<Orders> orders = ordersService.getOrderById(orderId);
+    public String viewOrderById(@RequestParam Long orderId,
+        @RequestParam(required = false) String email, Model model) {
+        List<Orders> orders = ordersService.getOrderById(orderId, email);
 
         model.addAttribute("orders", orders);
         model.addAttribute("request", "id");

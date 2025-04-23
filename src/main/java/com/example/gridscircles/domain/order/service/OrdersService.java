@@ -16,7 +16,7 @@ public class OrdersService {
         return ordersRepository.findByEmailOrderByCreatedAtDesc(email);
     }
 
-    public List<Orders> getOrderById(Long id) {
-        return ordersRepository.findByIdOrderByCreatedAtDesc(id);
+    public List<Orders> getOrderById(Long id, String email) {
+        return ordersRepository.findByIdAndEmailOrderByCreatedAt(id, email);
     }
 }
