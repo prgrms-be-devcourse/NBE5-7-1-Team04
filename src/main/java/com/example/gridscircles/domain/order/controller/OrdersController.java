@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/orders")
@@ -33,7 +34,21 @@ public class OrdersController {
             return "email_form";
         }
         List<Orders> orders = ordersService.getOrdersByEmail(request.getEmail());
+
+        model.addAttribute("email", request.getEmail());
         model.addAttribute("orders", orders);
+        model.addAttribute("request", "email");
+
+        return "view_orders";
+    }
+
+    @GetMapping("/id")
+    public String viewOrderById(@RequestParam Long orderId, Model model) {
+        List<Orders> orders = ordersService.getOrderById(orderId);
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("request", "id");
+
         return "view_orders";
     }
 }
