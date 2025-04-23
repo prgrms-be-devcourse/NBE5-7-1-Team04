@@ -18,10 +18,10 @@
   </thead>
   <tbody>
   <tr th:each="order : ${orders}">
-    <td th:text="${order.getId()}">1</td>
-    <td th:text="${order.getTotalPrice()}">2000</td>
-    <td th:text="${order.getOrderStatus()}">배송중</td>
-    <td th:text="${order.getCreatedAt()}">2025-04-23</td>
+    <td th:text="${order.getId()}"></td>
+    <td th:text="${order.getTotalPrice()}"></td>
+    <td th:text="${order.getOrderStatus()}"></td>
+    <td th:text="${order.getCreatedAt()}"></td>
   </tr>
   </tbody>
 </table>
