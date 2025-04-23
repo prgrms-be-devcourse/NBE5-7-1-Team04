@@ -18,44 +18,50 @@ public class OrdersService {
     private final OrderProductRepository orderProductRepository;
 
     @Transactional(readOnly = true)
-    public OrderDetailDto findOrder(Long orderId) {
-
+    public OrderDetailDto getOrderDetail(Long orderId) {
         List<OrderProduct> products = orderProductRepository
             .findByOrdersIdWithProductAndOrder(orderId);
 
-        if (products.isEmpty()) {
-            throw new OrderNotFoundException("주문 정보를 조회할 수 없습니다.");
-        }
-
-        Orders order = products.getFirst().getOrders();
+        Orders findOrder = products.stream()
+            .findFirst()
+            .map(OrderProduct::getOrders)
+            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
         List<OrderProductDetailDto> orderProducts = products.stream()
-            .map(op -> OrderProductDetailDto.builder()
-                .productName(op.getProduct().getName())
-                .price(op.getPrice())
-                .quantity(op.getQuantity())
-                .build())
+            .map(this::toDetailDto)
             .toList();
 
+        return toOrderDetailDto(findOrder, orderProducts);
+    }
+
+    private OrderProductDetailDto toDetailDto(OrderProduct op) {
+        return OrderProductDetailDto.builder()
+            .productName(op.getProduct().getName())
+            .price(op.getPrice())
+            .quantity(op.getQuantity())
+            .build();
+    }
+
+    private OrderDetailDto toOrderDetailDto(Orders order, List<OrderProductDetailDto> items) {
         return OrderDetailDto.builder()
-            .orderProducts(orderProducts)
-            .totalQuantity(calculateTotalQuantity(orderProducts))
-            .totalPrice(calculateTotalPrice(orderProducts))
+            .orderProducts(items)
+            .totalQuantity(calculdateTotalQuantity(items))
+            .totalPrice(calculateTotalPrice(items))
             .address(order.getAddress())
             .zipcode(order.getZipcode())
             .orderStatus(order.getOrderStatus())
             .build();
     }
 
-    private static int calculateTotalQuantity(List<OrderProductDetailDto> items) {
+    private int calculdateTotalQuantity(List<OrderProductDetailDto> items) {
         return items.stream()
             .mapToInt(OrderProductDetailDto::getQuantity)
             .sum();
     }
 
-    private static int calculateTotalPrice(List<OrderProductDetailDto> items) {
+    private int calculateTotalPrice(List<OrderProductDetailDto> items) {
         return items.stream()
-            .mapToInt(op -> op.getPrice() * op.getQuantity())
+            .mapToInt(item -> item.getPrice() * item.getQuantity())
             .sum();
     }
 }
