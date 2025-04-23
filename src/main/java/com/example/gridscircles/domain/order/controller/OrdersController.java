@@ -5,6 +5,8 @@ import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -28,15 +30,18 @@ public class OrdersController {
 
     @GetMapping
     public String viewOrders(@Validated @ModelAttribute EmailDto request,
-        BindingResult bindingResult, Model model) {
+        BindingResult bindingResult, @RequestParam(defaultValue = "0") int page, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "이메일 형식이 올바르지 않습니다.");
             return "email_form";
         }
-        List<Orders> orders = ordersService.getOrdersByEmail(request.getEmail());
+        String email = request.getEmail();
+        Page<Orders> ordersPage = ordersService.getOrdersByEmail(email, PageRequest.of(page, 6));
 
-        model.addAttribute("email", request.getEmail());
-        model.addAttribute("orders", orders);
+        model.addAttribute("email", email);
+        model.addAttribute("orders", ordersPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", ordersPage.getTotalPages());
         model.addAttribute("request", "email");
 
         return "view_orders";
