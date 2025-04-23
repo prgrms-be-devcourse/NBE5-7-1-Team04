@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
     List<Orders> findByEmailOrderByCreatedAtDesc(String email);
+
+    List<Orders> findByIdOrderByCreatedAtDesc(Long id);
 }
