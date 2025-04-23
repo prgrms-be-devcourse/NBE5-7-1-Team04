@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 등록 - 관리자</title>
+  <style>
+    body {
+      background-color: #f2f2f2;  /* 완전 밝은 회색 */
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 50px 0;
+    }
+
+    .form-wrapper {
+      width: 600px;
+      margin: 0 auto;
+      background-color: white;  /* 하얀색 네모 박스 */
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 살짝 그림자 */
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .button-group {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: gray;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button[type="button"] {
+      background-color: black;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-wrapper">
+  <h2>상품 등록</h2>
+
+  <form  action="/products" method="post" enctype="multipart/form-data">
+    <table>
+      <tr>
+        <td>상품명</td>
+        <td><input type="text" name="name" ></td>
+      </tr>
+      <tr>
+        <td>카테고리</td>
+        <td>
+          <select name="category">
+            <option th:each="category : ${categories}"
+                    th:value="${category}"
+                    th:text="${category}"></option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>상품 설명</td>
+        <td><input type="text" name="description"/></td>
+      </tr>
+      <tr>
+        <td>가격</td>
+        <td><input type="text"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');"
+                   name="price"
+                   style="width: 70%; margin-right: 5px;" />
+          <span>원</span>
+        </td>
+      </tr>
+      <tr>
+        <td>상품 이미지</td>
+        <td><input type="file" name="file"/></td>
+      </tr>
+    </table>
+
+    <div class="button-group">
+      <button type="button" >목록으로</button>
+      <button type="submit">상품 등록</button>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>
