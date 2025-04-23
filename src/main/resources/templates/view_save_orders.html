@@ -84,7 +84,7 @@
   <div class="row">
     <div class="col-md-8 mt-4 d-flex flex-column align-items-start p-3 pt-0">
       <h5 class="flex-grow-0"><b>상품 목록</b></h5>
-      <ul class="list-group products">
+      <ul class="list-group products mb-auto">
         <th:block th:each="product : ${products}">
           <li class="list-group-item d-flex mt-3">
             <div class="col-2">
@@ -108,7 +108,11 @@
           </li>
         </th:block>
       </ul>
+      <button class="btn btn-dark" th:href="/orders">
+        주문내역조회
+      </button>
     </div>
+
     <div class="col-md-4 summary p-4">
       <div>
         <h5 class="m-0 p-0"><b>Summary</b></h5>
@@ -116,24 +120,24 @@
       <hr>
       <div id="cart">
       </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">이메일</label>
-          <input type="email" class="form-control mb-1" id="email">
-        </div>
-        <div class="mb-3">
-          <label for="address" class="form-label">주소</label>
-          <input type="text" class="form-control mb-1" id="address">
-        </div>
-        <div class="mb-3">
-          <label for="zipcode" class="form-label">우편번호</label>
-          <input type="text" class="form-control" id="zipcode">
-        </div>
-        <div>당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다.</div>
-        <div class="row pt-2 pb-2 border-top">
-          <h5 class="col">총금액</h5>
-          <h5 class="col text-end" id="totalPrice"></h5>
-        </div>
-        <button class="btn btn-dark col-12" id="paymentButton">결제하기</button>
+      <div class="mb-3">
+        <label for="email" class="form-label">이메일</label>
+        <input type="email" class="form-control mb-1" id="email">
+      </div>
+      <div class="mb-3">
+        <label for="address" class="form-label">주소</label>
+        <input type="text" class="form-control mb-1" id="address">
+      </div>
+      <div class="mb-3">
+        <label for="zipcode" class="form-label">우편번호</label>
+        <input type="text" class="form-control" id="zipcode">
+      </div>
+      <div>당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다.</div>
+      <div class="row pt-2 pb-2 border-top">
+        <h5 class="col">총금액</h5>
+        <h5 class="col text-end" id="totalPrice"></h5>
+      </div>
+      <button class="btn btn-dark col-12" id="paymentButton">결제하기</button>
     </div>
   </div>
 </div>
