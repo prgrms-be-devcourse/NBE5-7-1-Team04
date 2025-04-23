@@ -17,12 +17,12 @@ public class OrdersController {
     private final OrdersService ordersService;
 
     @GetMapping("/{orderId}")
-    public String findOrderDetail(@PathVariable Long orderId, Model model) {
-        
-        OrderDetailDto orderDetail = ordersService.findOrder(orderId);
+    public String viewOrderDetail(@PathVariable Long orderId, Model model) {
+
+        OrderDetailDto orderDetail = ordersService.getOrderDetail(orderId);
 
         model.addAttribute("orderDetail", orderDetail);
 
-        return "findOrderDetailForm";
+        return "view_orderDetail";
     }
 }
