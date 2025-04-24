@@ -57,8 +57,7 @@ public class OrdersService {
     @Transactional
     public void updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest) {
 
-        Orders findOrder = ordersRepository.findById(orderId)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+        Orders findOrder = getOrderById(orderId);
 
         findOrder.updateOrder(orderUpdateRequest);
     }
@@ -66,13 +65,21 @@ public class OrdersService {
     @Transactional
     public void cancelOrder(Long orderId) {
 
-        Orders findOrder = ordersRepository.findById(orderId)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+        Orders findOrder = getOrderById(orderId);
 
+        validateOrderStatus(findOrder);
+        findOrder.cancel();
+    }
+
+    private static void validateOrderStatus(Orders findOrder) {
         if (findOrder.getOrderStatus() == OrderStatus.COMPLETED) {
             throw new OrderNotFoundException("배송이 완료된 주문은 취소할 수 없습니다.");
         }
-        findOrder.cancel();
+    }
+
+    private Orders getOrderById(Long orderId) {
+        return ordersRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
     }
 
     @Transactional
