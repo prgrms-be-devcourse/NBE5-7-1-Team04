@@ -3,7 +3,7 @@ package com.example.gridscircles.domain.order.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.example.gridscircles.domain.order.dto.OrderDetailDesponse;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
@@ -89,7 +89,7 @@ class OrderServiceTests {
         orderProductRepository.save(op2);
 
         // when
-        OrderDetailDesponse response = ordersService.getOrderDetail(order.getId());
+        OrderDetailResponse response = ordersService.getOrderDetail(order.getId());
 
         assertThat(response).isNotNull();
         assertThat(response.getOrderProducts()).hasSize(2);
