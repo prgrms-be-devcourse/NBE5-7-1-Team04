@@ -6,6 +6,7 @@ import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
+import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
@@ -60,23 +61,18 @@ public class OrdersService {
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
 
         findOrder.updateOrder(orderUpdateRequest);
-
-        ordersRepository.save(findOrder);
     }
 
     @Transactional
-    public void deleteOrder(Long orderId) {
-        validateOrderId(orderId);
+    public void cancelOrder(Long orderId) {
 
-        orderProductRepository.deleteByOrderId(orderId);
+        Orders findOrder = ordersRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
 
-        ordersRepository.deleteById(orderId);
-    }
-
-    private void validateOrderId(Long orderId) {
-        if (!ordersRepository.existsById(orderId)) {
-            throw new OrderNotFoundException("주문 정보를 찾을 수 없습니다.");
+        if (findOrder.getOrderStatus() == OrderStatus.COMPLETED) {
+            throw new OrderNotFoundException("배송이 완료된 주문은 취소할 수 없습니다.");
         }
+        findOrder.cancel();
     }
 
     @Transactional
