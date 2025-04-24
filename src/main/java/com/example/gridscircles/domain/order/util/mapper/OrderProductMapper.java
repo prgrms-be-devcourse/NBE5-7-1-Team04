@@ -1,4 +1,4 @@
-package com.example.gridscircles.domain.order.mapper;
+package com.example.gridscircles.domain.order.util.mapper;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.entity.OrderProduct;

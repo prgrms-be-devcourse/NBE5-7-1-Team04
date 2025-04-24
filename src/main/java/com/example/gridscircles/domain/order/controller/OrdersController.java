@@ -3,10 +3,12 @@ package com.example.gridscircles.domain.order.controller;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.EmailDto;
-import com.example.gridscircles.domain.order.dto.OrderDetailDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +37,7 @@ public class OrdersController {
 
     @GetMapping("/{orderId}")
     public String viewOrderDetail(@PathVariable Long orderId, Model model) {
-        OrderDetailDto orderDetail = ordersService.getOrderDetail(orderId);
+        OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
         return "view_orderDetail";
     }
@@ -90,11 +93,28 @@ public class OrdersController {
         return "view_save_orders";
     }
 
+    @GetMapping("/{orderId}/edit")
+    public String updateOrderForm(@PathVariable Long orderId, Model model) {
+        OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
+        model.addAttribute("orderDetail", orderDetail);
+        return "view_update_order";
+    }
+
     @ResponseBody
     @PostMapping("")
     public ResponseEntity<CreateOrdersResponse> saveOrders(
         @Validated @RequestBody CreateOrdersRequest createOrdersRequest) {
         CreateOrdersResponse response = ordersService.saveOrders(createOrdersRequest);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{orderId}")
+    @ResponseBody
+    public ResponseEntity<Void> updateOrder(
+        @PathVariable Long orderId,
+        @Valid @RequestBody OrderUpdateRequest orderUpdateRequest
+    ) {
+        ordersService.updateOrder(orderId, orderUpdateRequest);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -3,16 +3,16 @@ package com.example.gridscircles.domain.order.service;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
-import com.example.gridscircles.domain.order.dto.OrderDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
-import com.example.gridscircles.domain.order.mapper.OrderProductMapper;
-import com.example.gridscircles.domain.order.mapper.OrdersMapper;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
+import com.example.gridscircles.domain.order.util.mapper.OrderProductMapper;
+import com.example.gridscircles.domain.order.util.mapper.OrdersMapper;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import java.util.List;
@@ -32,30 +32,42 @@ public class OrdersService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public OrderDetailDto getOrderDetail(Long orderId) {
-        List<OrderProduct> products = orderProductRepository.findByOrdersIdWithProductAndOrder(orderId);
+    public OrderDetailResponse getOrderDetail(Long orderId) {
+        List<OrderProduct> products = orderProductRepository
+            .findByOrdersIdWithProductAndOrder(orderId);
+
         Orders findOrder = products.stream()
             .findFirst()
             .map(OrderProduct::getOrders)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
-        List<OrderProductDetailDto> orderProducts = products.stream()
-            .map(op -> OrderProductDetailDto.builder()
-                .productName(op.getProduct().getName())
-                .price(op.getPrice())
-                .quantity(op.getQuantity())
-                .build())
-            .toList();
-
-        return OrderDetailDto.builder()
-            .orderProducts(orderProducts)
-            .totalQuantity(orderProducts.stream().mapToInt(OrderProductDetailDto::getQuantity).sum())
-            .totalPrice(orderProducts.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum())
-            .address(findOrder.getAddress())
-            .zipcode(findOrder.getZipcode())
-            .orderStatus(findOrder.getOrderStatus())
-            .build();
+        return OrdersMapper.toOrderDetailResponse(findOrder, products, calculateQuantity(products),
+            calculdateTotalPrice(products));
     }
+
+    private static int calculdateTotalPrice(List<OrderProduct> products) {
+        return products.stream()
+            .mapToInt(op -> op.getPrice() * op.getQuantity())
+            .sum();
+    }
+
+    private static int calculateQuantity(List<OrderProduct> products) {
+        return products.stream()
+            .mapToInt(OrderProduct::getQuantity)
+            .sum();
+    }
+
+    @Transactional
+    public void updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest) {
+
+        Orders findOrder = ordersRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+
+        findOrder.updateOrder(orderUpdateRequest);
+
+        ordersRepository.save(findOrder);
+    }
+
 
     @Transactional
     public CreateOrdersResponse saveOrders(CreateOrdersRequest createOrdersRequest) {
@@ -65,7 +77,7 @@ public class OrdersService {
         int totalPrice = orderProducts.stream()
             .mapToInt(OrderProduct::getPrice)
             .sum();
-        
+
         createOrders.setTotalPrice(totalPrice);
         ordersRepository.save(createOrders);
         orderProductRepository.saveAll(orderProducts);
@@ -80,7 +92,8 @@ public class OrdersService {
         return ordersRepository.findByIdAndEmailOrderByCreatedAt(id, email);
     }
 
-    private List<OrderProduct> createOrderProducts(List<CreateOrdersProductDto> productsDto, Orders order) {
+    private List<OrderProduct> createOrderProducts(List<CreateOrdersProductDto> productsDto,
+        Orders order) {
         return productsDto.stream()
             .map(dto -> {
                 Product product = productRepository.findById(dto.getId())
