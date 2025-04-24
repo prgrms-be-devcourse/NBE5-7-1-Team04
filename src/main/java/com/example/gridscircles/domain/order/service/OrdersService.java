@@ -2,12 +2,15 @@ package com.example.gridscircles.domain.order.service;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
+import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.OrderDetailDto;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
+import com.example.gridscircles.domain.order.mapper.OrderProductMapper;
+import com.example.gridscircles.domain.order.mapper.OrdersMapper;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
@@ -55,8 +58,8 @@ public class OrdersService {
     }
 
     @Transactional
-    public Long saveOrders(CreateOrdersRequest createOrdersRequest) {
-        Orders createOrders = Orders.from(createOrdersRequest);
+    public CreateOrdersResponse saveOrders(CreateOrdersRequest createOrdersRequest) {
+        Orders createOrders = OrdersMapper.fromCreateOrdersRequest(createOrdersRequest);
         List<OrderProduct> orderProducts = createOrderProducts(createOrdersRequest.getProducts(), createOrders);
         
         int totalPrice = orderProducts.stream()
@@ -65,7 +68,7 @@ public class OrdersService {
         
         createOrders.setTotalPrice(totalPrice);
         orderProductRepository.saveAll(orderProducts);
-        return ordersRepository.save(createOrders).getId();
+        return OrdersMapper.toCreateOrdersResponse(createOrders);
     }
 
     public Page<Orders> getOrdersByEmail(String email, Pageable pageable) {
@@ -81,12 +84,7 @@ public class OrdersService {
             .map(dto -> {
                 Product product = productRepository.findById(dto.getId())
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
-                return OrderProduct.builder()
-                    .orders(order)
-                    .product(product)
-                    .quantity(dto.getQuantity())
-                    .price(product.getPrice() * dto.getQuantity())
-                    .build();
+                return OrderProductMapper.fromCreateOrdersProductDto(dto, order, product);
             })
             .toList();
     }

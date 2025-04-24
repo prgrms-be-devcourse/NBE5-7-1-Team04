@@ -94,7 +94,7 @@ public class OrdersController {
     @PostMapping("")
     public ResponseEntity<CreateOrdersResponse> saveOrders(
         @Validated @RequestBody CreateOrdersRequest createOrdersRequest) {
-        Long ordersId = ordersService.saveOrders(createOrdersRequest);
-        return ResponseEntity.ok(new CreateOrdersResponse(ordersId));
+        CreateOrdersResponse response = ordersService.saveOrders(createOrdersRequest);
+        return ResponseEntity.ok(response);
     }
 }
