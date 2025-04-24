@@ -2,6 +2,7 @@ package com.example.gridscircles.domain.order.controller;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.EmailDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailDto;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import com.example.gridscircles.domain.product.dto.ProductDto;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/orders")
@@ -28,6 +30,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OrdersController {
 
     private final OrdersService ordersService;
+
+    @GetMapping("/{orderId}")
+    public String viewOrderDetail(@PathVariable Long orderId, Model model) {
+        OrderDetailDto orderDetail = ordersService.getOrderDetail(orderId);
+        model.addAttribute("orderDetail", orderDetail);
+        return "view_orderDetail";
+    }
 
     @GetMapping("/search")
     public String searchForm() {
@@ -66,7 +75,6 @@ public class OrdersController {
 
     @GetMapping("")
     public String viewSaveOrders(Model model) {
-        // TODO : 상품 목록 조회 후 model에 넣기
         model.addAttribute("products", List.of(
             ProductDto.builder()
                 .id(1L)
