@@ -21,30 +21,30 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderProduct extends BaseEntity {
 
-    @Id
-    @Column(name = "order_product_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @Column(name = "order_product_id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private Integer quantity;
+  @Column(nullable = false)
+  private Integer quantity;
 
-    @Column(nullable = false)
-    private Integer price;
+  @Column(nullable = false)
+  private Integer price;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+  @ManyToOne
+  @JoinColumn(name = "product_id")
+  private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Orders orders;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "order_id")
+  private Orders orders;
 
-    @Builder
-    public OrderProduct(Integer quantity, Integer price, Product product, Orders orders) {
-        this.quantity = quantity;
-        this.price = price;
-        this.product = product;
-        this.orders = orders;
-    }
+  @Builder
+  public OrderProduct(Integer quantity, Integer price, Product product, Orders orders) {
+    this.quantity = quantity;
+    this.price = price;
+    this.product = product;
+    this.orders = orders;
+  }
 }
