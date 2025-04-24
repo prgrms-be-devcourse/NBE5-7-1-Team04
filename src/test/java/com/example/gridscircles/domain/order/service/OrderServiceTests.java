@@ -48,6 +48,7 @@ class OrderServiceTests {
             .price(1000)
             .category(Category.DRINK)
             .description("맛있어요!")
+            .contentType("image/jpeg")
             .image(dummyImage1)
             .build();
         Product product2 = Product.builder()
@@ -55,6 +56,7 @@ class OrderServiceTests {
             .price(1500)
             .category(Category.DRINK)
             .description("최고예요!")
+            .contentType("image/jpeg")
             .image(dummyImage2)
             .build();
         productRepository.save(product1);
