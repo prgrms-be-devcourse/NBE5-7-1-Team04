@@ -17,16 +17,18 @@ public class OrderDetailDto {
     private String address;
     private String zipcode;
     private OrderStatus orderStatus;
+    private String email;
 
     @Builder
     public OrderDetailDto(List<OrderProductDetailDto> orderProducts,
         Integer totalQuantity,
-        Integer totalPrice, String address, String zipcode, OrderStatus orderStatus) {
+        Integer totalPrice, String address, String zipcode, OrderStatus orderStatus, String email) {
         this.orderProducts = orderProducts;
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
         this.address = address;
         this.zipcode = zipcode;
         this.orderStatus = orderStatus;
+        this.email = email;
     }
 }
