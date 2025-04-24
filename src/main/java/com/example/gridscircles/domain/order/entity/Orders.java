@@ -1,7 +1,7 @@
 package com.example.gridscircles.domain.order.entity;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
-import com.example.gridscircles.domain.order.dto.OrderUpdateDto;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -63,8 +63,8 @@ public class Orders extends BaseEntity {
             .build();
     }
 
-    public void updateOrder(OrderUpdateDto orderUpdateDto) {
-        this.address = orderUpdateDto.getAddress();
-        this.zipcode = orderUpdateDto.getZipcode();
+    public void updateOrder(OrderUpdateRequest orderUpdateRequest) {
+        this.address = orderUpdateRequest.getAddress();
+        this.zipcode = orderUpdateRequest.getZipcode();
     }
 }

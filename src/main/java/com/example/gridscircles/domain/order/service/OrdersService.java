@@ -2,9 +2,9 @@ package com.example.gridscircles.domain.order.service;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto.CreateOrdersProductDto;
-import com.example.gridscircles.domain.order.dto.OrderDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderUpdateDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailDesponse;
+import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
@@ -29,7 +29,7 @@ public class OrdersService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public OrderDetailDto getOrderDetail(Long orderId) {
+    public OrderDetailDesponse getOrderDetail(Long orderId) {
         List<OrderProduct> products = orderProductRepository.findByOrdersIdWithProductAndOrder(
             orderId);
         Orders findOrder = products.stream()
@@ -37,18 +37,18 @@ public class OrdersService {
             .map(OrderProduct::getOrders)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
-        List<OrderProductDetailDto> orderProducts = products.stream()
-            .map(op -> OrderProductDetailDto.builder()
+        List<OrderProductDetailResponse> orderProducts = products.stream()
+            .map(op -> OrderProductDetailResponse.builder()
                 .productName(op.getProduct().getName())
                 .price(op.getPrice())
                 .quantity(op.getQuantity())
                 .build())
             .toList();
 
-        return OrderDetailDto.builder()
+        return OrderDetailDesponse.builder()
             .orderProducts(orderProducts)
             .totalQuantity(
-                orderProducts.stream().mapToInt(OrderProductDetailDto::getQuantity).sum())
+                orderProducts.stream().mapToInt(OrderProductDetailResponse::getQuantity).sum())
             .totalPrice(
                 orderProducts.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum())
             .address(findOrder.getAddress())
@@ -59,12 +59,12 @@ public class OrdersService {
     }
 
     @Transactional
-    public void updateOrder(Long orderId, OrderUpdateDto orderUpdateDto) {
+    public void updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest) {
 
         Orders findOrder = ordersRepository.findById(orderId)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
 
-        findOrder.updateOrder(orderUpdateDto);
+        findOrder.updateOrder(orderUpdateRequest);
 
         ordersRepository.save(findOrder);
     }

@@ -2,8 +2,8 @@ package com.example.gridscircles.domain.order.controller;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.EmailDto;
-import com.example.gridscircles.domain.order.dto.OrderDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderUpdateDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailDesponse;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import com.example.gridscircles.domain.product.dto.ProductDto;
@@ -36,7 +36,7 @@ public class OrdersController {
 
     @GetMapping("/{orderId}")
     public String viewOrderDetail(@PathVariable Long orderId, Model model) {
-        OrderDetailDto orderDetail = ordersService.getOrderDetail(orderId);
+        OrderDetailDesponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
         return "view_orderDetail";
     }
@@ -94,7 +94,7 @@ public class OrdersController {
 
     @GetMapping("/update/{orderId}")
     public String updateOrderForm(@PathVariable Long orderId, Model model) {
-        OrderDetailDto orderDetail = ordersService.getOrderDetail(orderId);
+        OrderDetailDesponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
         return "view_update_order";
     }
@@ -111,9 +111,9 @@ public class OrdersController {
     @ResponseBody
     public ResponseEntity<Void> updateOrder(
         @PathVariable Long orderId,
-        @Valid @RequestBody OrderUpdateDto orderUpdateDto
+        @Valid @RequestBody OrderUpdateRequest orderUpdateRequest
     ) {
-        ordersService.updateOrder(orderId, orderUpdateDto);
+        ordersService.updateOrder(orderId, orderUpdateRequest);
         return ResponseEntity.noContent().build();
     }
 }

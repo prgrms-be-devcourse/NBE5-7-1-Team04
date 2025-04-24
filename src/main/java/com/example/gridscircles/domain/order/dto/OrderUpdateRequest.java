@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderUpdateDto {
+public class OrderUpdateRequest {
 
     @NotBlank(message = "주소를 입력해주세요")
     private String address;
@@ -19,7 +19,7 @@ public class OrderUpdateDto {
     private String zipcode;
 
     @Builder
-    public OrderUpdateDto(String address, String zipcode) {
+    public OrderUpdateRequest(String address, String zipcode) {
         this.address = address;
         this.zipcode = zipcode;
     }
