@@ -67,6 +67,7 @@ public class OrdersService {
             .sum();
         
         createOrders.setTotalPrice(totalPrice);
+        ordersRepository.save(createOrders);
         orderProductRepository.saveAll(orderProducts);
         return OrdersMapper.toCreateOrdersResponse(createOrders);
     }
@@ -91,9 +92,6 @@ public class OrdersService {
 
     @Transactional
     public void completeOrders() {
-        List<Orders> orders = ordersRepository.findByOrderStatus(OrderStatus.PROCESSING);
-        for (Orders order : orders) {
-            order.updateStatusComplete();
-        }
+        ordersRepository.updateOrdersStatusByOrderStatus(OrderStatus.PROCESSING, OrderStatus.COMPLETED);
     }
 }

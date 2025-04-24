@@ -60,6 +60,7 @@ async function payment() {
   .then(response => {
     if (!response.ok) {
       alert("주문 처리에 실패했습니다.");
+      throw new Error("주문 실패");
     } else {
       return response.json();
     }
