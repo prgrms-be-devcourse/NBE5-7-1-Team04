@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class OrdersCompleteScheduler {
     private final OrdersService ordersService;
 
-    @Scheduled(cron = "0 19 14 * * *")
+    @Scheduled(cron = "0 0 14 * * *")
     public void completeOrders() {
         ordersService.completeOrders();
     }
