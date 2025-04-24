@@ -2,14 +2,14 @@ package com.example.gridscircles.domain.order.service;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto.CreateOrdersProductDto;
-import com.example.gridscircles.domain.order.dto.OrderDetailDesponse;
-import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
+import com.example.gridscircles.domain.order.util.mapper.OrdersMapper;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import java.util.List;
@@ -29,33 +29,16 @@ public class OrdersService {
     private final ProductRepository productRepository;
 
     @Transactional(readOnly = true)
-    public OrderDetailDesponse getOrderDetail(Long orderId) {
-        List<OrderProduct> products = orderProductRepository.findByOrdersIdWithProductAndOrder(
-            orderId);
+    public OrderDetailResponse getOrderDetail(Long orderId) {
+        List<OrderProduct> products = orderProductRepository
+            .findByOrdersIdWithProductAndOrder(orderId);
+
         Orders findOrder = products.stream()
             .findFirst()
             .map(OrderProduct::getOrders)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
-        List<OrderProductDetailResponse> orderProducts = products.stream()
-            .map(op -> OrderProductDetailResponse.builder()
-                .productName(op.getProduct().getName())
-                .price(op.getPrice())
-                .quantity(op.getQuantity())
-                .build())
-            .toList();
-
-        return OrderDetailDesponse.builder()
-            .orderProducts(orderProducts)
-            .totalQuantity(
-                orderProducts.stream().mapToInt(OrderProductDetailResponse::getQuantity).sum())
-            .totalPrice(
-                orderProducts.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum())
-            .address(findOrder.getAddress())
-            .zipcode(findOrder.getZipcode())
-            .email(findOrder.getEmail())
-            .orderStatus(findOrder.getOrderStatus())
-            .build();
+        return OrdersMapper.toOrderDetailResponse(findOrder, products);
     }
 
     @Transactional
