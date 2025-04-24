@@ -11,18 +11,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderDetailResponse {
 
+    private Long id;
+    private String email;
     private List<OrderProductDetailResponse> orderProducts;
     private Integer totalQuantity;
     private Integer totalPrice;
     private String address;
     private String zipcode;
     private OrderStatus orderStatus;
-    private String email;
 
     @Builder
-    public OrderDetailResponse(List<OrderProductDetailResponse> orderProducts,
-        Integer totalQuantity,
-        Integer totalPrice, String address, String zipcode, OrderStatus orderStatus, String email) {
+    public OrderDetailResponse(Long id, List<OrderProductDetailResponse> orderProducts,
+        Integer totalQuantity, Integer totalPrice, String address, String zipcode,
+        OrderStatus orderStatus, String email) {
+        this.id = id;
         this.orderProducts = orderProducts;
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
