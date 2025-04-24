@@ -4,6 +4,7 @@ import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.dto.OrderDetailDto;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
+import com.example.gridscircles.domain.order.dto.OrderUpdateDto;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
@@ -29,7 +30,8 @@ public class OrdersService {
 
     @Transactional(readOnly = true)
     public OrderDetailDto getOrderDetail(Long orderId) {
-        List<OrderProduct> products = orderProductRepository.findByOrdersIdWithProductAndOrder(orderId);
+        List<OrderProduct> products = orderProductRepository.findByOrdersIdWithProductAndOrder(
+            orderId);
         Orders findOrder = products.stream()
             .findFirst()
             .map(OrderProduct::getOrders)
@@ -45,8 +47,10 @@ public class OrdersService {
 
         return OrderDetailDto.builder()
             .orderProducts(orderProducts)
-            .totalQuantity(orderProducts.stream().mapToInt(OrderProductDetailDto::getQuantity).sum())
-            .totalPrice(orderProducts.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum())
+            .totalQuantity(
+                orderProducts.stream().mapToInt(OrderProductDetailDto::getQuantity).sum())
+            .totalPrice(
+                orderProducts.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum())
             .address(findOrder.getAddress())
             .zipcode(findOrder.getZipcode())
             .orderStatus(findOrder.getOrderStatus())
@@ -54,14 +58,27 @@ public class OrdersService {
     }
 
     @Transactional
+    public void updateOrder(Long orderId, OrderUpdateDto orderUpdateDto) {
+
+        Orders findOrder = ordersRepository.findById(orderId)
+            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+
+        findOrder.updateOrder(orderUpdateDto);
+
+        ordersRepository.save(findOrder);
+    }
+
+
+    @Transactional
     public Long saveOrders(CreateOrdersDto createOrdersDto) {
         Orders createOrders = Orders.from(createOrdersDto);
-        List<OrderProduct> orderProducts = createOrderProducts(createOrdersDto.getProducts(), createOrders);
-        
+        List<OrderProduct> orderProducts = createOrderProducts(createOrdersDto.getProducts(),
+            createOrders);
+
         int totalPrice = orderProducts.stream()
             .mapToInt(OrderProduct::getPrice)
             .sum();
-        
+
         createOrders.setTotalPrice(totalPrice);
         orderProductRepository.saveAll(orderProducts);
         return ordersRepository.save(createOrders).getId();
@@ -75,7 +92,8 @@ public class OrdersService {
         return ordersRepository.findByIdAndEmailOrderByCreatedAt(id, email);
     }
 
-    private List<OrderProduct> createOrderProducts(List<CreateOrdersProductDto> productsDto, Orders order) {
+    private List<OrderProduct> createOrderProducts(List<CreateOrdersProductDto> productsDto,
+        Orders order) {
         return productsDto.stream()
             .map(dto -> {
                 Product product = productRepository.findById(dto.getId())
