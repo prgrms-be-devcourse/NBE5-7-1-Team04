@@ -38,7 +38,20 @@ public class OrdersService {
             .map(OrderProduct::getOrders)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
-        return OrdersMapper.toOrderDetailResponse(findOrder, products);
+        return OrdersMapper.toOrderDetailResponse(findOrder, products, calculateQuantity(products),
+            calculdateTotalPrice(products));
+    }
+
+    private static int calculdateTotalPrice(List<OrderProduct> products) {
+        return products.stream()
+            .mapToInt(op -> op.getPrice() * op.getQuantity())
+            .sum();
+    }
+
+    private static int calculateQuantity(List<OrderProduct> products) {
+        return products.stream()
+            .mapToInt(OrderProduct::getQuantity)
+            .sum();
     }
 
     @Transactional

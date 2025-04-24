@@ -11,20 +11,15 @@ public class OrdersMapper {
     private OrdersMapper() {
     }
 
-
-    public static OrderDetailResponse toOrderDetailResponse(Orders order,
-        List<OrderProduct> products) {
+    public static OrderDetailResponse toOrderDetailResponse(
+        Orders order,
+        List<OrderProduct> products,
+        int totalQuantity,
+        int totalPrice
+    ) {
         List<OrderProductDetailResponse> orderProducts = products.stream()
             .map(OrdersMapper::toOrderProductDetailResponse)
             .toList();
-
-        int totalQuantity = orderProducts.stream()
-            .mapToInt(OrderProductDetailResponse::getQuantity)
-            .sum();
-
-        int totalPrice = orderProducts.stream()
-            .mapToInt(op -> op.getPrice() * op.getQuantity())
-            .sum();
 
         return OrderDetailResponse.builder()
             .orderProducts(orderProducts)
@@ -36,7 +31,6 @@ public class OrdersMapper {
             .orderStatus(order.getOrderStatus())
             .build();
     }
-
 
     private static OrderProductDetailResponse toOrderProductDetailResponse(OrderProduct op) {
         return OrderProductDetailResponse.builder()
