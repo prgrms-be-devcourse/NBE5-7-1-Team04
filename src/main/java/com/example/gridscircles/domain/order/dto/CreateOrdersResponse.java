@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CreateOrdersResponseDto {
+public class CreateOrdersResponse {
     private Long ordersId;
 }

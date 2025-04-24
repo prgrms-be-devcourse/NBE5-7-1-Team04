@@ -1,7 +1,7 @@
 package com.example.gridscircles.domain.order.service;
 
-import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
-import com.example.gridscircles.domain.order.dto.CreateOrdersDto.CreateOrdersProductDto;
+import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
+import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.dto.OrderDetailDto;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
@@ -55,9 +55,9 @@ public class OrdersService {
     }
 
     @Transactional
-    public Long saveOrders(CreateOrdersDto createOrdersDto) {
-        Orders createOrders = Orders.from(createOrdersDto);
-        List<OrderProduct> orderProducts = createOrderProducts(createOrdersDto.getProducts(), createOrders);
+    public Long saveOrders(CreateOrdersRequest createOrdersRequest) {
+        Orders createOrders = Orders.from(createOrdersRequest);
+        List<OrderProduct> orderProducts = createOrderProducts(createOrdersRequest.getProducts(), createOrders);
         
         int totalPrice = orderProducts.stream()
             .mapToInt(OrderProduct::getPrice)

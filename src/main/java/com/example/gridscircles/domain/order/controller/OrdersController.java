@@ -1,12 +1,12 @@
 package com.example.gridscircles.domain.order.controller;
 
-import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
-import com.example.gridscircles.domain.order.dto.CreateOrdersResponseDto;
+import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
+import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.EmailDto;
 import com.example.gridscircles.domain.order.dto.OrderDetailDto;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
-import com.example.gridscircles.domain.product.dto.ProductDto;
+import com.example.gridscircles.domain.product.dto.ProductResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,13 +77,13 @@ public class OrdersController {
     @GetMapping("")
     public String viewSaveOrders(Model model) {
         model.addAttribute("products", List.of(
-            ProductDto.builder()
+            ProductResponse.builder()
                 .id(1L)
                 .price(1000)
                 .name("Product 1")
                 .category("커피콩")
                 .imageType("image/jpeg")
-                .imageBase64("/9j/4AAQSkZJRgABAQAAAQABAAD")
+                .imageBase64("test")
                 .build())
         );
 
@@ -92,9 +92,9 @@ public class OrdersController {
 
     @ResponseBody
     @PostMapping("")
-    public ResponseEntity<CreateOrdersResponseDto> saveOrders(
-        @Validated @RequestBody CreateOrdersDto createOrdersDto) {
-        Long ordersId = ordersService.saveOrders(createOrdersDto);
-        return ResponseEntity.ok(new CreateOrdersResponseDto(ordersId));
+    public ResponseEntity<CreateOrdersResponse> saveOrders(
+        @Validated @RequestBody CreateOrdersRequest createOrdersRequest) {
+        Long ordersId = ordersService.saveOrders(createOrdersRequest);
+        return ResponseEntity.ok(new CreateOrdersResponse(ordersId));
     }
 }
