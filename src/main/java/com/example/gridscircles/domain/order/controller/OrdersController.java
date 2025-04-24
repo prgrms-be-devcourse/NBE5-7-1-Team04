@@ -2,7 +2,7 @@ package com.example.gridscircles.domain.order.controller;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.EmailDto;
-import com.example.gridscircles.domain.order.dto.OrderDetailDesponse;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
@@ -36,7 +36,7 @@ public class OrdersController {
 
     @GetMapping("/{orderId}")
     public String viewOrderDetail(@PathVariable Long orderId, Model model) {
-        OrderDetailDesponse orderDetail = ordersService.getOrderDetail(orderId);
+        OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
         return "view_orderDetail";
     }
@@ -94,7 +94,7 @@ public class OrdersController {
 
     @GetMapping("/update/{orderId}")
     public String updateOrderForm(@PathVariable Long orderId, Model model) {
-        OrderDetailDesponse orderDetail = ordersService.getOrderDetail(orderId);
+        OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
         return "view_update_order";
     }
