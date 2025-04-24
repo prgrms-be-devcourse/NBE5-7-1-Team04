@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderProductDetailDto {
+public class OrderProductDetailResponse {
 
     private String productName;
     private Integer price;
     private Integer quantity;
 
     @Builder
-    public OrderProductDetailDto(String productName, Integer price, Integer quantity) {
+    public OrderProductDetailResponse(String productName, Integer price, Integer quantity) {
         this.productName = productName;
         this.price = price;
         this.quantity = quantity;

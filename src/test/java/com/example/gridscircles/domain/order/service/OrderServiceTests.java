@@ -3,8 +3,9 @@ package com.example.gridscircles.domain.order.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.example.gridscircles.domain.order.dto.OrderDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
@@ -37,20 +38,26 @@ class OrderServiceTests {
     @Test
     @DisplayName("주문 상세 조회 테스트 - 여러 상품")
     void test_find_orderDetails_multipleProducts() throws Exception {
+
         // given: 두 개의 상품 생성 및 저장
+        byte[] dummyImage1 = "dummy-image-1".getBytes();
+        byte[] dummyImage2 = "dummy-image-2".getBytes();
+
         Product product1 = Product.builder()
             .name("사바하 커피1")
             .price(1000)
             .category(Category.DRINK)
             .description("맛있어요!")
-            .image("https://Yuhan.com/image1.jpg")
+            .contentType("image/jpeg")
+            .image(dummyImage1)
             .build();
         Product product2 = Product.builder()
             .name("사바하 커피2")
             .price(1500)
             .category(Category.DRINK)
             .description("최고예요!")
-            .image("https://Yuhan.com/image2.jpg")
+            .contentType("image/jpeg")
+            .image(dummyImage2)
             .build();
         productRepository.save(product1);
         productRepository.save(product2);
@@ -82,13 +89,13 @@ class OrderServiceTests {
         orderProductRepository.save(op2);
 
         // when
-        OrderDetailDto response = ordersService.getOrderDetail(order.getId());
+        OrderDetailResponse response = ordersService.getOrderDetail(order.getId());
 
         assertThat(response).isNotNull();
         assertThat(response.getOrderProducts()).hasSize(2);
 
         assertThat(response.getOrderProducts())
-            .extracting(OrderProductDetailDto::getProductName)
+            .extracting(OrderProductDetailResponse::getProductName)
             .containsExactlyInAnyOrder("사바하 커피1", "사바하 커피2");
 
         // 총 수량 = 2 + 3 = 5
@@ -112,5 +119,34 @@ class OrderServiceTests {
         );
 
         assertThat(ex.getMessage()).isEqualTo("주문 정보를 조회할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("주문 수정 테스트")
+    void test_updateOrder() {
+
+        // given: 주문 생성
+        Orders order = Orders.builder()
+            .email("Yuhan@example.com")
+            .address("서울특별시 강남구 사바하아파트 444동 444호")
+            .zipcode("44444")
+            .totalPrice(0)
+            .orderStatus(OrderStatus.PROCESSING)
+            .build();
+        ordersRepository.save(order);
+
+        OrderUpdateRequest updateDto = OrderUpdateRequest.builder()
+            .address("서울특별시 용산구 사바하아파트 444동 444호")
+            .zipcode("12345")
+            .build();
+
+        // when
+        ordersService.updateOrder(order.getId(), updateDto);
+
+        // then
+        Orders updated = ordersRepository.findById(order.getId())
+            .orElseThrow();
+        assertThat(updated.getAddress()).isEqualTo("서울특별시 용산구 사바하아파트 444동 444호");
+        assertThat(updated.getZipcode()).isEqualTo("12345");
     }
 }

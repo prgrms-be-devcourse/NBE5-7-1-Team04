@@ -9,24 +9,26 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderDetailDto {
+public class OrderDetailResponse {
 
-    private List<OrderProductDetailDto> orderProducts;
+    private List<OrderProductDetailResponse> orderProducts;
     private Integer totalQuantity;
     private Integer totalPrice;
     private String address;
     private String zipcode;
     private OrderStatus orderStatus;
+    private String email;
 
     @Builder
-    public OrderDetailDto(List<OrderProductDetailDto> orderProducts,
+    public OrderDetailResponse(List<OrderProductDetailResponse> orderProducts,
         Integer totalQuantity,
-        Integer totalPrice, String address, String zipcode, OrderStatus orderStatus) {
+        Integer totalPrice, String address, String zipcode, OrderStatus orderStatus, String email) {
         this.orderProducts = orderProducts;
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
         this.address = address;
         this.zipcode = zipcode;
         this.orderStatus = orderStatus;
+        this.email = email;
     }
 }
