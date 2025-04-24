@@ -22,6 +22,7 @@ public class OrdersMapper {
             .toList();
 
         return OrderDetailResponse.builder()
+            .id(order.getId())
             .orderProducts(orderProducts)
             .totalQuantity(totalQuantity)
             .totalPrice(totalPrice)
