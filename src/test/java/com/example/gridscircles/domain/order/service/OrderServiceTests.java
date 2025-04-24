@@ -151,31 +151,8 @@ class OrderServiceTests {
     }
 
     @Test
-    @DisplayName("주문 삭제 테스트")
-    void test_deleteOrder() {
-        // given: 두 개의 상품 생성 및 저장
-        byte[] dummyImage1 = "dummy-image-1".getBytes();
-        byte[] dummyImage2 = "dummy-image-2".getBytes();
-
-        Product product1 = Product.builder()
-            .name("사바하 커피1")
-            .price(1000)
-            .category(Category.DRINK)
-            .description("맛있어요!")
-            .contentType("image/jpeg")
-            .image(dummyImage1)
-            .build();
-        Product product2 = Product.builder()
-            .name("사바하 커피2")
-            .price(1500)
-            .category(Category.DRINK)
-            .description("최고예요!")
-            .contentType("image/jpeg")
-            .image(dummyImage2)
-            .build();
-        productRepository.save(product1);
-        productRepository.save(product2);
-
+    @DisplayName("주문 취소 테스트")
+    void test_cancelOrder() {
         // given: 주문 생성
         Orders order = Orders.builder()
             .email("kkkk@gmail.com")
@@ -186,32 +163,11 @@ class OrderServiceTests {
             .build();
         ordersRepository.save(order);
 
-        // given: 두 개의 OrderProduct 저장
-        OrderProduct op1 = OrderProduct.builder()
-            .product(product1)
-            .price(product1.getPrice())
-            .quantity(2)
-            .orders(order)
-            .build();
-        OrderProduct op2 = OrderProduct.builder()
-            .product(product2)
-            .price(product2.getPrice())
-            .quantity(3)
-            .orders(order)
-            .build();
-        orderProductRepository.save(op1);
-        orderProductRepository.save(op2);
+        // when: 주문 취소
+        ordersService.cancelOrder(order.getId());
 
-        Long orderId = order.getId();
-        Long op1Id = op1.getId();
-        Long op2Id = op2.getId();
-
-        // when: 주문 삭제 실행
-        ordersService.deleteOrder(orderId);
-
-        // then: 부모(주문)와 자식(주문상품) 모두 삭제됐는지 확인
-        assertThat(ordersRepository.findById(orderId)).isEmpty();
-        assertThat(orderProductRepository.findById(op1Id)).isEmpty();
-        assertThat(orderProductRepository.findById(op2Id)).isEmpty();
+        // then: 주문 취소 상태 확인
+        Orders canceledOrder = ordersRepository.findById(order.getId()).orElseThrow();
+        assertThat(canceledOrder.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
     }
 }
