@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class OrderDetailDesponse {
+public class OrderDetailResponse {
 
     private List<OrderProductDetailResponse> orderProducts;
     private Integer totalQuantity;
@@ -20,7 +20,7 @@ public class OrderDetailDesponse {
     private String email;
 
     @Builder
-    public OrderDetailDesponse(List<OrderProductDetailResponse> orderProducts,
+    public OrderDetailResponse(List<OrderProductDetailResponse> orderProducts,
         Integer totalQuantity,
         Integer totalPrice, String address, String zipcode, OrderStatus orderStatus, String email) {
         this.orderProducts = orderProducts;
