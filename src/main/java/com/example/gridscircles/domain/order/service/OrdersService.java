@@ -53,6 +53,7 @@ public class OrdersService {
                 orderProducts.stream().mapToInt(item -> item.getPrice() * item.getQuantity()).sum())
             .address(findOrder.getAddress())
             .zipcode(findOrder.getZipcode())
+            .email(findOrder.getEmail())
             .orderStatus(findOrder.getOrderStatus())
             .build();
     }
