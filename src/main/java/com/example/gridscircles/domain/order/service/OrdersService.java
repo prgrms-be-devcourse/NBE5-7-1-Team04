@@ -6,6 +6,7 @@ import com.example.gridscircles.domain.order.dto.OrderDetailDto;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
+import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
@@ -88,5 +89,13 @@ public class OrdersService {
                     .build();
             })
             .toList();
+    }
+
+    @Transactional
+    public void completeOrders() {
+        List<Orders> orders = ordersRepository.findByOrderStatus(OrderStatus.PROCESSING);
+        for (Orders order : orders) {
+            order.updateStatusComplete();
+        }
     }
 }

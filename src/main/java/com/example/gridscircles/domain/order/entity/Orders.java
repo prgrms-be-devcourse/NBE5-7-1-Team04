@@ -62,4 +62,8 @@ public class Orders extends BaseEntity {
             .zipcode(createOrdersDto.getZipcode())
             .build();
     }
+
+    public void updateStatusComplete() {
+        this.orderStatus = OrderStatus.COMPLETED;
+    }
 }
