@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 상세 조회 - 관리자</title>
+  <style>
+    body {
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 50px 0;
+    }
+
+    td:first-child {
+      width: 80px;
+      font-weight: bold;
+      text-align: left;
+      padding-right: 10px;
+    }
+
+    .form-wrapper {
+      width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .value {
+      padding: 8px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+
+    .product-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .button-group {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: gray;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button[type="button"] {
+      background-color: black;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-wrapper">
+  <h2>상품 상세 조회</h2>
+
+  <table>
+    <tr>
+      <td>상품명</td>
+      <td><div class="value" th:text="${product.name}"></div></td>
+    </tr>
+    <tr>
+      <td>카테고리</td>
+      <td><div class="value" th:text="${product.category}"></div></td>
+    </tr>
+    <tr>
+      <td>상품 설명</td>
+      <td><div class="value" th:text="${product.description}"></div></td>
+    </tr>
+    <tr>
+      <td>가격</td>
+      <td><div class="value" th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')} + ' 원'"></div></td>
+    </tr>
+    <tr>
+      <td>상품 이미지</td>
+      <td>
+        <img th:src="'data:' + ${contentType} + ';base64,' + ${base64Image}" alt="상품 이미지" class="product-image"/>
+      </td>
+    </tr>
+  </table>
+
+  <div class="button-group">
+    <input type="hidden" id="productId" th:value="${product.id}" />
+    <button type="button" th:onclick="|window.location.href='@{/admin/products/edit/{id}(id=${product.id})}'|">수정</button>
+    <button type="button" id="deleteBtn" >삭제</button>
+    <button type="button" th:onclick="|window.location.href='@{/admin/products/list}'|">목록으로</button>
+  </div>
+</div>
+<script src="/find_products.js"></script>
+</body>
+</html>
