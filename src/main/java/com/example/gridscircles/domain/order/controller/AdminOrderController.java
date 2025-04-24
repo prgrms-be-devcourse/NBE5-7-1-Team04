@@ -1,7 +1,7 @@
 package com.example.gridscircles.domain.order.controller;
 
 
-import com.example.gridscircles.domain.order.dto.OrdersSearchResponseDto;
+import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,7 +36,7 @@ public class AdminOrderController {
     if (orderId != null) {
       try {
         // orderId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
-        OrdersSearchResponseDto response = ordersService.searchOrderWithItems(orderId);
+        OrdersSearchResponse response = ordersService.searchOrderWithItems(orderId);
         model.addAttribute("orders_list", List.of(response));
         model.addAttribute("isPaged", false); // 페이징 여부
 
@@ -48,7 +48,7 @@ public class AdminOrderController {
 
     } else {
       // 없으면 전체 주문 목록 (Paged = true)
-      Page<OrdersSearchResponseDto> responseDtoPage = ordersService.getAllOrders(
+      Page<OrdersSearchResponse> responseDtoPage = ordersService.getAllOrders(
           PageRequest.of(page, size));
 
       model.addAttribute("orders_list", responseDtoPage);
@@ -64,7 +64,7 @@ public class AdminOrderController {
   // 해당 주문의 상세페이지
   @GetMapping("/orders/{orderId}")
   public String viewOrderDetail(@PathVariable Long orderId, Model model) {
-    OrdersSearchResponseDto orderDetail = ordersService.searchOrderWithItems(orderId);
+    OrdersSearchResponse orderDetail = ordersService.searchOrderWithItems(orderId);
     model.addAttribute("orderDetail", orderDetail);
     return "view_orderDetail"; // 상세페이지 템플릿
   }

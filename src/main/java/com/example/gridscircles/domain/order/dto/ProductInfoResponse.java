@@ -5,11 +5,14 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProductInfoDto {
+public class ProductInfoResponse {
 
   private String productName;
   private Integer quantity;
   private Integer price;
+
+
+
 }
 
 

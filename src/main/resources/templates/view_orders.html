@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>주문 내역</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 900px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      gap: 10px;
+    }
+
+    .search-form input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 200px;
+    }
+
+    .search-form button {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .search-form button:hover {
+      background-color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    a.button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #444;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    a.button:hover {
+      background-color: #333;
+    }
+
+    .pagination a {
+      margin: 0 5px;
+      text-decoration: none;
+      color: #444;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .pagination a.button {
+      background-color: #444;
+      color: white;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 th:text="${email != null} ? ${email} + '님의 주문 내역' : '주문 내역'">주문 내역</h1>
+
+  <form class="search-form" th:action="@{/orders/id}" method="get">
+    <input type="number" name="orderId" placeholder="주문 ID" required>
+    <input type="hidden" name="email" th:value="${email}"/>
+    <button type="submit">조회</button>
+  </form>
+
+  <table>
+    <thead>
+    <tr>
+      <th>주문 ID</th>
+      <th>주소</th>
+      <th>우편번호</th>
+      <th>총 가격</th>
+      <th>주문 상태</th>
+      <th>주문일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+      <td th:text="${order.getId()}"></td>
+      <td th:text="${order.getAddress()}"></td>
+      <td th:text="${order.getZipcode()}"></td>
+      <td th:text="${order.getTotalPrice()}"></td>
+      <td th:text="${order.getOrderStatus()}"></td>
+      <td th:text="${order.getCreatedAt()}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination" style="text-align: center; margin-top: 20px;" th:if="${totalPages > 1}">
+    <div style="display: inline-block;">
+      <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+         th:href="@{/orders/email(email=${email}, page=${i})}"
+         th:text="${i + 1}"
+         th:classappend="${i == currentPage} ? ' button' : ''"></a>
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <a th:if="${request == 'email'}" href="/orders/search" class="button">돌아가기</a>
+    <a th:if="${request == 'id'}" href="javascript:history.back()" class="button">돌아가기</a>
+  </div>
+</div>
+</body>
+</html>

@@ -11,6 +11,6 @@ public class ProductSearchResponseDto {
   private String productName;
   private String description;
   private Integer price;
-  private String image;
+  private byte[] image;
   private Category category;
 }

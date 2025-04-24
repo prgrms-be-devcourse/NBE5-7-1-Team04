@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class OrdersSearchResponseDto {
+public class OrdersSearchResponse {
 
   private Long orderId;
   private String email;
@@ -17,5 +17,5 @@ public class OrdersSearchResponseDto {
   private Integer totalPrice;
   private OrderStatus orderStatus;
   private LocalDateTime createdAt;
-  private List<ProductInfoDto> products;
+  private List<ProductInfoResponse> products;
 }
