@@ -65,6 +65,21 @@ public class OrdersService {
     }
 
     @Transactional
+    public void deleteOrder(Long orderId) {
+        validateOrderId(orderId);
+
+        orderProductRepository.deleteByOrderId(orderId);
+
+        ordersRepository.deleteById(orderId);
+    }
+
+    private void validateOrderId(Long orderId) {
+        if (!ordersRepository.existsById(orderId)) {
+            throw new OrderNotFoundException("주문 정보를 찾을 수 없습니다.");
+        }
+    }
+
+    @Transactional
     public Long saveOrders(CreateOrdersDto createOrdersDto) {
         Orders createOrders = Orders.from(createOrdersDto);
         List<OrderProduct> orderProducts = createOrderProducts(createOrdersDto.getProducts(),
