@@ -1,9 +1,12 @@
 package com.example.gridscircles.domain.order.util.mapper;
 
+import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
+import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
+import com.example.gridscircles.domain.order.enums.OrderStatus;
 import java.util.List;
 
 public class OrdersMapper {
@@ -37,6 +40,21 @@ public class OrdersMapper {
             .productName(op.getProduct().getName())
             .price(op.getPrice())
             .quantity(op.getQuantity())
+            .build();
+    }
+
+    public static CreateOrdersResponse toCreateOrdersResponse(Orders order) {
+        return CreateOrdersResponse.builder()
+            .ordersId(order.getId())
+            .build();
+    }
+
+    public static Orders fromCreateOrdersRequest(CreateOrdersRequest createOrdersRequest) {
+        return Orders.builder()
+            .orderStatus(OrderStatus.PROCESSING)
+            .email(createOrdersRequest.getEmail())
+            .address(createOrdersRequest.getAddress())
+            .zipcode(createOrdersRequest.getZipcode())
             .build();
     }
 }

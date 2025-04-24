@@ -50,18 +50,28 @@ async function payment() {
   // requestDto
   const request = {email, address, zipcode, products};
 
-  const response = await fetch("/orders", {
+  fetch("/orders", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(request)
+  })
+  .then(response => {
+    if (!response.ok) {
+      alert("주문 처리에 실패했습니다.");
+      throw new Error("주문 실패");
+    } else {
+      return response.json();
+    }
+  })
+  .then(data => {
+    alert(
+        "주문이 완료되었습니다!\n" +
+        "당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다."
+    );
+
+    window.location.replace("/orders/" + data.ordersId);
   });
 
-  if (response.ok) {
-    alert("주문이 완료되었습니다!");
-    window.location.replace("/orders"); // 주문 상세 정보 같은 곳으로 가도 될 듯?
-  } else {
-    alert("주문 처리에 실패했습니다.");
-  }
 }
