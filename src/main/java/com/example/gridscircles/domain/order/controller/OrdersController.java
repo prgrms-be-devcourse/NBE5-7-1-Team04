@@ -92,7 +92,7 @@ public class OrdersController {
         return "view_save_orders";
     }
 
-    @GetMapping("/update/{orderId}")
+    @GetMapping("/{orderId}/edit")
     public String updateOrderForm(@PathVariable Long orderId, Model model) {
         OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
