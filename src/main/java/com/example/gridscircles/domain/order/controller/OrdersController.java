@@ -96,7 +96,7 @@ public class OrdersController {
     public String updateOrderForm(@PathVariable Long orderId, Model model) {
         OrderDetailDto orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
-        return "view_update_orderForm";
+        return "view_update_order";
     }
 
     @ResponseBody
