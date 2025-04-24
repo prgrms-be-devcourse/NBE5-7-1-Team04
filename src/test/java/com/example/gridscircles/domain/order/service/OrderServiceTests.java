@@ -3,9 +3,9 @@ package com.example.gridscircles.domain.order.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.example.gridscircles.domain.order.dto.OrderDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderProductDetailDto;
-import com.example.gridscircles.domain.order.dto.OrderUpdateDto;
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
@@ -89,13 +89,13 @@ class OrderServiceTests {
         orderProductRepository.save(op2);
 
         // when
-        OrderDetailDto response = ordersService.getOrderDetail(order.getId());
+        OrderDetailResponse response = ordersService.getOrderDetail(order.getId());
 
         assertThat(response).isNotNull();
         assertThat(response.getOrderProducts()).hasSize(2);
 
         assertThat(response.getOrderProducts())
-            .extracting(OrderProductDetailDto::getProductName)
+            .extracting(OrderProductDetailResponse::getProductName)
             .containsExactlyInAnyOrder("사바하 커피1", "사바하 커피2");
 
         // 총 수량 = 2 + 3 = 5
@@ -135,7 +135,7 @@ class OrderServiceTests {
             .build();
         ordersRepository.save(order);
 
-        OrderUpdateDto updateDto = OrderUpdateDto.builder()
+        OrderUpdateRequest updateDto = OrderUpdateRequest.builder()
             .address("서울특별시 용산구 사바하아파트 444동 444호")
             .zipcode("12345")
             .build();
