@@ -1,5 +1,5 @@
 function updateOrder() {
-  const match = window.location.pathname.match(/\/orders\/update\/(\d+)/);
+  const match = window.location.pathname.match(/\/orders\/(\d+)\/edit/);
   const orderId = match ? match[1] : null;
   const address = document.getElementById("address").value.trim();
   const zipcode = document.getElementById("zipcode").value.trim();
