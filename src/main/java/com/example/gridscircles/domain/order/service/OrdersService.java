@@ -149,7 +149,7 @@ public class OrdersService {
             .mapToInt(OrderProduct::getPrice)
             .sum();
 
-        //createOrders.setTotalPrice(totalPrice);
+        createOrders.setTotalPrice(totalPrice);
         ordersRepository.save(createOrders);
         orderProductRepository.saveAll(orderProducts);
         return OrdersMapper.toCreateOrdersResponse(createOrders);
