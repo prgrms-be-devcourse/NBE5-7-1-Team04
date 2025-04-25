@@ -24,9 +24,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -47,17 +46,17 @@ public class AdminProductController {
     }
 
 
-
     @PostMapping
-    public String saveProduct(@Validated(OnProductCreate.class) ProductForm productForm, BindingResult bindingResult, Model model) {
+    public String saveProduct(@Validated(OnProductCreate.class) ProductForm productForm,
+        BindingResult bindingResult, Model model) {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
 
             model.addAttribute("productForm", productForm);
             model.addAttribute("categories", Category.values());
             model.addAttribute("isNew", true);
 
-            if (!productForm.getFile().isEmpty()){
+            if (!productForm.getFile().isEmpty()) {
                 model.addAttribute("imageReuploadNotice", "다른 항목 오류로 인해 이미지는 다시 업로드해 주세요.");
             }
 
@@ -68,8 +67,6 @@ public class AdminProductController {
 
         return "redirect:/admin/products/new";
     }
-
-
 
 
     @GetMapping("/{productId}")
@@ -95,7 +92,7 @@ public class AdminProductController {
     }
 
     @GetMapping("edit/{productId}")
-    public String viewUpdateProduct(@PathVariable Long productId,Model model) {
+    public String viewUpdateProduct(@PathVariable Long productId, Model model) {
 
         Product productById = productService.findProductById(productId);
 
@@ -110,15 +107,16 @@ public class AdminProductController {
     }
 
     @PostMapping("/{ProductId}")
-    public String updateProduct(@Validated(OnProductUpdate.class) ProductForm productForm, BindingResult bindingResult, @PathVariable Long ProductId, Model model) {
+    public String updateProduct(@Validated(OnProductUpdate.class) ProductForm productForm,
+        BindingResult bindingResult, @PathVariable Long ProductId, Model model) {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             productForm.setId(ProductId);
             model.addAttribute("productForm", productForm);
             model.addAttribute("categories", Category.values());
             model.addAttribute("isNew", false);
 
-            if (!productForm.getFile().isEmpty()){
+            if (!productForm.getFile().isEmpty()) {
                 model.addAttribute("imageReuploadNotice", "다른 항목 오류로 인해 이미지는 다시 업로드해 주세요.");
             }
 
@@ -147,7 +145,8 @@ public class AdminProductController {
         if (productId != null) {
             try {
                 // productId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
-                ProductSearchResponseDto response = productService.searchProductWithItems(productId);
+                ProductSearchResponseDto response = productService.searchProductWithItems(
+                    productId);
                 model.addAttribute("isPaged", false); // 페이징 여부
                 model.addAttribute("products_list", List.of(response));
 

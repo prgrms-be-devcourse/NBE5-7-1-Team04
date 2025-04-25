@@ -10,7 +10,12 @@ function cancelOrder() {
   }
 
   const orderId = card.getAttribute('data-order-id');
-  const email = card.getAttribute('data-order-email');
+  const orderStatus = card.getAttribute('data-order-status');
+
+  if (orderStatus === 'COMPLETED') {
+    alert('배송이 완료된 주문은 취소하실 수 없습니다.');
+    return;
+  }
 
   fetch(`/orders/${orderId}/cancel`, {
     method: 'PUT'
@@ -19,6 +24,7 @@ function cancelOrder() {
     if (!response.ok) {
       throw new Error('주문 취소에 실패했습니다.');
     }
+    alert('주문이 취소되었습니다.');
     window.location.href = `/orders/${orderId}`;
   })
   .catch(err => {
