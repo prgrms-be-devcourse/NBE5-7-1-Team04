@@ -122,7 +122,8 @@ public class AdminProductController {
         if (productId != null) {
             try {
                 // productId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
-                ProductSearchResponseDto response = productService.searchProductWithItems(productId);
+                ProductSearchResponseDto response = productService.searchProductWithItems(
+                    productId);
                 model.addAttribute("isPaged", false); // 페이징 여부
                 model.addAttribute("products_list", List.of(response));
 
