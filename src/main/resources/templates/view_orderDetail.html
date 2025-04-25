@@ -44,6 +44,30 @@
         border-bottom-left-radius: 1rem;
       }
     }
+
+    .order-status {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      font-size: 0.9em;
+      font-weight: 600;
+      border-radius: 0.25rem;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .order-status.PROCESSING {
+      background-color: #f0ad4e; /* 오렌지 */
+    }
+
+    .order-status.COMPLETED {
+      background-color: #5cb85c; /* 녹색 */
+    }
+
+    .order-status.CANCELED {
+      background-color: #d9534f; /* 빨간 */
+    }
+
+
   </style>
 </head>
 <body class="container-fluid">
@@ -52,7 +76,7 @@
 </div>
 
 <div class="card mb-4"
-     th:attr="data-order-id=${orderDetail.id}, data-order-email=${orderDetail.email}">
+     th:attr="data-order-id=${orderDetail.id},data-order-status=${orderDetail.orderStatus.name()}">
   <div class="row no-gutters">
     <div class="col-md-8 p-4">
       <h5><b>상품 목록</b></h5>
@@ -93,7 +117,13 @@
         </tr>
         <tr>
           <th>주문 상태</th>
-          <td th:text="${orderDetail.orderStatus}">-</td>
+          <td>
+    <span
+        th:class="'order-status ' + ${orderDetail.orderStatus.name()}"
+        th:text="${orderDetail.orderStatus.name()}">
+      PROCESSING
+    </span>
+          </td>
         </tr>
         </tbody>
       </table>
