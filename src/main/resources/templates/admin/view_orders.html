@@ -166,7 +166,8 @@
   <div class="pagination"
        th:if="${hasData and totalPages > 1}"
        style="text-align: center; margin-top: 20px;">
-    <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
+    <div
+        style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
 
       <!-- 첫 페이지 -->
       <a th:if="${currentPage > 0}"
@@ -180,8 +181,8 @@
 
       <!-- 페이지 번호 (슬라이딩 처리) -->
       <a th:each="i : ${#numbers.sequence(
-        currentPage <= 2 ? 0 : (currentPage + 2 >= totalPages ? totalPages - 5 : currentPage - 2),
-        currentPage <= 2 ? (totalPages < 5 ? totalPages - 1 : 4) : (currentPage + 2 >= totalPages ? totalPages - 1 : currentPage + 2))}"
+        totalPages <= 5 ? 0 : (currentPage <= 2 ? 0 : (currentPage + 2 >= totalPages ? totalPages - 5 : currentPage - 2)),
+        totalPages <= 5 ? (totalPages == 0 ? 0 : totalPages - 1) : (currentPage <= 2 ? (totalPages < 5 ? totalPages - 1 : 4) : (currentPage + 2 >= totalPages ? totalPages - 1 : currentPage + 2)))}"
          th:href="@{/admin/orders/list(page=${i}, size=${pageSize})}"
          th:text="${i + 1}"
          th:classappend="${i == currentPage} ? ' button' : ''"
