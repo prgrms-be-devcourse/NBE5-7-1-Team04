@@ -77,22 +77,6 @@ public class OrdersController {
         return "view_orders";
     }
 
-//    @GetMapping("")
-//    public String viewSaveOrders(Model model) {
-//        model.addAttribute("products", List.of(
-//            ProductResponse.builder()
-//                .id(1L)
-//                .price(1000)
-//                .name("Product 1")
-//                .category("커피콩")
-//                .imageType("image/jpeg")
-//                .imageBase64("test")
-//                .build())
-//        );
-//
-//        return "view_save_orders";
-//    }
-
     @GetMapping("/{orderId}/edit")
     public String updateOrderForm(@PathVariable Long orderId, Model model) {
         OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
