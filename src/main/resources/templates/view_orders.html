@@ -72,6 +72,10 @@
       background-color: #f0f0f0;
     }
 
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
     a.button {
       display: inline-block;
       margin-top: 20px;
@@ -124,8 +128,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="order : ${orders}">
-      <td th:text="${order.getId()}"></td>
+    <tr th:each="order : ${orders}"
+        th:onclick="|location.href='/orders/${order.getId()}'|"
+        style="cursor: pointer;">
+
+    <td th:text="${order.getId()}"></td>
       <td th:text="${order.getAddress()}"></td>
       <td th:text="${order.getZipcode()}"></td>
       <td th:text="${order.getTotalPrice()}"></td>
@@ -136,7 +143,8 @@
   </table>
 
   <div class="pagination" th:if="${totalPages > 1}" style="text-align: center; margin-top: 20px;">
-    <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
+    <div
+        style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
 
       <!-- 첫 페이지로 이동 -->
       <a th:if="${totalPages > 5 and currentPage > 0}"
