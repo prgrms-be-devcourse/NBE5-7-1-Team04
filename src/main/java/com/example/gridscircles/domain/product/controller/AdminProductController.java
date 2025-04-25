@@ -5,7 +5,7 @@ import com.example.gridscircles.domain.product.dto.ProductSearchResponseDto;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.service.ProductService;
-import com.example.gridscircles.domain.product.util.ProductMapper;
+import com.example.gridscircles.domain.product.util.mapper.ProductMapper;
 import com.example.gridscircles.global.validator.OnProductCreate;
 import com.example.gridscircles.global.validator.OnProductUpdate;
 import java.util.Base64;
@@ -172,14 +172,5 @@ public class AdminProductController {
 
         return "admin/products";
     }
-
-    // 해당 상품의 상세페이지
-    @GetMapping("/{productId}")
-    public String viewOrderDetail(@PathVariable Long productId, Model model) {
-        ProductSearchResponseDto productDetail = productService.searchProductWithItems(productId);
-        model.addAttribute("productDetail", productDetail);
-        return "view_find_products"; // 상세페이지 템플릿
-    }
-
 
 }

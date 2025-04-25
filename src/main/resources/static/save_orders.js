@@ -74,4 +74,31 @@ async function payment() {
     window.location.replace("/orders/" + data.ordersId);
   });
 
+  document.addEventListener('DOMContentLoaded', function() {
+    goProductPage(1); // 페이지 첫 로딩
+  });
+
+  async function goProductPage(page) {
+    fetch('/products?page=' + (page - 1) + '&size=5')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(fragment => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(fragment, 'text/html');
+      const newContent = doc.querySelector('#product-list');
+      const oldContent = document.querySelector('#product-list');
+      if (newContent && oldContent) {
+        oldContent.replaceWith(newContent);
+      }
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
+
+  }
+
 }

@@ -73,6 +73,24 @@
       line-height: 38px;
     }
 
+    .pagination a {
+      text-decoration: none;
+      color: #333;
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .pagination a:hover {
+      background-color: #007bff;
+    }
+
+    .pagination .active a {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+
   </style>
   <title>주문하기</title>
 </head>
@@ -82,33 +100,57 @@
 </div>
 <div class="card">
   <div class="row">
-    <div class="col-md-8 mt-4 d-flex flex-column align-items-start p-3 pt-0">
+    <div class="col-md-8 mt-4 d-flex flex-column align-items-center p-3 pt-0" id="product-list">
       <h5 class="flex-grow-0"><b>상품 목록</b></h5>
       <ul class="list-group products mb-auto">
-        <th:block th:each="product : ${products}">
+        <th:block th:each="product : ${products_list}">
           <li class="list-group-item d-flex mt-3">
             <div class="col-2">
               <img class="img-fluid"
                    th:src="'data:' + ${product.imageType} + ';base64,' + ${product.imageBase64}"
+                   style="width: 50px; height: 50px; object-fit: contain;"
                    alt="">
             </div>
             <div class="col">
               <div class="row text-muted" th:text="${product.category}"></div>
-              <div class="row" th:text="${product.name}"></div>
+              <div class="row" th:text="${product.productName}"></div>
             </div>
             <div class="col text-center price" th:text="${product.price} + '원'"></div>
             <div class="col text-end action">
               <a class="btn btn-small btn-outline-dark"
-                 th:attr="product-id=${product.id}, product-name=${product.name}, product-price=${product.price}"
-                 onclick="addToCart(this)"
-              >
+                 th:attr="product-id=${product.productId}, product-name=${product.productName}, product-price=${product.price}"
+                 onclick="addToCart(this)">
                 추가
               </a>
             </div>
           </li>
         </th:block>
       </ul>
-      <a href="/orders/email" class="btn btn-dark">주문내역조회</a>
+      <div th:if="${isPaged}" class="pagination mt-3">
+        <ul style="display: flex; list-style: none; justify-content: center; gap: 10px; padding: 0;">
+
+          <!-- 이전 페이지 -->
+          <li th:if="${currentPage > 0}">
+            <a th:onclick="|goProductPage(${currentPage - 1})|">←</a>
+          </li>
+
+          <!-- 페이지 번호들 -->
+          <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+              th:classappend="${i == currentPage} ? 'active'">
+            <a th:onclick="|goProductPage(${i + 1})|"
+               th:text="${i + 1}">1</a>
+          </li>
+
+          <!-- 다음 페이지 -->
+          <li th:if="${currentPage + 1 < totalPages}">
+            <a th:onclick="|goProductPage(${currentPage + 1})|" >→</a>
+          </li>
+
+        </ul>
+      </div>
+      <div class="d-flex justify-content-start w-100">
+        <a href="/orders/email" class="btn btn-dark">주문내역조회</a>
+      </div>
     </div>
 
     <div class="col-md-4 summary p-4">
@@ -140,5 +182,32 @@
   </div>
 </div>
 <script src="/save_orders.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    goProductPage(1); // 페이지 첫 로딩
+  });
+
+  async function goProductPage(page) {
+    fetch('/products?page=' + (page - 1) + '&size=5')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(fragment => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(fragment, 'text/html');
+      const newContent = doc.querySelector('#product-list');
+      const oldContent = document.querySelector('#product-list');
+      if (newContent && oldContent) {
+        oldContent.replaceWith(newContent);
+      }
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
+  }
+</script>
 </body>
 </html>
