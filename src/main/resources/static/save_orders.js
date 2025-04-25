@@ -8,7 +8,9 @@ function addToCart(button) {
 
   if (cart.has(id)) {
     let quantity = cart.get(id);
-    quantity += 1;
+    quantity = quantity + 1;
+    cart.set(id, quantity); // 증가된 수량을 cart에 다시 저장
+
     document.getElementById(`product-quantity-${id}`).innerText = quantity
         + '개';
   } else {
