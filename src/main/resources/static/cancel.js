@@ -12,8 +12,13 @@ function cancelOrder() {
   const orderId = card.getAttribute('data-order-id');
   const orderStatus = card.getAttribute('data-order-status');
 
-  if (orderStatus === 'COMPLETED') {
-    alert('배송이 완료된 주문은 취소하실 수 없습니다.');
+  if (orderStatus === 'COMPLETED' || orderStatus === 'CANCELED') {
+    alert('배송이 완료되거나 취소 상태인 주문은 취소하실 수 없습니다.');
+    return;
+  }
+
+  if (orderStatus === 'CANCELED') {
+    alert('이미 주문이 취소되었습니다.')
     return;
   }
 
