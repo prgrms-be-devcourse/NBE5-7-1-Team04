@@ -108,7 +108,7 @@
       <h5 class="flex-grow-0"><b>상품 목록</b></h5>
       <ul class="list-group products mb-auto">
         <th:block th:each="product : ${products_list}">
-          <li class="list-group-item d-flex mt-3 li-hover" th:onclick="|location.href='/admin/products/${product.productId}'|">
+          <li class="list-group-item d-flex mt-3 li-hover" th:onclick="|location.href='/products/${product.productId}'|">
             <div class="col-2">
               <img class="img-fluid"
                    th:src="'data:' + ${product.imageType} + ';base64,' + ${product.imageBase64}"

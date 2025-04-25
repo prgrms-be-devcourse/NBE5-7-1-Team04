@@ -1,7 +1,9 @@
 package com.example.gridscircles.domain.product.controller;
 
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
+import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.service.ProductService;
+import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -35,5 +38,18 @@ public class ProductController {
         model.addAttribute("pageSize", responseDtoPage.getSize());
 
         return "view_save_orders::#product-list";
+    }
+
+    @GetMapping("/{productId}")
+    public String findProductById(@PathVariable Long productId, Model model) {
+
+        Product findProduct = productService.findProductById(productId);
+
+        model.addAttribute("product", findProduct);
+        model.addAttribute("base64Image", Base64.getEncoder().encodeToString(findProduct.getImage()));
+        model.addAttribute("contentType", findProduct.getContentType());
+        model.addAttribute("isAdmin", false);
+
+        return "view_find_products";
     }
 }

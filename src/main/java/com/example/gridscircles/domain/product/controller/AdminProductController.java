@@ -78,6 +78,7 @@ public class AdminProductController {
 
         model.addAttribute("base64Image", base64Encoding(productById));
         model.addAttribute("contentType", productById.getContentType());
+        model.addAttribute("isAdmin", true);
 
         return "view_find_products";
     }

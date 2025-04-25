@@ -108,12 +108,17 @@
     </tr>
   </table>
 
-  <div class="button-group">
+  <div class="button-group" th:if="${isAdmin}">
     <input type="hidden" id="productId" th:value="${product.id}" />
     <button type="button" th:onclick="|window.location.href='@{/admin/products/edit/{id}(id=${product.id})}'|">수정</button>
     <button type="button" id="deleteBtn" >삭제</button>
     <button type="button" th:onclick="|window.location.href='@{/admin/products/list}'|">목록으로</button>
   </div>
+
+  <div class="button-group" th:if="${not isAdmin}">
+    <button type="button" th:onclick="|window.location.href='@{/orders}'|">목록으로</button>
+  </div>
+
 </div>
 <script src="/find_products.js"></script>
 </body>
