@@ -16,6 +16,7 @@ import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +25,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -176,5 +179,59 @@ class OrdersServiceTests {
             );
         }
 
+    }
+
+    @Nested
+    @DisplayName("주문 내역 조회 테스트")
+    class GetOrdersTests {
+
+        @Test
+        @DisplayName("이메일로 전체 주문 내역 조회")
+        void getOrdersByEmailTest() {
+            String email = "test@example.com";
+            Orders order1 = Orders.builder()
+                .email(email)
+                .address("서울")
+                .zipcode("12345")
+                .totalPrice(5000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+
+            Orders order2 = Orders.builder()
+                .email(email)
+                .address("서울2")
+                .zipcode("67890")
+                .totalPrice(8000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+
+            ordersRepository.saveAll(List.of(order1, order2));
+
+            Page<Orders> result = ordersService.getOrdersByEmail(email, PageRequest.of(0, 10));
+
+            assertThat(result.getContent()).hasSize(2);
+            assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
+        }
+
+        @Test
+        @DisplayName("전체 주문 내역에서 주문 ID로 특정 주문 내역 조회")
+        void getOrdersByIdTest() {
+            String email = "test@example.com";
+            Orders order = Orders.builder()
+                .email(email)
+                .address("부산")
+                .zipcode("54321")
+                .totalPrice(10000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+
+            Orders savedOrder = ordersRepository.save(order);
+
+            List<Orders> result = ordersService.getOrderById(savedOrder.getId(), email);
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().getId()).isEqualTo(savedOrder.getId());
+            assertThat(result.getFirst().getEmail()).isEqualTo(email);
+        }
     }
 }
