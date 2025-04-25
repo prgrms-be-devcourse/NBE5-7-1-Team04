@@ -86,31 +86,31 @@
   <table>
     <tr>
       <td>상품명</td>
-      <td><div class="value" th:text="${product.name}"></div></td>
+      <td><div class="value" th:text="${productResponse.name}"></div></td>
     </tr>
     <tr>
       <td>카테고리</td>
-      <td><div class="value" th:text="${product.category}"></div></td>
+      <td><div class="value" th:text="${productResponse.category}"></div></td>
     </tr>
     <tr>
       <td>상품 설명</td>
-      <td><div class="value" th:text="${product.description}"></div></td>
+      <td><div class="value" th:text="${productResponse.description}"></div></td>
     </tr>
     <tr>
       <td>가격</td>
-      <td><div class="value" th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')} + ' 원'"></div></td>
+      <td><div class="value" th:text="${productResponse.getPrice()} + ' 원'"></div></td>
     </tr>
     <tr>
       <td>상품 이미지</td>
       <td>
-        <img th:src="'data:' + ${contentType} + ';base64,' + ${base64Image}" alt="상품 이미지" class="product-image"/>
+        <img th:src="'data:' + ${productResponse.getContentType()} + ';base64,' + ${productResponse.getBase64EncodeImage()}" alt="상품 이미지" class="product-image"/>
       </td>
     </tr>
   </table>
 
   <div class="button-group">
-    <input type="hidden" id="productId" th:value="${product.id}" />
-    <button type="button" th:onclick="|window.location.href='@{/admin/products/edit/{id}(id=${product.id})}'|">수정</button>
+    <input type="hidden" id="productId" th:value="${productResponse.id}" />
+    <button type="button" th:onclick="|window.location.href='@{/admin/products/edit/{id}(id=${productResponse.id})}'|">수정</button>
     <button type="button" id="deleteBtn" >삭제</button>
     <button type="button" th:onclick="|window.location.href='@{/admin/products/list}'|">목록으로</button>
   </div>

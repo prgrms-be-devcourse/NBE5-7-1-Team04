@@ -1,26 +1,37 @@
 package com.example.gridscircles.domain.product.dto;
 
+import com.example.gridscircles.domain.product.enums.Category;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-// 테스트용
-@Data
+@Getter
 public class ProductResponse {
-    private Long id;
-    private String name;
-    private String category;
-    private Integer price;
-    private String imageType;
-    private String imageBase64;
+
+    private final Long id;
+
+    private final String name;
+
+    private final Category category;
+
+    private final String description;
+
+    private final String price;
+
+    private final String base64EncodeImage;
+
+    private final String contentType;
 
     @Builder
-    public ProductResponse(Long id, String name, String category, Integer price, String imageType,
-        String imageBase64) {
+    public ProductResponse(Long id, String name, Category category, String description,
+        String price,
+        String base64EncodeImage, String contentType) {
         this.id = id;
         this.name = name;
         this.category = category;
+        this.description = description;
         this.price = price;
-        this.imageType = imageType;
-        this.imageBase64 = imageBase64;
+        this.base64EncodeImage = base64EncodeImage;
+        this.contentType = contentType;
     }
 }
