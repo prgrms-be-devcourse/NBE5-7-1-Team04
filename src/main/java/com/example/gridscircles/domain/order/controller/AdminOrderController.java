@@ -5,6 +5,7 @@ import static java.util.List.of;
 
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.service.OrdersService;
+import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,8 +39,10 @@ public class AdminOrderController {
             try {
                 // orderId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
                 OrdersSearchResponse response = ordersService.readOrderById(orderId);
-                model.addAttribute("orders_list", of(response));
-//                model.addAttribute("isPaged", false); // 페이징 여부
+                List<OrdersSearchResponse> responselist = of(response);
+                boolean hasData = !CollectionUtils.isEmpty(responselist);
+                model.addAttribute("orders_list", responselist);
+                model.addAttribute("hasData", hasData);
 
             } catch (NoSuchElementException e) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -56,8 +60,6 @@ public class AdminOrderController {
             model.addAttribute("currentPage", responseDtoPage.getNumber());
             model.addAttribute("totalPages", responseDtoPage.getTotalPages());
             model.addAttribute("pageSize", size);
-            System.out.println("orders_list size orders_listorders_list: " + responseDtoPage.getContent().size());
-            System.out.println("hasdatahasdatahasdata: " + responseDtoPage.hasContent());
 
         }
 
