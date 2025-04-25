@@ -1,6 +1,5 @@
 package com.example.gridscircles.domain.product.util;
 
-import com.example.gridscircles.domain.product.dto.ProductDto;
 import com.example.gridscircles.domain.product.dto.ProductForm;
 import com.example.gridscircles.domain.product.entity.Product;
 import java.io.IOException;

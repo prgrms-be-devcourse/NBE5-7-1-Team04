@@ -117,4 +117,11 @@ public class OrdersController {
         ordersService.updateOrder(orderId, orderUpdateRequest);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{orderId}/cancel")
+    @ResponseBody
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        ordersService.cancelOrder(orderId);
+        return ResponseEntity.noContent().build();
+    }
 }
