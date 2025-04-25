@@ -51,7 +51,8 @@
   <h1 class="text-center">주문 상세 조회</h1>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-4"
+     th:attr="data-order-id=${orderDetail.id}, data-order-email=${orderDetail.email}">
   <div class="row no-gutters">
     <div class="col-md-8 p-4">
       <h5><b>상품 목록</b></h5>
@@ -117,10 +118,15 @@
           목록으로
         </a>
         <a th:href="@{/orders/{orderId}/edit(orderId=${orderId})}" class="btn btn-dark">주문 수정</a>
-        <a href="#" class="btn btn-dark">주문 취소</a>
+        <button type="button"
+                class="btn btn-dark"
+                onclick="cancelOrder()">
+          주문 취소
+        </button>
       </div>
     </div>
   </div>
 </div>
+<script src="/cancel.js"></script>
 </body>
 </html>

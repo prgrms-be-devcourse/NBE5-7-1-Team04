@@ -61,4 +61,8 @@ public class Orders extends BaseEntity {
         this.address = orderUpdateRequest.getAddress();
         this.zipcode = orderUpdateRequest.getZipcode();
     }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCELED;
+    }
 }

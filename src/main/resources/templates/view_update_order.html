@@ -51,7 +51,8 @@
   <h1 class="text-center">주문 내역 수정</h1>
 </div>
 
-<div class="card mb-4" data-order-id="${orderDetail.id}">
+<div class="card mb-4"
+     th:attr="data-order-id=${orderDetail.id}">
   <div class="row no-gutters">
     <div class="col-md-8 p-4">
       <h5><b>상품 목록</b></h5>
@@ -121,11 +122,16 @@
            class="btn btn-dark">
           목록으로
         </a>
-        <a href="#" class="btn btn-dark">주문 취소</a>
+        <button type="button"
+                class="btn btn-dark"
+                onclick="cancelOrder()">
+          주문 취소
+        </button>
       </div>
     </div>
   </div>
 </div>
 <script src="/update_order.js"></script>
+<script src="/cancel.js"></script>
 </body>
 </html>

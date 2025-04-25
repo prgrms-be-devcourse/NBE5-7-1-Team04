@@ -149,4 +149,25 @@ class OrderServiceTests {
         assertThat(updated.getAddress()).isEqualTo("서울특별시 용산구 사바하아파트 444동 444호");
         assertThat(updated.getZipcode()).isEqualTo("12345");
     }
+
+    @Test
+    @DisplayName("주문 취소 테스트")
+    void test_cancelOrder() {
+        // given: 주문 생성
+        Orders order = Orders.builder()
+            .email("kkkk@gmail.com")
+            .address("서울")
+            .zipcode("12345")
+            .totalPrice(1000 * 2 + 1500 * 3)
+            .orderStatus(OrderStatus.PROCESSING)
+            .build();
+        ordersRepository.save(order);
+
+        // when: 주문 취소
+        ordersService.cancelOrder(order.getId());
+
+        // then: 주문 취소 상태 확인
+        Orders canceledOrder = ordersRepository.findById(order.getId()).orElseThrow();
+        assertThat(canceledOrder.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
+    }
 }
