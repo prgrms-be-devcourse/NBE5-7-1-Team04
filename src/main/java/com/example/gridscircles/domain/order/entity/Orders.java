@@ -1,6 +1,5 @@
 package com.example.gridscircles.domain.order.entity;
 
-import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.global.entity.BaseEntity;
@@ -54,17 +53,16 @@ public class Orders extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
-    public static Orders from(CreateOrdersDto createOrdersDto) {
-        return Orders.builder()
-            .orderStatus(OrderStatus.PROCESSING)
-            .email(createOrdersDto.getEmail())
-            .address(createOrdersDto.getAddress())
-            .zipcode(createOrdersDto.getZipcode())
-            .build();
+    public void updateStatusComplete() {
+        this.orderStatus = OrderStatus.COMPLETED;
     }
 
     public void updateOrder(OrderUpdateRequest orderUpdateRequest) {
         this.address = orderUpdateRequest.getAddress();
         this.zipcode = orderUpdateRequest.getZipcode();
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCELED;
     }
 }

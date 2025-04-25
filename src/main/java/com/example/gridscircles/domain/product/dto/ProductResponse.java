@@ -5,7 +5,7 @@ import lombok.Data;
 
 // 테스트용
 @Data
-public class ProductDto {
+public class ProductResponse {
     private Long id;
     private String name;
     private String category;
@@ -14,7 +14,7 @@ public class ProductDto {
     private String imageBase64;
 
     @Builder
-    public ProductDto(Long id, String name, String category, Integer price, String imageType,
+    public ProductResponse(Long id, String name, String category, Integer price, String imageType,
         String imageBase64) {
         this.id = id;
         this.name = name;

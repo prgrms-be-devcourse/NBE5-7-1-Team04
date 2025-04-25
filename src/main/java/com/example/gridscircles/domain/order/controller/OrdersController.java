@@ -1,12 +1,13 @@
 package com.example.gridscircles.domain.order.controller;
 
-import com.example.gridscircles.domain.order.dto.CreateOrdersDto;
+import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
+import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.EmailDto;
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
-import com.example.gridscircles.domain.product.dto.ProductDto;
+import com.example.gridscircles.domain.product.dto.ProductResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -79,13 +80,13 @@ public class OrdersController {
     @GetMapping("")
     public String viewSaveOrders(Model model) {
         model.addAttribute("products", List.of(
-            ProductDto.builder()
+            ProductResponse.builder()
                 .id(1L)
                 .price(1000)
                 .name("Product 1")
                 .category("커피콩")
                 .imageType("image/jpeg")
-                .imageBase64("/9j/4AAQSkZJRgABAQAAAQABAAD")
+                .imageBase64("test")
                 .build())
         );
 
@@ -101,10 +102,10 @@ public class OrdersController {
 
     @ResponseBody
     @PostMapping("")
-    public ResponseEntity<Long> saveOrders(
-        @Validated @RequestBody CreateOrdersDto createOrdersDto) {
-        Long ordersId = ordersService.saveOrders(createOrdersDto);
-        return ResponseEntity.ok(ordersId);
+    public ResponseEntity<CreateOrdersResponse> saveOrders(
+        @Validated @RequestBody CreateOrdersRequest createOrdersRequest) {
+        CreateOrdersResponse response = ordersService.saveOrders(createOrdersRequest);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{orderId}")
@@ -114,6 +115,13 @@ public class OrdersController {
         @Valid @RequestBody OrderUpdateRequest orderUpdateRequest
     ) {
         ordersService.updateOrder(orderId, orderUpdateRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{orderId}/cancel")
+    @ResponseBody
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        ordersService.cancelOrder(orderId);
         return ResponseEntity.noContent().build();
     }
 }
