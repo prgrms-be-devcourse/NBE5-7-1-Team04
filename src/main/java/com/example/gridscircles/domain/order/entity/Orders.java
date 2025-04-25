@@ -1,11 +1,8 @@
 package com.example.gridscircles.domain.order.entity;
 
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
-import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.global.entity.BaseEntity;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,10 +11,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,4 +72,7 @@ public class Orders extends BaseEntity {
     this.orderStatus = OrderStatus.CANCELED;
   }
 
+  public void updateTotalPrice(int totalPrice) {
+    this.totalPrice = totalPrice;
+  }
 }

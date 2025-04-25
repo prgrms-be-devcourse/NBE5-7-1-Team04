@@ -4,10 +4,10 @@ import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResponseDto;
 import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
+import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
-
-import com.example.gridscircles.domain.product.util.ProductMapper;
+import com.example.gridscircles.domain.product.util.mapper.ProductMapper;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.NoSuchElementException;
@@ -108,4 +108,10 @@ public class ProductService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public Page<ProductListResponse> getAllProductsWithImage(Pageable pageable) {
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        return ProductMapper.toProductListResponse(productPage);
+    }
 }

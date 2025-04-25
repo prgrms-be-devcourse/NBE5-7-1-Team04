@@ -67,6 +67,7 @@ public class AdminProductController {
     public String findProductById(@PathVariable Long productId, Model model) {
 
         model.addAttribute("productResponse", productService.findProductById(productId));
+        model.addAttribute("isAdmin", true);
 
         return "view_find_products";
     }
