@@ -76,3 +76,65 @@ async function payment() {
     window.location.replace("/orders/" + data.ordersId);
   });
 }
+
+function checkForm() {
+  const email = document.getElementById("email");
+  const address = document.getElementById("address");
+  const zipcode = document.getElementById("zipcode");
+  const paymentButton = document.getElementById("paymentButton");
+
+  let isValid = true;
+
+  // 이메일 유효성 검사
+  if (!email.value || !email.checkValidity()) {
+    email.classList.add("is-invalid");
+    isValid = false;
+  } else {
+    email.classList.remove("is-invalid");
+  }
+
+  // 주소 유효성 검사
+  if (!address.value) {
+    address.classList.add("is-invalid");
+    isValid = false;
+  } else {
+    address.classList.remove("is-invalid");
+  }
+
+  // 우편번호 유효성 검사 (5자리 숫자)
+  if (!zipcode.value || !zipcode.checkValidity()) {
+    zipcode.classList.add("is-invalid");
+    isValid = false;
+  } else {
+    zipcode.classList.remove("is-invalid");
+  }
+
+  // 폼이 유효하면 결제 버튼 활성화
+  paymentButton.disabled = !isValid;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  goProductPage(1); // 페이지 첫 로딩
+});
+
+async function goProductPage(page) {
+  fetch('/products?page=' + (page - 1) + '&size=5')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.text();
+  })
+  .then(fragment => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(fragment, 'text/html');
+    const newContent = doc.querySelector('#product-list');
+    const oldContent = document.querySelector('#product-list');
+    if (newContent && oldContent) {
+      oldContent.replaceWith(newContent);
+    }
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
+}
