@@ -66,8 +66,6 @@
     .order-status.CANCELED {
       background-color: #d9534f;
     }
-
-
   </style>
 </head>
 <body class="container-fluid">
@@ -76,7 +74,7 @@
 </div>
 
 <div class="card mb-4"
-     th:attr="data-order-id=${orderDetail.id},data-order-status=${orderDetail.orderStatus.name()}">
+     th:attr="data-order-id=${orderDetail.getId()},data-order-status=${orderDetail.getOrderStatus().name()}">
   <div class="row no-gutters">
     <div class="col-md-8 p-4">
       <h5><b>상품 목록</b></h5>
@@ -89,17 +87,17 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="prod : ${orderDetail.orderProducts}">
-          <td th:text="${prod.productName}">상품명</td>
-          <td th:text="${prod.price} + '원'">10000원</td>
-          <td th:text="${prod.quantity}">1</td>
+        <tr th:each="prod : ${orderDetail.getOrderProducts()}">
+          <td th:text="${prod.getProductName()}">상품명</td>
+          <td th:text="${prod.getPrice()} + '원'">10000원</td>
+          <td th:text="${prod.getQuantity()}">1</td>
         </tr>
         </tbody>
         <tfoot>
         <tr>
           <td><b>총합계</b></td>
-          <td th:text="${orderDetail.totalPrice} + '원'">20000원</td>
-          <td th:text="${orderDetail.totalQuantity}">2</td>
+          <td th:text="${orderDetail.getTotalPrice()} + '원'">20000원</td>
+          <td th:text="${orderDetail.getTotalQuantity()}">2</td>
         </tr>
         </tfoot>
       </table>
@@ -109,20 +107,20 @@
         <tbody>
         <tr>
           <th>주소</th>
-          <td th:text="${orderDetail.address} ?: '-'">-</td>
+          <td th:text="${orderDetail.getAddress()} ?: '-'">-</td>
         </tr>
         <tr>
           <th>우편번호</th>
-          <td th:text="${orderDetail.zipcode} ?: '-'">-</td>
+          <td th:text="${orderDetail.getZipcode()} ?: '-'">-</td>
         </tr>
         <tr>
           <th>주문 상태</th>
           <td>
-    <span
-        th:class="'order-status ' + ${orderDetail.orderStatus.name()}"
-        th:text="${orderDetail.orderStatus.name()}">
-      PROCESSING
-    </span>
+            <span
+                th:class="'order-status ' + ${orderDetail.getOrderStatus().name()}"
+                th:text="${orderDetail.getOrderStatus().name()}">
+              PROCESSING
+            </span>
           </td>
         </tr>
         </tbody>
@@ -135,19 +133,20 @@
         <hr>
         <div class="mb-3">
           <strong>총 상품 수량:</strong>
-          <span th:text="${orderDetail.totalQuantity} + '개'">2개</span>
+          <span th:text="${orderDetail.getTotalQuantity()} + '개'">2개</span>
         </div>
         <div class="mb-3">
           <strong>총 금액:</strong>
-          <span th:text="${orderDetail.totalPrice} + '원'">20000원</span>
+          <span th:text="${orderDetail.getTotalPrice()} + '원'">20000원</span>
         </div>
       </div>
       <div class="btn-group text-end">
-        <a th:href="@{/orders/email(email=${orderDetail.email})}"
+        <a th:href="@{/orders/email(email=${orderDetail.getEmail()})}"
            class="btn btn-dark">
           목록으로
         </a>
-        <a th:href="@{/orders/{orderId}/edit(orderId=${orderId})}" class="btn btn-dark">주문 수정</a>
+        <a th:href="@{/orders/{orderId}/edit(orderId=${orderDetail.getId()})}" class="btn btn-dark">주문
+          수정</a>
         <button type="button"
                 class="btn btn-dark"
                 onclick="cancelOrder()">
