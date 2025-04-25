@@ -72,6 +72,7 @@ public class OrdersController {
         List<Orders> orders = ordersService.getOrderById(orderId, email);
 
         model.addAttribute("orders", orders);
+        model.addAttribute("email", email);
         model.addAttribute("request", "id");
 
         return "view_orders";
