@@ -49,13 +49,15 @@ public class OrdersController {
 
     @GetMapping("/email")
     public String viewOrders(@Validated @ModelAttribute EmailDto request,
-        BindingResult bindingResult, @RequestParam(defaultValue = "0") int page, Model model) {
+        BindingResult bindingResult, @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "6") int pageSize, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("error", "이메일 형식이 올바르지 않습니다.");
             return "email_form";
         }
         String email = request.getEmail();
-        Page<Orders> ordersPage = ordersService.getOrdersByEmail(email, PageRequest.of(page, 6));
+        Page<Orders> ordersPage = ordersService.getOrdersByEmail(email,
+            PageRequest.of(page, pageSize));
 
         model.addAttribute("email", email);
         model.addAttribute("orders", ordersPage.getContent());
@@ -66,7 +68,7 @@ public class OrdersController {
         return "view_orders";
     }
 
-    @GetMapping("/id")
+    @GetMapping("/orderId")
     public String viewOrderById(@RequestParam Long orderId,
         @RequestParam(required = false) String email, Model model) {
         List<Orders> orders = ordersService.getOrderById(orderId, email);
