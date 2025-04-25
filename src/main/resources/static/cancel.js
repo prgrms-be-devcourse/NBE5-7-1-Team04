@@ -24,6 +24,7 @@ function cancelOrder() {
     if (!response.ok) {
       throw new Error('주문 취소에 실패했습니다.');
     }
+    alert('주문이 취소되었습니다.');
     window.location.href = `/orders/${orderId}`;
   })
   .catch(err => {
