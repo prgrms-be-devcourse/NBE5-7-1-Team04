@@ -55,6 +55,7 @@ public class OrdersController {
             model.addAttribute("error", "이메일 형식이 올바르지 않습니다.");
             return "email_form";
         }
+
         String email = request.getEmail();
         Page<Orders> ordersPage = ordersService.getOrdersByEmail(email,
             PageRequest.of(page, pageSize));
