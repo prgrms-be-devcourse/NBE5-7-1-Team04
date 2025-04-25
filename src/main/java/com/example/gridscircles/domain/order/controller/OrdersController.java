@@ -7,7 +7,6 @@ import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.service.OrdersService;
-import com.example.gridscircles.domain.product.dto.ProductResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -78,18 +77,7 @@ public class OrdersController {
     }
 
     @GetMapping("")
-    public String viewSaveOrders(Model model) {
-        model.addAttribute("products", List.of(
-            ProductResponse.builder()
-                .id(1L)
-                .price(1000)
-                .name("Product 1")
-                .category("커피콩")
-                .imageType("image/jpeg")
-                .imageBase64("test")
-                .build())
-        );
-
+    public String viewSaveOrders() {
         return "view_save_orders";
     }
 
