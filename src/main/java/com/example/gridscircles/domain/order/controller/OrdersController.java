@@ -70,7 +70,7 @@ public class OrdersController {
 
     @GetMapping("/orderId")
     public String viewOrderById(@RequestParam Long orderId,
-        @RequestParam(required = false) String email, Model model) {
+        @RequestParam String email, Model model) {
         List<Orders> orders = ordersService.getOrderById(orderId, email);
 
         model.addAttribute("orders", orders);
