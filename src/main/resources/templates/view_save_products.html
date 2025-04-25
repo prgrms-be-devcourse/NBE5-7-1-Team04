@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 등록</title>
+  <style>
+    body {
+      background-color: #f2f2f2;  /* 완전 밝은 회색 */
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 50px 0;
+    }
+
+    .form-wrapper {
+      width: 600px;
+      margin: 0 auto;
+      background-color: white;  /* 하얀색 네모 박스 */
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 살짝 그림자 */
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .button-group {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: gray;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button[type="button"] {
+      background-color: black;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-wrapper">
+  <h2 th:text="${isNew}? '상품 등록' : '상품 수정'">상품 등록</h2>
+
+  <form  th:action="${isNew} ? @{/admin/products} : @{/admin/products/{id}(id=${productForm.id})}"
+         th:object="${productForm}"
+         method="post" enctype="multipart/form-data">
+    <input type="hidden" id="productId" th:value="${isNew} ? null : ${productForm.id}" />
+    <div th:if="${!isNew}">
+      <input type="hidden" name="base64EncodeImage" th:value="${productForm.base64EncodeImage}">
+      <input type="hidden" name="contentType" th:value="${productForm.contentType}">
+    </div>
+    <table>
+      <tr>
+        <td>상품명</td>
+        <td>
+          <input type="text" name="name" th:field="*{name}">
+          <div id="nameError" class="errorMsg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>카테고리</td>
+        <td>
+          <select name="category" th:field="*{category}" >
+            <option th:each="category : ${categories}"
+                    th:value="${category}"
+                    th:text="${category}"></option>
+          </select>
+          <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" style="color:red"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>상품 설명</td>
+        <td>
+          <input type="text" name="description" th:value="${productForm.description}"/>
+          <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="color:red"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>가격</td>
+        <td><input type="text"
+                   id="priceInput"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');"
+                   name="price"
+                   style="width: 70%; margin-right: 5px;"
+                   th:value="${productForm.price}" />
+          <span>원</span>
+          <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" style="color:red"></div>
+        </td>
+      </tr>
+      <tr>
+        <td>상품 이미지</td>
+        <td>
+          <div th:if="${productForm.base64EncodeImage != null}">
+            <img id="productImage" th:src="'data:' + ${productForm.contentType} + ';base64,'  + ${productForm.base64EncodeImage}" alt="이미지" width="200px"><br>
+          </div>
+          <input type="file" name="file" id="fileInput"/>
+          <p id="fileNameDisplay"></p>
+          <p th:if="${imageReuploadNotice}" th:text="${imageReuploadNotice}" style="color:blue;"></p>
+          <div th:if="${#fields.hasErrors('file')}" th:errors="*{file}" style="color:red"></div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="button-group">
+      <button type="button" th:onclick="|window.location.href='@{/admin/products/list}'|">목록으로</button>
+      <button type="submit" >
+        <span th:text="${isNew} ? '상품 등록' : '상품 수정'"></span>
+      </button>
+    </div>
+  </form>
+</div>
+<script src="/save_products.js"></script>
+</body>
+</html>
