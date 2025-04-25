@@ -135,12 +135,39 @@
     </tbody>
   </table>
 
-  <div class="pagination" style="text-align: center; margin-top: 20px;" th:if="${totalPages > 1}">
-    <div style="display: inline-block;">
-      <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+  <div class="pagination" th:if="${totalPages > 1}" style="text-align: center; margin-top: 20px;">
+    <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
+
+      <!-- 첫 페이지로 이동 -->
+      <a th:if="${totalPages > 5 and currentPage > 0}"
+         th:href="@{/orders/email(email=${email}, page=0)}"
+         style="min-width: 30px; text-align: center;">&laquo;</a>
+
+      <!-- 이전 페이지로 이동 -->
+      <a th:if="${totalPages > 5 and currentPage > 0}"
+         th:href="@{/orders/email(email=${email}, page=${currentPage - 1})}"
+         style="min-width: 30px; text-align: center;">&lt;</a>
+
+      <!-- 페이지 번호 리스트 (±2 범위 또는 전체 페이지) -->
+      <!-- 페이지 번호 범위: 최대 5개 (currentPage 중심) -->
+      <a th:each="i : ${#numbers.sequence(
+                currentPage - 2 > 0 ? currentPage - 2 : 0,
+                currentPage + 2 < totalPages ? currentPage + 2 : totalPages - 1)}"
          th:href="@{/orders/email(email=${email}, page=${i})}"
          th:text="${i + 1}"
-         th:classappend="${i == currentPage} ? ' button' : ''"></a>
+         th:classappend="${i == currentPage} ? ' button' : ''"
+         style="min-width: 30px; text-align: center;"></a>
+
+      <!-- 다음 페이지로 이동 -->
+      <a th:if="${totalPages > 5 and currentPage < totalPages - 1}"
+         th:href="@{/orders/email(email=${email}, page=${currentPage + 1})}"
+         style="min-width: 30px; text-align: center;">&gt;</a>
+
+      <!-- 마지막 페이지로 이동 -->
+      <a th:if="${totalPages > 5 and currentPage < totalPages - 1}"
+         th:href="@{/orders/email(email=${email}, page=${totalPages - 1})}"
+         style="min-width: 30px; text-align: center;">&raquo;</a>
+
     </div>
   </div>
 
