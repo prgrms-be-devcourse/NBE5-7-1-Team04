@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+// PR시 feat보다 수정 전 코드
 @Getter
 @AllArgsConstructor
 public class OrdersSearchResponse {

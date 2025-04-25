@@ -25,7 +25,7 @@ public class AdminOrderController {
 
   private final OrdersService ordersService;
 
-
+  // PR시 feat보다 수정 전 코드
   @GetMapping("/orders/list")
   public String viewlistOrders(
       @RequestParam(required = false) Long orderId, Model model,
@@ -61,7 +61,7 @@ public class AdminOrderController {
     return "admin/orders";
   }
 
-  // 해당 주문의 상세페이지
+  // PR시 feat보다 수정 전 코드
   @GetMapping("/orders/{orderId}")
   public String viewOrderDetail(@PathVariable Long orderId, Model model) {
     OrdersSearchResponse orderDetail = ordersService.searchOrderWithItems(orderId);

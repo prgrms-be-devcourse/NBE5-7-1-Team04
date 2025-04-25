@@ -2,12 +2,13 @@ package com.example.gridscircles.domain.product.service;
 
 import com.example.gridscircles.domain.product.dto.ProductForm;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
-import com.example.gridscircles.domain.product.dto.ProductSearchResponseDto;
+import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import com.example.gridscircles.domain.product.util.mapper.ProductMapper;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +34,15 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Product findProductById (Long id){
+    public Product findProductById(Long id) {
 
-        return productRepository.findById(id).orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
+        return productRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
 
     }
 
     @Transactional
-    public void deleteProductById(Long id){
+    public void deleteProductById(Long id) {
 
         findProductById(id).deleted();
 
@@ -51,54 +53,38 @@ public class ProductService {
 
         Product originProduct = findProductById(id);
 
-        byte [] decodeImage;
+        byte[] decodeImage;
 
-        try{
-            if (productForm.getFile().isEmpty()){
+        try {
+            if (productForm.getFile().isEmpty()) {
                 decodeImage = Base64.getDecoder().decode(productForm.getBase64EncodeImage());
-            }else{
+            } else {
                 decodeImage = productForm.getFile().getBytes();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        originProduct.updateProduct(productForm,decodeImage);
+        originProduct.updateProduct(productForm, decodeImage);
 
         return originProduct;
     }
 
 
-    // 특정 ID에 따른 product 정보
+    // 특정 상품명에 따른 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
-    public ProductSearchResponseDto searchProductWithItems(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(()
-            -> new NoSuchElementException("해당 상품은 존재 하지 않습니다. ID: " + productId));
-
-        return new ProductSearchResponseDto(
-            product.getId(),
-            product.getName(),
-            product.getDescription(),
-            product.getPrice(),
-            product.getImage(),
-            product.getCategory()
-        );
+    public Product readProductByName(String productName) {
+        return productRepository.findByNameIgnoreCase(productName);
 
     }
 
-    // 전체 상품 조회
+    // 전체 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
-    public Page<ProductSearchResponseDto> getAllProducts(Pageable pageable) {
+    public Page<ProductSearchResponse> getAllProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
 
-        return productPage.map(product -> new ProductSearchResponseDto(
-            product.getId(),
-            product.getName(),
-            product.getDescription(),
-            product.getPrice(),
-            product.getImage(),
-            product.getCategory())
-        );
+        return productPage.map(ProductMapper::toProductSearchResponse);
+
     }
 
     @Transactional(readOnly = true)

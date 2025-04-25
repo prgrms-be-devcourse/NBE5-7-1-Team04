@@ -42,7 +42,7 @@ public class Product extends BaseEntity {
     private Integer price;
 
     @Lob
-    @Column(columnDefinition = "LONGBLOB" ,nullable = false)
+    @Column(columnDefinition = "LONGBLOB", nullable = false)
     private byte[] image;
 
     @Column(nullable = false)
@@ -51,22 +51,22 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private String del_yn;
 
-    public void deleted(){
+    public void deleted() {
         this.del_yn = "Y";
     }
 
-    public void updateProduct(ProductForm productForm , byte [] image) {
+    public void updateProduct(ProductForm productForm, byte[] image) {
 
         int formatPrice =
-            Integer.parseInt(productForm.getPrice().replace(",",""));
+            Integer.parseInt(productForm.getPrice().replace(",", ""));
 
-        if(!Objects.equals(this.name, productForm.getName())) {
+        if (!Objects.equals(this.name, productForm.getName())) {
             this.name = productForm.getName();
         }
-        if(this.category != productForm.getCategory() ){
+        if (this.category != productForm.getCategory()) {
             this.category = productForm.getCategory();
         }
-        if(!Objects.equals(this.description, productForm.getDescription())) {
+        if (!Objects.equals(this.description, productForm.getDescription())) {
             this.description = productForm.getDescription();
         }
         if (!Objects.equals(this.price, formatPrice)) {
@@ -77,14 +77,15 @@ public class Product extends BaseEntity {
             this.image = image;
         }
 
-        if(!Objects.equals(this.contentType, productForm.getFile().getContentType())) {
+        if (!Objects.equals(this.contentType, productForm.getFile().getContentType())) {
             this.contentType = productForm.getFile().getContentType();
         }
     }
 
     @Builder
-    public Product(String name, Category category, String description, Integer price, byte[] image,
+    public Product(Long id, String name, Category category, String description, Integer price, byte[] image,
         String contentType, String del_yn) {
+        this.id = id;
         this.name = name;
         this.category = category;
         this.description = description;
