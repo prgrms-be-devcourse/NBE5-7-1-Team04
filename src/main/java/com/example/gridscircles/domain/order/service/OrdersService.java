@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrdersService {
 
+
   private final OrdersRepository ordersRepository;
   private final OrderProductRepository orderProductRepository;
   private final ProductRepository productRepository;
@@ -162,7 +163,4 @@ public class OrdersService {
     ordersRepository.updateOrdersStatusByOrderStatus(OrderStatus.PROCESSING, OrderStatus.COMPLETED);
   }
 
-
 }
-
-
