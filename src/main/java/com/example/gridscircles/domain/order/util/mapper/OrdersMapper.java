@@ -4,10 +4,12 @@ import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrdersMapper {
 
@@ -36,7 +38,7 @@ public class OrdersMapper {
             .build();
     }
 
-    private static OrderProductDetailResponse toOrderProductDetailResponse(OrderProduct op) {
+    public static OrderProductDetailResponse toOrderProductDetailResponse(OrderProduct op) {
         return OrderProductDetailResponse.builder()
             .productName(op.getProduct().getName())
             .price(op.getPrice())
@@ -58,4 +60,25 @@ public class OrdersMapper {
             .zipcode(createOrdersRequest.getZipcode())
             .build();
     }
+
+    // 주문 조회(관리자용)
+    public static OrdersSearchResponse toOrdersSearchResponse(Orders order,
+        List<OrderProduct> orderProducts) {
+        List<OrderProductDetailResponse> productInfoList = orderProducts.stream()
+            .map(OrdersMapper::toOrderProductDetailResponse)
+            .collect(Collectors.toList());
+
+        return OrdersSearchResponse.builder()
+            .orderId(order.getId())
+            .email(order.getEmail())
+            .address(order.getAddress())
+            .zipcode(order.getZipcode())
+            .totalPrice(order.getTotalPrice())
+            .orderStatus(order.getOrderStatus())
+            .createdAt(order.getCreatedAt())
+            .products(productInfoList)
+            .build();
+    }
+
+
 }

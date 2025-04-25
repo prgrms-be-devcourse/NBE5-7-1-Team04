@@ -20,7 +20,6 @@ import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,64 +41,40 @@ public class OrdersService {
         Orders orders = ordersRepository.findById(orderId).orElseThrow(()
             -> new NoSuchElementException("해당 주문은 존재 하지 않습니다. ID: " + orderId));
 
-        List<ProductInfoResponse> products = orders.getOrderProducts().stream()
-            .map(orderProduct -> new ProductInfoResponse(
-                orderProduct.getProduct().getName(),
-                orderProduct.getQuantity(),
-                orderProduct.getPrice()
-            )).collect(Collectors.toList());
+        List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 
-        return new OrdersSearchResponse(
-            orders.getId(),
-            orders.getEmail(),
-            orders.getAddress(),
-            orders.getZipcode(),
-            orders.getTotalPrice(),
-            orders.getOrderStatus(),
-            orders.getCreatedAt(),
-            products
-        );
+        return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
 
-    }
+  }
 
     // 전체 주문 조회
     @Transactional(readOnly = true)
     public Page<OrdersSearchResponse> getAllOrders(Pageable pageable) {
         Page<Orders> ordersPage = ordersRepository.findAllByOrderByCreatedAtDesc(pageable);
 
-        return ordersPage.map(order -> new OrdersSearchResponse(
-            order.getId(),
-            order.getEmail(),
-            order.getAddress(),
-            order.getZipcode(),
-            order.getTotalPrice(),
-            order.getOrderStatus(),
-            order.getCreatedAt(),
-            order.getOrderProducts().stream()
-                .map(item -> new ProductInfoResponse(
-                    item.getProduct().getName(),
-                    item.getQuantity(),
-                    item.getPrice()
-                ))
-                .collect(Collectors.toList())
-        ));
+        return ordersPage.map(order -> {
+
+            List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(order.getId());
+
+            return OrdersMapper.toOrdersSearchResponse(order, orderProducts);
+        });
 
 
-    }
+  }
 
-    @Transactional(readOnly = true)
-    public OrderDetailResponse getOrderDetail(Long orderId) {
-        List<OrderProduct> products = orderProductRepository
-            .findByOrdersIdWithProductAndOrder(orderId);
+  @Transactional(readOnly = true)
+  public OrderDetailResponse getOrderDetail(Long orderId) {
+    List<OrderProduct> products = orderProductRepository
+        .findByOrdersIdWithProductAndOrder(orderId);
 
-        Orders findOrder = products.stream()
-            .findFirst()
-            .map(OrderProduct::getOrders)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
+    Orders findOrder = products.stream()
+        .findFirst()
+        .map(OrderProduct::getOrders)
+        .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
-        return OrdersMapper.toOrderDetailResponse(findOrder, products, calculateQuantity(products),
-            calculdateTotalPrice(products));
-    }
+    return OrdersMapper.toOrderDetailResponse(findOrder, products, calculateQuantity(products),
+        calculdateTotalPrice(products));
+  }
 
     private static int calculdateTotalPrice(List<OrderProduct> products) {
         return products.stream()
