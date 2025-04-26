@@ -119,6 +119,7 @@ public class OrdersService {
         Orders findOrder = ordersRepository.findById(orderId)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
 
+        OrdersValidator.validateUpdateable(findOrder.getOrderStatus());
         findOrder.updateOrder(orderUpdateRequest);
 
         ordersRepository.save(findOrder);

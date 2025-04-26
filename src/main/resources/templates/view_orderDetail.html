@@ -10,7 +10,7 @@
         crossorigin="anonymous">
   <style>
     body {
-      background: #ddd;
+      background: #f8f9fa;
     }
 
     .card {
@@ -145,16 +145,24 @@
            class="btn btn-dark">
           목록으로
         </a>
-        <a th:href="@{/orders/{orderId}/edit(orderId=${orderDetail.getId()})}" class="btn btn-dark">주문
-          수정</a>
-        <button type="button"
-                class="btn btn-dark"
-                onclick="cancelOrder()">
+
+        <a th:if="${orderDetail.getEditable()}"
+           th:href="@{/orders/{orderId}/edit(orderId=${orderDetail.getId()})}"
+           class="btn btn-dark">
+          주문 수정
+        </a>
+
+        <button
+            type="button"
+            class="btn btn-dark"
+            onclick="cancelOrder()"
+            th:if="${orderDetail.getEditable()}">
           주문 취소
         </button>
       </div>
     </div>
   </div>
+</div>
 </div>
 <script src="/cancel.js"></script>
 </body>
