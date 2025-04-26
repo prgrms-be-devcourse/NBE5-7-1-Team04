@@ -14,7 +14,6 @@ public class ProductSearchResponse {
     private String name;
     private String description;
     private Integer price;
-    // image 필드 제거, del_yn 추가
     private String del_yn;
     private Category category;
 

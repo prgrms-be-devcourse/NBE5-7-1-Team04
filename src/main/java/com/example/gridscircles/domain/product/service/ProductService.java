@@ -78,15 +78,19 @@ public class ProductService {
 
     // 특정 상품명에 따른 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
-    public Product readProductByName(String productName) {
-        return productRepository.findByNameIgnoreCase(productName);
-
+    public Page<Product> readProductByName(String productName, Pageable pageable) {
+        Page<Product> resultProducts = productRepository.findNonDeletedProductsByName(
+            productName, pageable);
+        if (!resultProducts.hasContent()){
+            throw new NoSuchElementException("상품을 찾을 수 없습니다.");
+        }
+        return resultProducts;
     }
 
     // 전체 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
-    public Page<ProductSearchResponse> getAllProducts(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAll(pageable);
+    public Page<ProductSearchResponse> readAllProducts(Pageable pageable) {
+        Page<Product> productPage = productRepository.findNonDeletedProducts(pageable);
 
         return productPage.map(ProductMapper::toProductSearchResponse);
 

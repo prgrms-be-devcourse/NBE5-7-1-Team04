@@ -125,9 +125,12 @@ public class AdminProductController {
         if (productName != null && !productName.trim().isEmpty()) {
             try {
                 // productName 파라미터가 있으면 해당 상품만 리스트로 구성
-                Product response = productService.readProductByName(productName);
-                model.addAttribute("products_list", response);
-                model.addAttribute("hasData", true);
+                Page<Product> responseName = productService.readProductByName(productName, PageRequest.of(page, size));
+                model.addAttribute("products_list", responseName);
+                model.addAttribute("hasData", responseName.hasContent());
+                model.addAttribute("currentPage", responseName.getNumber());
+                model.addAttribute("totalPages", responseName.getTotalPages());
+                model.addAttribute("pageSize", size);
 
             } catch (NoSuchElementException e) {
                 redirectAttributes.addFlashAttribute("errorMessage",
@@ -137,17 +140,20 @@ public class AdminProductController {
 
         } else {
             // 없으면 전체 주문 목록
-            Page<ProductSearchResponse> responseDtoPage = productService.getAllProducts(PageRequest.of(page, size));
+            Page<ProductSearchResponse> responseList = productService.readAllProducts(PageRequest.of(page, size));
             System.out.println("productName   "+productName+"    findAll    ");
-            model.addAttribute("products_list", responseDtoPage);
-            model.addAttribute("hasData", responseDtoPage.hasContent());
-            model.addAttribute("currentPage", responseDtoPage.getNumber());
-            model.addAttribute("totalPages", responseDtoPage.getTotalPages());
+            model.addAttribute("products_list", responseList);
+            model.addAttribute("hasData", responseList.hasContent());
+            model.addAttribute("currentPage", responseList.getNumber());
+            model.addAttribute("totalPages", responseList.getTotalPages());
             model.addAttribute("pageSize", size);
 
         }
 
         return "admin/view_products";
     }
+
+
+
 
 }
