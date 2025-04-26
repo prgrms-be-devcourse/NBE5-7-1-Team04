@@ -19,11 +19,12 @@ public class OrderDetailResponse {
     private String address;
     private String zipcode;
     private OrderStatus orderStatus;
+    private Boolean editable;
 
     @Builder
     public OrderDetailResponse(Long id, List<OrderProductDetailResponse> orderProducts,
         Integer totalQuantity, Integer totalPrice, String address, String zipcode,
-        OrderStatus orderStatus, String email) {
+        OrderStatus orderStatus, String email, boolean editable) {
         this.id = id;
         this.orderProducts = orderProducts;
         this.totalQuantity = totalQuantity;
@@ -32,5 +33,6 @@ public class OrderDetailResponse {
         this.zipcode = zipcode;
         this.orderStatus = orderStatus;
         this.email = email;
+        this.editable = editable;
     }
 }

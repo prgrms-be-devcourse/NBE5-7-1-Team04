@@ -35,6 +35,7 @@ public class OrdersMapper {
             .zipcode(order.getZipcode())
             .email(order.getEmail())
             .orderStatus(order.getOrderStatus())
+            .editable(order.getOrderStatus() == OrderStatus.PROCESSING)
             .build();
     }
 
