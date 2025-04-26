@@ -5,7 +5,7 @@
   <title>상품 등록</title>
   <style>
     body {
-      background-color: #f2f2f2;  /* 완전 밝은 회색 */
+      background-color: #f8f9fa;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 50px 0;
@@ -14,9 +14,9 @@
     .form-wrapper {
       width: 600px;
       margin: 0 auto;
-      background-color: white;  /* 하얀색 네모 박스 */
+      background-color: white;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 살짝 그림자 */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       padding: 30px;
     }
 
@@ -71,22 +71,23 @@
 <body>
 
 <div class="form-wrapper">
-  <h2 th:text="${isNew}? '상품 등록' : '상품 수정'">상품 등록</h2>
+  <h2 th:text="${isNew} ? '상품 등록' : '상품 수정'">상품 등록</h2>
 
   <form  th:action="${isNew} ? @{/admin/products} : @{/admin/products/{id}(id=${productForm.id})}"
          th:object="${productForm}"
          method="post" enctype="multipart/form-data">
-    <input type="hidden" id="productId" th:value="${isNew} ? null : ${productForm.id}" />
     <div th:if="${!isNew}">
-      <input type="hidden" name="base64EncodeImage" th:value="${productForm.base64EncodeImage}">
-      <input type="hidden" name="contentType" th:value="${productForm.contentType}">
+      <input type="hidden" id="productId"  th:value="${productForm.id}"  />
+      <input type="hidden" name="base64EncodeImage" th:value="${productForm.base64EncodeImage}" />
+      <input type="hidden" name="contentType" th:value="${productForm.contentType}" />
     </div>
     <table>
       <tr>
         <td>상품명</td>
         <td>
-          <input type="text" name="name" th:field="*{name}">
-          <div id="nameError" class="errorMsg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red"></div>
+          <input type="text" name="name" th:field="*{name}" />
+          <div id="nameError" class="errorMsg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red">
+          </div>
         </td>
       </tr>
       <tr>
@@ -122,13 +123,16 @@
       <tr>
         <td>상품 이미지</td>
         <td>
-          <div th:if="${productForm.base64EncodeImage != null}">
-            <img id="productImage" th:src="'data:' + ${productForm.contentType} + ';base64,'  + ${productForm.base64EncodeImage}" alt="이미지" width="200px"><br>
+          <div th:if="${!isNew}">
+            <div th:if="${productForm.base64EncodeImage != null}">
+              <img id="productImage" th:src="'data:' + ${productForm.contentType} + ';base64,'  + ${productForm.base64EncodeImage}" alt="이미지" width="200px"><br>
+            </div>
           </div>
           <input type="file" name="file" id="fileInput"/>
           <p id="fileNameDisplay"></p>
           <p th:if="${imageReuploadNotice}" th:text="${imageReuploadNotice}" style="color:blue;"></p>
-          <div th:if="${#fields.hasErrors('file')}" th:errors="*{file}" style="color:red"></div>
+
+          <div th:if="${isNew and #fields.hasErrors('file')}" th:errors="*{file}" style="color:red"></div>
         </td>
       </tr>
     </table>
