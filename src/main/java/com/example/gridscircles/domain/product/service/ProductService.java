@@ -1,14 +1,15 @@
 package com.example.gridscircles.domain.product.service;
 
-import com.example.gridscircles.domain.product.dto.ProductForm;
-import com.example.gridscircles.domain.product.dto.ProductListResponse;
+import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
+import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
+import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
+import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import com.example.gridscircles.domain.product.util.mapper.ProductMapper;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,47 +26,51 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public Product saveProduct(ProductForm productForm) {
+    public Product saveProduct(ProductCreateRequest productCreateRequest) {
 
-        Product product = ProductMapper.toEntity(productForm);
+        Product product = ProductMapper.productCreateRequestToEntity(productCreateRequest);
 
         return productRepository.save(product);
 
     }
 
     @Transactional(readOnly = true)
-    public Product findProductById(Long id) {
+    public ProductResponse findProductById (Long id){
 
-        return productRepository.findById(id)
+        Product product = productRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
 
-    }
-
-    @Transactional
-    public void deleteProductById(Long id) {
-
-        findProductById(id).deleted();
+        return ProductMapper.entityToProductResponse(product);
 
     }
 
     @Transactional
-    public Product updateProduct(ProductForm productForm, Long id) {
+    public void deleteProductById(Long id){
 
-        Product originProduct = findProductById(id);
+        productRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "))
+            .deleted();
+    }
 
-        byte[] decodeImage;
+    @Transactional
+    public Product updateProduct(ProductUpdateRequest productUpdateRequest, Long id) {
 
-        try {
-            if (productForm.getFile().isEmpty()) {
-                decodeImage = Base64.getDecoder().decode(productForm.getBase64EncodeImage());
-            } else {
-                decodeImage = productForm.getFile().getBytes();
+        Product originProduct =  productRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
+
+        byte [] decodeImage;
+
+        try{
+            if (productUpdateRequest.getFile().isEmpty()){
+                decodeImage = Base64.getDecoder().decode(productUpdateRequest.getBase64EncodeImage());
+            }else{
+                decodeImage = productUpdateRequest.getFile().getBytes();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        originProduct.updateProduct(productForm, decodeImage);
+        originProduct.updateProduct(productUpdateRequest,decodeImage);
 
         return originProduct;
     }

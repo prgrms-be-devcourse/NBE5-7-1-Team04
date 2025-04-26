@@ -1,6 +1,8 @@
 package com.example.gridscircles.domain.order.controller;
 
 
+import static java.util.List.of;
+
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,48 +28,44 @@ public class AdminOrderController {
 
   private final OrdersService ordersService;
 
-  // PR시 feat보다 수정 전 코드
-  @GetMapping("/orders/list")
-  public String viewlistOrders(
-      @RequestParam(required = false) Long orderId, Model model,
-      RedirectAttributes redirectAttributes,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "5") int size) {
 
-    if (orderId != null) {
-      try {
-        // orderId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
-        OrdersSearchResponse response = ordersService.searchOrderWithItems(orderId);
-        model.addAttribute("orders_list", List.of(response));
-        model.addAttribute("isPaged", false); // 페이징 여부
+    @GetMapping("/orders/list")
+    public String viewlistOrders(
+        @RequestParam(required = false) Long orderId, Model model,
+        RedirectAttributes redirectAttributes,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size) {
 
-      } catch (NoSuchElementException e) {
-        redirectAttributes.addFlashAttribute("errorMessage",
-            "검색한 ID  " + orderId + "  은 존재하지 않는 주문 ID입니다.");
-        return "redirect:/admin/orders/list";
-      }
+        if (orderId != null) {
+            try {
+                // orderId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
+                OrdersSearchResponse response = ordersService.readOrderById(orderId);
+                List<OrdersSearchResponse> responselist = of(response);
+                boolean hasData = !CollectionUtils.isEmpty(responselist);
+                model.addAttribute("orders_list", responselist);
+                model.addAttribute("hasData", hasData);
 
-    } else {
-      // 없으면 전체 주문 목록 (Paged = true)
-      Page<OrdersSearchResponse> responseDtoPage = ordersService.getAllOrders(
-          PageRequest.of(page, size));
+            } catch (NoSuchElementException e) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                    "검색한 ID  " + orderId + "  은 존재하지 않는 주문 ID입니다.");
+                return "redirect:/admin/orders/list";
+            }
 
-      model.addAttribute("orders_list", responseDtoPage);
-      model.addAttribute("currentPage", page);
-      model.addAttribute("totalPages", responseDtoPage.getTotalPages());
-      model.addAttribute("isPaged", true);
-      model.addAttribute("pageSize", responseDtoPage.getSize());
+        } else {
+            // 없으면 전체 주문 목록 (Paged = true)
+            Page<OrdersSearchResponse> responseDtoPage = ordersService
+                .getAllOrders(PageRequest.of(page, size));
+
+            model.addAttribute("orders_list", responseDtoPage.getContent());
+            model.addAttribute("hasData", responseDtoPage.hasContent());
+            model.addAttribute("currentPage", responseDtoPage.getNumber());
+            model.addAttribute("totalPages", responseDtoPage.getTotalPages());
+            model.addAttribute("pageSize", size);
+
+        }
+
+        return "admin/view_orders";
     }
 
-    return "admin/orders";
-  }
-
-  // PR시 feat보다 수정 전 코드
-  @GetMapping("/orders/{orderId}")
-  public String viewOrderDetail(@PathVariable Long orderId, Model model) {
-    OrdersSearchResponse orderDetail = ordersService.searchOrderWithItems(orderId);
-    model.addAttribute("orderDetail", orderDetail);
-    return "view_orderDetail"; // 상세페이지 템플릿
-  }
 
 }

@@ -1,47 +1,55 @@
 package com.example.gridscircles.domain.product.util.mapper;
 
-import com.example.gridscircles.domain.product.dto.ProductForm;
+import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
+import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Base64;
 import org.springframework.data.domain.Page;
 
 public class ProductMapper {
 
-    public static ProductForm toDto(Product product) {
-
-        String priceStr =
-            String.format("%,d", product.getPrice());
-
-        return ProductForm.builder()
-            .id(product.getId())
-            .name(product.getName())
-            .category(product.getCategory())
-            .description(product.getDescription())
-            .price(priceStr)
-            .build();
-    }
-
-    public static Product toEntity(ProductForm productForm) {
+    public static Product productCreateRequestToEntity(ProductCreateRequest productCreateRequest){
 
         int price =
-            Integer.parseInt(productForm.getPrice().replace(",", ""));
+            Integer.parseInt(productCreateRequest.getPrice().replace(",",""));
 
         try {
-            return Product.builder()
-                .name(productForm.getName())
-                .category(productForm.getCategory())
-                .description(productForm.getDescription())
+            return  Product.builder()
+                .name(productCreateRequest.getName())
+                .category(productCreateRequest.getCategory())
+                .description(productCreateRequest.getDescription())
                 .price(price)
-                .image(productForm.getFile().getBytes())
-                .contentType(productForm.getFile().getContentType())
+                .image(productCreateRequest.getFile().getBytes())
+                .contentType(productCreateRequest.getFile().getContentType())
                 .del_yn("N")
                 .build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ProductResponse entityToProductResponse(Product product){
+        String priceStr =
+            String.format("%,d", product.getPrice());
+
+        return ProductResponse.builder()
+            .id(product.getId())
+            .name(product.getName())
+            .price(priceStr)
+            .category(product.getCategory())
+            .description(product.getDescription())
+            .base64EncodeImage(base64Encoding(product.getImage()))
+            .contentType(product.getContentType())
+            .build();
+    }
+
+    private static String base64Encoding(byte [] data) {
+
+        return Base64.getEncoder().encodeToString(data);
     }
 
     public static Page<ProductListResponse> toProductListResponse(Page<Product> productPage) {
@@ -70,3 +78,6 @@ public class ProductMapper {
 
 
 }
+
+
+

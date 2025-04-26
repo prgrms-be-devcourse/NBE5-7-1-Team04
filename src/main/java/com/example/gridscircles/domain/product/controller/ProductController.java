@@ -1,6 +1,7 @@
 package com.example.gridscircles.domain.product.controller;
 
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
+import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.service.ProductService;
 import java.util.Base64;
@@ -43,11 +44,9 @@ public class ProductController {
     @GetMapping("/{productId}")
     public String findProductById(@PathVariable Long productId, Model model) {
 
-        Product findProduct = productService.findProductById(productId);
+        ProductResponse findProduct = productService.findProductById(productId);
 
-        model.addAttribute("product", findProduct);
-        model.addAttribute("base64Image", Base64.getEncoder().encodeToString(findProduct.getImage()));
-        model.addAttribute("contentType", findProduct.getContentType());
+        model.addAttribute("productResponse", findProduct);
         model.addAttribute("isAdmin", false);
 
         return "view_find_products";

@@ -11,19 +11,24 @@ import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.domain.order.exception.OrderCancelException;
 import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
+import com.example.gridscircles.domain.order.exception.OrderUpdateException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -144,7 +149,31 @@ class OrdersServiceTests {
             assertThat(updated.getAddress()).isEqualTo("서울특별시 용산구 사바하아파트 202동 202호");
             assertThat(updated.getZipcode()).isEqualTo("22222");
         }
+
+
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COMPLETED", "CANCELED"})
+        void invalidUpdateOrder(OrderStatus status) {
+            Orders order = saveOrder(
+                "Yuhan2@example.com",
+                "경기도 사바하시 사바하구",
+                "11111",
+                status,
+                0
+            );
+            OrderUpdateRequest req = OrderUpdateRequest.builder()
+                .address("서울특별시 용산구 사바하아파트 202동 202호")
+                .zipcode("22222")
+                .build();
+
+            assertThrows(
+                OrderUpdateException.class,
+                () -> ordersService.updateOrder(order.getId(), req),
+                "배송이 완료되거나 주문이 취소된 상태면 주문을 수정하실 수 없습니다."
+            );
+        }
     }
+
 
     @Nested
     @DisplayName("주문 취소 테스트")
@@ -163,18 +192,78 @@ class OrdersServiceTests {
             assertThat(canceled.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
         }
 
-        @Test
-        @DisplayName("주문 취소 실패(배송 완료 시)")
-        void invalidCancelOrder() {
+        @ParameterizedTest
+        @EnumSource(value = OrderStatus.class, names = {"COMPLETED", "CANCELED"})
+        @DisplayName("주문 취소 실패(배송 완료 또는 이미 취소된 경우)")
+        void invalidCancelOrder(OrderStatus status) {
             int total = product1.getPrice() * 2 + product2.getPrice() * 3;
-            Orders order = saveOrder("Yuhan3@example.com", "부산", "33333", OrderStatus.COMPLETED,
-                total);
+            Orders order = saveOrder(
+                "Yuhan3@example.com",
+                "부산",
+                "33333",
+                status,
+                total
+            );
+
             assertThrows(
                 OrderCancelException.class,
                 () -> ordersService.cancelOrder(order.getId()),
-                "배송이 완료된 주문은 취소할 수 없습니다."
+                "배송이 완료되거나 주문이 취소된 상태면 주문을 취소하실 수 없습니다."
             );
         }
+    }
 
+    @Nested
+    @DisplayName("주문 내역 조회 테스트")
+    class GetOrdersTests {
+
+        @Test
+        @DisplayName("이메일로 전체 주문 내역 조회")
+        void getOrdersByEmailTest() {
+            String email = "test@example.com";
+            Orders order1 = Orders.builder()
+                .email(email)
+                .address("서울")
+                .zipcode("12345")
+                .totalPrice(5000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+
+            Orders order2 = Orders.builder()
+                .email(email)
+                .address("서울2")
+                .zipcode("67890")
+                .totalPrice(8000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+
+            ordersRepository.saveAll(List.of(order1, order2));
+
+            Page<Orders> result = ordersService.getOrdersByEmail(email, PageRequest.of(0, 10));
+
+            assertThat(result.getContent()).hasSize(2);
+            assertThat(result.getContent().getFirst().getEmail()).isEqualTo(email);
+        }
+
+        @Test
+        @DisplayName("전체 주문 내역에서 주문 ID로 특정 주문 내역 조회")
+        void getOrdersByIdTest() {
+            String email = "test@example.com";
+            Orders order = Orders.builder()
+                .email(email)
+                .address("부산")
+                .zipcode("54321")
+                .totalPrice(10000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+
+            Orders savedOrder = ordersRepository.save(order);
+
+            List<Orders> result = ordersService.getOrderById(savedOrder.getId(), email);
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().getId()).isEqualTo(savedOrder.getId());
+            assertThat(result.getFirst().getEmail()).isEqualTo(email);
+        }
     }
 }

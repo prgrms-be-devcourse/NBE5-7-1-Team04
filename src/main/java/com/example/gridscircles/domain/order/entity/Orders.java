@@ -11,17 +11,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Orders extends BaseEntity {
@@ -47,20 +42,15 @@ public class Orders extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private OrderStatus orderStatus;
 
-  // PR시 feat보다 수정 전 코드
-  @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<OrderProduct> orderProducts = new ArrayList<>();
-
-
-  @Builder
-  public Orders(String email, String address, String zipcode, Integer totalPrice,
-      OrderStatus orderStatus) {
-    this.email = email;
-    this.address = address;
-    this.zipcode = zipcode;
-    this.totalPrice = totalPrice;
-    this.orderStatus = orderStatus;
-  }
+    @Builder
+    public Orders(String email, String address, String zipcode, Integer totalPrice,
+        OrderStatus orderStatus) {
+        this.email = email;
+        this.address = address;
+        this.zipcode = zipcode;
+        this.totalPrice = totalPrice;
+        this.orderStatus = orderStatus;
+    }
 
   public void updateStatusComplete() {
     this.orderStatus = OrderStatus.COMPLETED;

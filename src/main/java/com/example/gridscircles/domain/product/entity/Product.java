@@ -1,6 +1,6 @@
 package com.example.gridscircles.domain.product.entity;
 
-import com.example.gridscircles.domain.product.dto.ProductForm;
+import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -42,7 +42,7 @@ public class Product extends BaseEntity {
     private Integer price;
 
     @Lob
-    @Column(columnDefinition = "LONGBLOB", nullable = false)
+    @Column(columnDefinition = "LONGBLOB" ,nullable = false)
     private byte[] image;
 
     @Column(nullable = false)
@@ -51,23 +51,23 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private String del_yn;
 
-    public void deleted() {
+    public void deleted(){
         this.del_yn = "Y";
     }
 
-    public void updateProduct(ProductForm productForm, byte[] image) {
+    public void updateProduct(ProductUpdateRequest productUpdateRequest , byte [] image) {
 
         int formatPrice =
-            Integer.parseInt(productForm.getPrice().replace(",", ""));
+            Integer.parseInt(productUpdateRequest.getPrice().replace(",",""));
 
-        if (!Objects.equals(this.name, productForm.getName())) {
-            this.name = productForm.getName();
+        if(!Objects.equals(this.name, productUpdateRequest.getName())) {
+            this.name = productUpdateRequest.getName();
         }
-        if (this.category != productForm.getCategory()) {
-            this.category = productForm.getCategory();
+        if(this.category != productUpdateRequest.getCategory() ){
+            this.category = productUpdateRequest.getCategory();
         }
-        if (!Objects.equals(this.description, productForm.getDescription())) {
-            this.description = productForm.getDescription();
+        if(!Objects.equals(this.description, productUpdateRequest.getDescription())) {
+            this.description = productUpdateRequest.getDescription();
         }
         if (!Objects.equals(this.price, formatPrice)) {
             this.price = formatPrice;
@@ -77,15 +77,14 @@ public class Product extends BaseEntity {
             this.image = image;
         }
 
-        if (!Objects.equals(this.contentType, productForm.getFile().getContentType())) {
-            this.contentType = productForm.getFile().getContentType();
+        if(!Objects.equals(this.contentType, productUpdateRequest.getFile().getContentType())) {
+            this.contentType = productUpdateRequest.getFile().getContentType();
         }
     }
 
     @Builder
-    public Product(Long id, String name, Category category, String description, Integer price, byte[] image,
+    public Product(String name, Category category, String description, Integer price, byte[] image,
         String contentType, String del_yn) {
-        this.id = id;
         this.name = name;
         this.category = category;
         this.description = description;
