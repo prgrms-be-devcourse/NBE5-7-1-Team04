@@ -63,6 +63,7 @@ public class AdminProductController {
         return "redirect:/admin/products/"+product.getId();
     }
 
+
     @GetMapping("/{productId}")
     public String findProductById(@PathVariable Long productId, Model model) {
 
@@ -147,6 +148,7 @@ public class AdminProductController {
 
         }
 
-        return "admin/products";
+        return "view_products";
     }
+
 }
