@@ -76,6 +76,26 @@
       background-color: #f9f9f9;
     }
 
+    .order-status {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 0.25rem;
+    }
+
+    .order-status.PROCESSING {
+      background-color: #f0ad4e;
+    }
+
+    .order-status.COMPLETED {
+      background-color: #5cb85c;
+    }
+
+    .order-status.CANCELED {
+      background-color: #d9534f;
+    }
+
     a.button {
       display: inline-block;
       margin-top: 20px;
@@ -136,7 +156,10 @@
       <td th:text="${order.getAddress()}"></td>
       <td th:text="${order.getZipcode()}"></td>
       <td th:text="${order.getTotalPrice()}"></td>
-      <td th:text="${order.getOrderStatus()}"></td>
+      <td style="text-align: center; vertical-align: middle; padding: 4px 2px;">
+        <span th:class="'order-status ' + ${order.getOrderStatus()}"
+              th:text="${order.getOrderStatus()}"></span>
+      </td>
       <td th:text="${order.getCreatedAt()}"></td>
     </tr>
     </tbody>
