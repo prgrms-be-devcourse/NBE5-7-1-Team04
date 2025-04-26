@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// PR시 feat보다 수정 전 코드
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrdersSearchResponse {

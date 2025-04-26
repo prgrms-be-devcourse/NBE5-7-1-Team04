@@ -3,6 +3,7 @@ package com.example.gridscircles.domain.product.util.mapper;
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
+import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import java.io.IOException;
 import java.util.Base64;
@@ -60,9 +61,22 @@ public class ProductMapper {
                 .category(product.getCategory())
                 .imageBase64(Base64.getEncoder().encodeToString(product.getImage()))
                 .imageType(product.getContentType())
-            .build()
+                .build()
         );
     }
+
+    public static ProductSearchResponse toProductSearchResponse(Product product) {
+        return ProductSearchResponse.builder()
+            .id(product.getId())
+            .name(product.getName())
+            .description(product.getDescription())
+            .price(product.getPrice())
+            .del_yn(product.getDel_yn())
+            .category(product.getCategory())
+            .build();
+    }
+
+
 }
 
 

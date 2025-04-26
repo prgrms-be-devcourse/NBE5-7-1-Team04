@@ -1,8 +1,8 @@
 package com.example.gridscircles.domain.product.controller;
 
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
-import com.example.gridscircles.domain.product.dto.ProductSearchResponseDto;
 import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
+import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.service.ProductService;
@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -115,40 +116,38 @@ public class AdminProductController {
 
     @GetMapping("/list")
     public String viewlistProducts(
-        @RequestParam(required = false) Long productId,
+        @RequestParam(required = false) String productName,
         Model model,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size,
         RedirectAttributes redirectAttributes) {
 
-        if (productId != null) {
+        if (productName != null && !productName.trim().isEmpty()) {
             try {
-                // productId 파라미터가 있으면 해당 상품만 리스트로 구성 (Paged = false)
-                ProductSearchResponseDto response = productService.searchProductWithItems(
-                    productId);
-                model.addAttribute("isPaged", false); // 페이징 여부
-                model.addAttribute("products_list", List.of(response));
+                // productName 파라미터가 있으면 해당 상품만 리스트로 구성
+                Product response = productService.readProductByName(productName);
+                model.addAttribute("products_list", response);
+                model.addAttribute("hasData", true);
 
             } catch (NoSuchElementException e) {
                 redirectAttributes.addFlashAttribute("errorMessage",
-                    "검색한 상품  " + productId + "  은 존재하지 않는 상품 ID입니다.");
+                    "검색한 상품  " + productName + "  은 존재하지 않는 상품입니다.");
                 return "redirect:/admin/products/list";
             }
 
         } else {
-            // 없으면 전체 주문 목록 (Paged = true)
-            Page<ProductSearchResponseDto> responseDtoPage = productService.getAllProducts(
-                PageRequest.of(page, size));
-
+            // 없으면 전체 주문 목록
+            Page<ProductSearchResponse> responseDtoPage = productService.getAllProducts(PageRequest.of(page, size));
+            System.out.println("productName   "+productName+"    findAll    ");
             model.addAttribute("products_list", responseDtoPage);
-            model.addAttribute("currentPage", page);
+            model.addAttribute("hasData", responseDtoPage.hasContent());
+            model.addAttribute("currentPage", responseDtoPage.getNumber());
             model.addAttribute("totalPages", responseDtoPage.getTotalPages());
-            model.addAttribute("isPaged", true);
-            model.addAttribute("pageSize", responseDtoPage.getSize());
+            model.addAttribute("pageSize", size);
 
         }
 
-        return "view_products";
+        return "admin/view_products";
     }
 
 }

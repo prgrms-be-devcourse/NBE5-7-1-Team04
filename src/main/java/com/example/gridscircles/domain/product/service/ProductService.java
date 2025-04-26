@@ -2,7 +2,7 @@ package com.example.gridscircles.domain.product.service;
 
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
-import com.example.gridscircles.domain.product.dto.ProductSearchResponseDto;
+import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.entity.Product;
@@ -76,36 +76,20 @@ public class ProductService {
     }
 
 
-    // 특정 ID에 따른 product 정보
+    // 특정 상품명에 따른 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
-    public ProductSearchResponseDto searchProductWithItems(Long productId) {
-        Product product = productRepository.findById(productId).orElseThrow(()
-            -> new NoSuchElementException("해당 상품은 존재 하지 않습니다. ID: " + productId));
-
-        return new ProductSearchResponseDto(
-            product.getId(),
-            product.getName(),
-            product.getDescription(),
-            product.getPrice(),
-            product.getImage(),
-            product.getCategory()
-        );
+    public Product readProductByName(String productName) {
+        return productRepository.findByNameIgnoreCase(productName);
 
     }
 
-    // 전체 상품 조회
+    // 전체 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
-    public Page<ProductSearchResponseDto> getAllProducts(Pageable pageable) {
+    public Page<ProductSearchResponse> getAllProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
 
-        return productPage.map(product -> new ProductSearchResponseDto(
-            product.getId(),
-            product.getName(),
-            product.getDescription(),
-            product.getPrice(),
-            product.getImage(),
-            product.getCategory())
-        );
+        return productPage.map(ProductMapper::toProductSearchResponse);
+
     }
 
     @Transactional(readOnly = true)

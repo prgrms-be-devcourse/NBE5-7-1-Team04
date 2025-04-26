@@ -10,6 +10,15 @@
       padding: 40px;
     }
 
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
     h2 {
       text-align: center;
       margin-bottom: 30px;
@@ -34,13 +43,13 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-left: 5px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
     }
 
     th, td {
@@ -57,99 +66,102 @@
       background-color: #f8f9fa;
     }
 
-    .product-image {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
+    .pagination {
+      text-align: center;
+      margin-top: 30px;
     }
 
     .pagination a {
+      min-width: 30px;
+      padding: 6px 10px;
+      margin: 0 2px;
+      border-radius: 4px;
+      /*background-color: #e9ecef;*/
       text-decoration: none;
-      color: #333;
-      padding: 5px 10px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      color: black;
     }
 
-    .pagination .active a {
-      background-color: #007bff;
+    .pagination a.button {
+      background-color: #339af0;
       color: white;
-      font-weight: bold;
     }
-
   </style>
 </head>
 <body>
-<div th:if="${errorMessage != null}">
-  <script th:inline="javascript">
-    alert([[${errorMessage}]]);
-  </script>
+
+<div class="container">
+
+  <div th:if="${errorMessage != null}">
+    <script th:inline="javascript">
+      alert([[${errorMessage}]]);
+    </script>
+  </div>
+
+  <h2>상품 목록</h2>
+
+  <div class="search-bar">
+    <form th:action="@{/admin/products/list}" method="get">
+      <input type="text" name="productName" placeholder="상품명 입력">
+      <button type="submit">검색</button>
+      <button type="button" th:onclick="|location.href='@{/admin/products/new}'|">상품 등록</button>
+      <button type="button" th:onclick="|location.href='@{/admin/orders/list}'|">주문 내역</button>
+    </form>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>상품 ID</th>
+      <th>상품명</th>
+      <th>설명</th>
+      <th>가격</th>
+      <th>카테고리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products_list}"
+        th:if="${product.del_yn == 'N'}"
+        th:onclick="|location.href='/admin/products/${product.id}'|"
+        style="cursor: pointer;">
+      <td th:text="${product.id}"></td>
+      <td th:text="${product.name}"></td>
+      <td th:text="${product.description}"></td>
+      <td th:text="${product.price}"></td>
+      <td th:text="${product.category}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 데이터 없을 때 -->
+  <div th:if="${not hasData}" style="text-align: center; margin-top: 40px;">
+    <p>등록된 주문이 없습니다.</p>
+  </div>
+
+  <!-- 페이징 영역 -->
+  <div class="pagination"
+       th:if="${hasData and totalPages > 1}">
+    <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;">
+      <a th:if="${currentPage > 0}"
+         th:href="@{/admin/products/list(page=0, size=${pageSize})}">&laquo;</a>
+      <a th:if="${currentPage > 0}"
+         th:href="@{/admin/products/list(page=${currentPage - 1}, size=${pageSize})}">&lt;</a>
+
+      <a th:each="i : ${#numbers.sequence(
+          totalPages <= 3 ? 0 : (currentPage <= 1 ? 0 : (currentPage + 1 >= totalPages ? totalPages - 3 : currentPage - 1)),
+          totalPages <= 3 ? (totalPages == 0 ? 0 : totalPages - 1) : (currentPage <= 1 ? 2 : (currentPage + 1 >= totalPages ? totalPages - 1 : currentPage + 1)))}"
+         th:href="@{/admin/products/list(page=${i}, size=${pageSize})}"
+         th:text="${i + 1}"
+         th:classappend="${i == currentPage} ? ' button' : ''"></a>
+
+
+      <a th:if="${currentPage < totalPages - 1}"
+         th:href="@{/admin/products/list(page=${currentPage + 1}, size=${pageSize})}">&gt;</a>
+      <a th:if="${currentPage < totalPages - 1}"
+         th:href="@{/admin/products/list(page=${totalPages - 1}, size=${pageSize})}">&raquo;</a>
+    </div>
+  </div>
+
 </div>
-<h2>상품 목록</h2>
-
-<div class="search-bar">
-  <form th:action="@{/admin/products/list}" method="get">
-    <input type="text" name="productId" placeholder="상품번호 입력">
-    <button type="submit">검색</button>
-    <button type="button" th:onclick="|location.href='@{/admin/products/new}'|">상품 등록</button>
-    <button type="button" th:onclick="|location.href='@{/admin/orders/list}'|">주문 내역</button>
-  </form>
-
-</div>
-
-<table>
-  <thead>
-  <tr>
-    <th>상품 ID</th>
-    <th>이미지</th>
-    <th>상품명</th>
-    <th>설명</th>
-    <th>가격</th>
-    <th>카테고리</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="product : ${products_list}"
-      th:onclick="|location.href='/admin/products/${product.productId}'|"
-      style="cursor: pointer;">
-    <td th:text="${product.productId}"></td>
-    <td><img th:src="${product.image}" class="product-image" alt="product image"/></td>
-    <td th:text="${product.productName}"></td>
-    <td th:text="${product.description}"></td>
-    <td th:text="${product.price}"></td>
-    <td th:text="${product.category}"></td>
-  </tr>
-  </tbody>
-</table>
-
-<div th:if="${isPaged}" class="pagination">
-  <ul style="display: flex; list-style: none; justify-content: center; gap: 10px; padding: 0;">
-
-    <!-- 이전 페이지 -->
-    <li th:if="${currentPage > 0}">
-      <a th:href="@{/admin/products/list(page=${currentPage - 1}, size=${pageSize})}">←</a>
-    </li>
-
-    <!-- 페이지 번호들 -->
-    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-        th:classappend="${i == currentPage} ? 'active'">
-      <a th:href="@{/admin/products/list(page=${i}, size=${pageSize})}"
-         th:text="${i + 1}">1</a>
-    </li>
-
-    <!-- 다음 페이지 -->
-    <li th:if="${currentPage + 1 < totalPages}">
-      <a th:href="@{/admin/products/list(page=${currentPage + 1}, size=${pageSize})}">→</a>
-    </li>
-
-  </ul>
-</div>
-
-<!-- 데이터 없을 때 -->
-<div th:if="${products_list == null or products_list.isEmpty()}" class="no-data">
-  <p>등록된 상품이 없습니다.</p>
-</div>
-
 
 </body>
 </html>
