@@ -81,6 +81,7 @@ function checkForm() {
   const email = document.getElementById("email");
   const address = document.getElementById("address");
   const zipcode = document.getElementById("zipcode");
+  const cartError = document.getElementById("cart-error");
   const paymentButton = document.getElementById("paymentButton");
 
   let isValid = true;
@@ -107,6 +108,16 @@ function checkForm() {
     isValid = false;
   } else {
     zipcode.classList.remove("is-invalid");
+  }
+
+  // 장바구니 유효성 검사
+  if (cart.size === 0) {
+    cartError.classList.add("is-invalid");
+    cartError.style.display = "block";
+    isValid = false;
+  } else {
+    cartError.classList.remove("is-invalid");
+    cartError.style.display = "none";
   }
 
   // 폼이 유효하면 결제 버튼 활성화

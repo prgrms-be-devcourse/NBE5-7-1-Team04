@@ -144,7 +144,7 @@
             <div class="col text-end action">
               <a class="btn btn-small btn-outline-dark"
                  th:attr="product-id=${product.productId}, product-name=${product.productName}, product-price=${product.price}"
-                 onclick="event.stopPropagation(); addToCart(this);">
+                 onclick="event.stopPropagation(); addToCart(this); checkForm();">
                 추가
               </a>
             </div>
@@ -174,7 +174,8 @@
         <h5 class="m-0 p-0"><b>Summary</b></h5>
       </div>
       <hr>
-      <div id="cart">
+      <div id="cart" class="mb-3">
+        <div class="invalid-feedback" id="cart-error">상품을 추가해주세요.</div>
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">이메일</label>
