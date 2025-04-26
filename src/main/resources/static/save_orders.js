@@ -27,7 +27,7 @@ function addToCart(button) {
   }
 
   totalAmount += price;
-  document.getElementById('totalPrice').innerText = totalAmount + '원';
+  document.getElementById('totalPrice').innerText = totalAmount.toLocaleString() + '원';
 }
 
 const paymentButton = document.getElementById("paymentButton");
