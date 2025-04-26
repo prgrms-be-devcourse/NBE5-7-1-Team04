@@ -1,5 +1,11 @@
 const cart = new Map();
-let totalAmount = 0;
+
+function shortName(name) {
+  if (name.length > 12) {
+    return name.slice(0, 9) + "...";
+  }
+  return name;
+}
 
 function addToCart(button) {
   const id = button.getAttribute('product-id');
@@ -8,26 +14,79 @@ function addToCart(button) {
 
   if (cart.has(id)) {
     let quantity = cart.get(id);
-    quantity = quantity + 1;
-    cart.set(id, quantity); // 증가된 수량을 cart에 다시 저장
+    quantity += 1;
+    cart.set(id, {quantity: quantity, price: price});
 
     document.getElementById(`product-quantity-${id}`).innerText = quantity
         + '개';
   } else {
-    cart.set(id, 1);
+    cart.set(id, {quantity: 1, price: price});
 
     const cartProductHTML = document.createElement('div');
+    cartProductHTML.setAttribute('id', `cart-item-${id}`); // 삭제할 때 필요
     cartProductHTML.innerHTML = `
-        <div class="row">
-          <h6 class="p-0">${name} <span class="badge bg-dark" id="product-quantity-${id}">1개</span></h6>
+      <div class="row align-items-center mb-2">
+        <div class="col-6">
+          <h6 class="p-0 m-0">${shortName(name)}</h6>
         </div>
-      `;
+        <div class="col-6 text-end">
+          <input type="number" id="product-quantity-${id}" value="1" max="999" style="width: 50px; vertical-align: middle;" onchange="updateQuantity('${id}', ${price})">
+          <button class="btn btn-sm" style="vertical-align: middle;" onclick="removeFromCart('${id}', ${price})">X</button>
+        </div>
+      </div>
+    `;
 
     document.getElementById('cart').appendChild(cartProductHTML);
   }
 
-  totalAmount += price;
-  document.getElementById('totalPrice').innerText = totalAmount.toLocaleString() + '원';
+  document.getElementById(
+      'totalPrice').innerText = calculateTotalAmount().toLocaleString()
+      + '원';
+}
+
+function updateQuantity(id, price) {
+  const input = document.getElementById(`product-quantity-${id}`);
+  let newQuantity = parseInt(input.value);
+
+  if (newQuantity < 1) {
+    removeFromCart(id, price)
+    return;
+  }
+
+  if (newQuantity > 999) {
+    input.value = 999;
+    newQuantity = 999;
+  }
+
+  cart.set(id, {quantity: newQuantity, price: price});
+
+  // 총 금액 수정
+  document.getElementById(
+      'totalPrice').innerText = calculateTotalAmount().toLocaleString() + '원';
+}
+
+function removeFromCart(id) {
+  cart.delete(id);
+
+  // UI에서도 삭제
+  const cartItem = document.getElementById(`cart-item-${id}`);
+  if (cartItem) {
+    cartItem.remove();
+  }
+
+  // 총 금액 업데이트
+  document.getElementById(
+      'totalPrice').innerText = calculateTotalAmount().toLocaleString()
+      + '원';
+  checkForm();
+}
+
+function calculateTotalAmount() {
+  let total = 0;
+  for (const [id, product] of cart.entries()) {
+    total += product.price * product.quantity;
+  }
+  return total;
 }
 
 const paymentButton = document.getElementById("paymentButton");
@@ -42,10 +101,10 @@ async function payment() {
   // requestDto 내부 products
   console.log(cart)
   const products = [];
-  for (const [id, quantity] of cart.entries()) {
+  for (const [id, product] of cart.entries()) {
     products.push({
       id: parseInt(id),
-      quantity: quantity
+      quantity: product.quantity
     });
   }
 
@@ -124,7 +183,7 @@ function checkForm() {
   paymentButton.disabled = !isValid;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   goProductPage(1); // 페이지 첫 로딩
 });
 
