@@ -4,9 +4,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class CreateOrdersRequest {
 
     @Email
@@ -21,7 +23,8 @@ public class CreateOrdersRequest {
     @NotEmpty
     private List<CreateOrdersProductDto> products;
 
-    @Data
+    @Getter
+    @AllArgsConstructor
     public static class CreateOrdersProductDto {
 
         private Long id;
