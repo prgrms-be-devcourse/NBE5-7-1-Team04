@@ -3,6 +3,7 @@ package com.example.gridscircles.domain.order.controller;
 
 import static java.util.List.of;
 
+import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.service.OrdersService;
 import java.util.List;
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class AdminOrderController {
 
-  private final OrdersService ordersService;
+    private final OrdersService ordersService;
 
 
     @GetMapping("/orders/list")
@@ -68,11 +69,10 @@ public class AdminOrderController {
     }
 
 
-    // 해당 주문의 상세페이지
-    @GetMapping("/{orderId}")
+    @GetMapping("/orders/{orderId}")
     public String viewOrderDetail(@PathVariable Long orderId, Model model) {
-        OrdersSearchResponse orderDetail = ordersService.readOrderById(orderId);
+        OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
-        return "view_orderDetail"; // 상세페이지 템플릿
+        return "view_orderDetail";
     }
 }
