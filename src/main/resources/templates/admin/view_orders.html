@@ -117,7 +117,7 @@
     </thead>
     <tbody>
     <tr th:each="order : ${orders_list}" th:if="${orders_list != null}"
-        th:onclick="|location.href='/orders/${order.orderId}'|"
+        th:onclick="|location.href='/admin/orders/${order.orderId}'|"
         style="cursor: pointer;">
       <td th:text="${order.orderId}"></td>
       <td>
