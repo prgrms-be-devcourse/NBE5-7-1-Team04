@@ -45,8 +45,9 @@
       border: none;
       background: #444;
       color: white;
-      border-radius: 0 4px 4px 0;
+      border-radius: 4px;
       cursor: pointer;
+      margin-left: 5px;
     }
 
     form.search .error {
@@ -72,15 +73,6 @@
       background: #f0f0f0;
     }
 
-    .no-data {
-      text-align: center;
-      color: #666;
-      padding: 24px 0;
-    }
-
-    .btn-wrap {
-      text-align: center;
-    }
 
     .btn-wrap .btn {
       display: inline-block;
@@ -90,20 +82,6 @@
       text-decoration: none;
       border-radius: 8px;
     }
-
-    /*.pagination a {*/
-    /*  text-decoration: none;*/
-    /*  color: #333;*/
-    /*  padding: 5px 10px;*/
-    /*  border: 1px solid #ddd;*/
-    /*  border-radius: 5px;*/
-    /*}*/
-
-    /*.pagination .active a {*/
-    /*  background-color: #007bff;*/
-    /*  color: white;*/
-    /*  font-weight: bold;*/
-    /*}*/
 
   </style>
 </head>
@@ -121,6 +99,7 @@
   <form th:action="@{/admin/orders/list}" method="get" class="search">
     <input type="text" name="orderId" placeholder="주문번호 입력"/>
     <button type="submit">검색</button>
+    <button type="button" th:onclick="|location.href='@{/admin/products/list}'|">상품 목록</button>
   </form>
 
   <!-- 테이블 -->
@@ -138,7 +117,7 @@
     </thead>
     <tbody>
     <tr th:each="order : ${orders_list}" th:if="${orders_list != null}"
-        th:onclick="|location.href='${order.orderId}'|"
+        th:onclick="|location.href='/orders/${order.orderId}'|"
         style="cursor: pointer;">
       <td th:text="${order.orderId}"></td>
       <td>

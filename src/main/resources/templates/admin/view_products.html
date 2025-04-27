@@ -76,7 +76,6 @@
       padding: 6px 10px;
       margin: 0 2px;
       border-radius: 4px;
-      /*background-color: #e9ecef;*/
       text-decoration: none;
       color: black;
     }
@@ -128,7 +127,6 @@
     </thead>
     <tbody>
     <tr th:each="product : ${products_list}"
-        th:if="${product.del_yn == 'N'}"
         th:onclick="|location.href='/admin/products/${product.id}'|"
         style="cursor: pointer;">
       <td th:text="${product.id}"></td>

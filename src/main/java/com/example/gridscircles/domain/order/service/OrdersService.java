@@ -38,7 +38,7 @@ public class OrdersService {
   @Transactional(readOnly = true)
   public OrdersSearchResponse readOrderById(Long orderId) {
     Orders orders = ordersRepository.findById(orderId).orElseThrow(()
-        -> new NoSuchElementException("해당 주문은 존재 하지 않습니다. ID: " + orderId));
+        -> new NoSuchElementException("해당 주문은 존재 하지 않습니다."));
 
         List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 

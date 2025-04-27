@@ -68,4 +68,11 @@ public class AdminOrderController {
     }
 
 
+    // 해당 주문의 상세페이지
+    @GetMapping("/{orderId}")
+    public String viewOrderDetail(@PathVariable Long orderId, Model model) {
+        OrdersSearchResponse orderDetail = ordersService.readOrderById(orderId);
+        model.addAttribute("orderDetail", orderDetail);
+        return "view_orderDetail"; // 상세페이지 템플릿
+    }
 }
