@@ -138,18 +138,17 @@ class OrdersServiceTests {
                 OrderStatus.PROCESSING,
                 0
             );
+
             OrderUpdateRequest req = OrderUpdateRequest.builder()
                 .address("서울특별시 용산구 사바하아파트 202동 202호")
                 .zipcode("22222")
                 .build();
-
             ordersService.updateOrder(order.getId(), req);
 
             Orders updated = ordersRepository.findById(order.getId()).orElseThrow();
             assertThat(updated.getAddress()).isEqualTo("서울특별시 용산구 사바하아파트 202동 202호");
             assertThat(updated.getZipcode()).isEqualTo("22222");
         }
-
 
         @ParameterizedTest
         @EnumSource(value = OrderStatus.class, names = {"COMPLETED", "CANCELED"})
@@ -185,7 +184,6 @@ class OrdersServiceTests {
             int total = product1.getPrice() * 2 + product2.getPrice() * 3;
             Orders order = saveOrder("Yuhan3@example.com", "부산", "33333", OrderStatus.PROCESSING,
                 total);
-
             ordersService.cancelOrder(order.getId());
 
             Orders canceled = ordersRepository.findById(order.getId()).orElseThrow();
@@ -197,6 +195,7 @@ class OrdersServiceTests {
         @DisplayName("주문 취소 실패(배송 완료 또는 이미 취소된 경우)")
         void invalidCancelOrder(OrderStatus status) {
             int total = product1.getPrice() * 2 + product2.getPrice() * 3;
+
             Orders order = saveOrder(
                 "Yuhan3@example.com",
                 "부산",
@@ -236,7 +235,6 @@ class OrdersServiceTests {
                 .totalPrice(8000)
                 .orderStatus(OrderStatus.PROCESSING)
                 .build();
-
             ordersRepository.saveAll(List.of(order1, order2));
 
             Page<Orders> result = ordersService.getOrdersByEmail(email, PageRequest.of(0, 10));
@@ -256,7 +254,6 @@ class OrdersServiceTests {
                 .totalPrice(10000)
                 .orderStatus(OrderStatus.PROCESSING)
                 .build();
-
             Orders savedOrder = ordersRepository.save(order);
 
             List<Orders> result = ordersService.getOrderById(savedOrder.getId(), email);
@@ -266,7 +263,4 @@ class OrdersServiceTests {
             assertThat(result.getFirst().getEmail()).isEqualTo(email);
         }
     }
-
-
-
 }

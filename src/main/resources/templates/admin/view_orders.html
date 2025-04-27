@@ -85,6 +85,7 @@
 
   </style>
 </head>
+
 <body>
 <div th:if="${errorMessage != null}">
   <script th:inline="javascript">
@@ -102,7 +103,6 @@
     <button type="button" th:onclick="|location.href='@{/admin/products/list}'|">상품 목록</button>
   </form>
 
-  <!-- 테이블 -->
   <table>
     <thead>
     <tr>
@@ -117,21 +117,21 @@
     </thead>
     <tbody>
     <tr th:each="order : ${orders_list}" th:if="${orders_list != null}"
-        th:onclick="|location.href='/admin/orders/${order.orderId}'|"
+        th:onclick="|location.href='/admin/orders/${order.getOrderId()}'|"
         style="cursor: pointer;">
-      <td th:text="${order.orderId}"></td>
+      <td th:text="${order.getOrderId()}"></td>
       <td>
         <ul>
-          <li th:each="prod : ${order.products}"
-              th:text="${prod.productName} + ' x' + ${prod.quantity}">상품
+          <li th:each="prod : ${order.getProducts()}"
+              th:text="${prod.getProductName()} + ' x' + ${prod.getQuantity()}">상품
           </li>
         </ul>
       </td>
-      <td colspan="1" th:text="${order.address}"></td>
+      <td colspan="1" th:text="${order.getAddress()}"></td>
       <td colspan="1" th:text="${order.getZipcode()}"></td>
-      <td th:text="${order.totalPrice}"></td>
+      <td th:text="${order.getTotalPrice()}"></td>
       <td colspan="1" th:text="${order.getOrderStatus()}"></td>
-      <td colspan="1" th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+      <td colspan="1" th:text="${#temporals.format(order.getCreatedAt(), 'yyyy-MM-dd HH:mm:ss')}"></td>
     </tr>
     </tbody>
   </table>
@@ -178,8 +178,6 @@
          style="min-width: 30px;">&raquo;</a>
     </div>
   </div>
-
-
 </div>
 </body>
 </html>

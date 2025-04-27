@@ -31,7 +31,8 @@ public class ProductUpdateRequest {
     private String contentType;
 
     @Builder
-    public ProductUpdateRequest(Long id, String name, Category category, String description, String price,
+    public ProductUpdateRequest(Long id, String name, Category category, String description,
+        String price,
         MultipartFile file, String base64EncodeImage, String contentType) {
         this.id = id;
         this.name = name;

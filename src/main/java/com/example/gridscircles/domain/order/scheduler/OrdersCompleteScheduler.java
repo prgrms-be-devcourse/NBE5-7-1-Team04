@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class OrdersCompleteScheduler {
+
     private final OrdersService ordersService;
 
     @Scheduled(cron = "0 0 14 * * *")

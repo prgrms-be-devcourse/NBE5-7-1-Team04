@@ -29,36 +29,27 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrdersService {
 
-
     private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
 
-  // 특정 ID에 product와 order정보 조회
-  @Transactional(readOnly = true)
-  public OrdersSearchResponse readOrderById(Long orderId) {
-    Orders orders = ordersRepository.findById(orderId).orElseThrow(()
-        -> new NoSuchElementException("해당 주문은 존재 하지 않습니다."));
-
+    @Transactional(readOnly = true)
+    public OrdersSearchResponse readOrderById(Long orderId) {
+        Orders orders = ordersRepository.findById(orderId)
+            .orElseThrow(() -> new NoSuchElementException("해당 주문은 존재 하지 않습니다."));
         List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 
         return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
-
     }
 
-  // 전체 주문 조회
-  @Transactional(readOnly = true)
-  public Page<OrdersSearchResponse> getAllOrders(Pageable pageable) {
-    Page<Orders> ordersPage = ordersRepository.findAllByOrderByCreatedAtDesc(pageable);
+    @Transactional(readOnly = true)
+    public Page<OrdersSearchResponse> getAllOrders(Pageable pageable) {
+        Page<Orders> ordersPage = ordersRepository.findAllByOrderByCreatedAtDesc(pageable);
 
         return ordersPage.map(order -> {
-
             List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(order.getId());
-
             return OrdersMapper.toOrdersSearchResponse(order, orderProducts);
         });
-
-
     }
 
     @Transactional(readOnly = true)
@@ -72,10 +63,10 @@ public class OrdersService {
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
 
         return OrdersMapper.toOrderDetailResponse(findOrder, products, calculateQuantity(products),
-            calculdateTotalPrice(products));
+            calculateTotalPrice(products));
     }
 
-    private static int calculdateTotalPrice(List<OrderProduct> products) {
+    private static int calculateTotalPrice(List<OrderProduct> products) {
         return products.stream()
             .mapToInt(op -> op.getPrice() * op.getQuantity())
             .sum();
@@ -89,19 +80,17 @@ public class OrdersService {
 
     @Transactional
     public void updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest) {
-
         Orders findOrder = ordersRepository.findById(orderId)
             .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
 
-        OrdersValidator.validateUpdateable(findOrder.getOrderStatus());
-        findOrder.updateOrder(orderUpdateRequest);
+        OrdersValidator.validateUpdatable(findOrder.getOrderStatus());
 
+        findOrder.updateOrder(orderUpdateRequest);
         ordersRepository.save(findOrder);
     }
 
     @Transactional
     public void cancelOrder(Long orderId) {
-
         Orders findOrder = getOrderById(orderId);
 
         OrdersValidator.validateCancelable(findOrder.getOrderStatus());
@@ -124,8 +113,8 @@ public class OrdersService {
             .sum();
 
         createOrders.updateTotalPrice(totalPrice);
-        ordersRepository.save(createOrders);
         orderProductRepository.saveAll(orderProducts);
+
         return OrdersMapper.toCreateOrdersResponse(createOrders);
     }
 
@@ -143,6 +132,7 @@ public class OrdersService {
             .map(dto -> {
                 Product product = productRepository.findById(dto.getId())
                     .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
+
                 return OrderProductMapper.fromCreateOrdersProductDto(dto, order, product);
             })
             .toList();
@@ -153,5 +143,4 @@ public class OrdersService {
         ordersRepository.updateOrdersStatusByOrderStatus(OrderStatus.PROCESSING,
             OrderStatus.COMPLETED);
     }
-
 }

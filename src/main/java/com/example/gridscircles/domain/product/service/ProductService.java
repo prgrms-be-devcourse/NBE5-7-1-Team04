@@ -1,10 +1,10 @@
 package com.example.gridscircles.domain.product.service;
 
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
+import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
-import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import com.example.gridscircles.domain.product.util.mapper.ProductMapper;
@@ -27,26 +27,20 @@ public class ProductService {
 
     @Transactional
     public Product saveProduct(ProductCreateRequest productCreateRequest) {
-
         Product product = ProductMapper.productCreateRequestToEntity(productCreateRequest);
-
         return productRepository.save(product);
-
     }
 
     @Transactional(readOnly = true)
-    public ProductResponse findProductById (Long id){
-
+    public ProductResponse findProductById(Long id) {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
 
         return ProductMapper.entityToProductResponse(product);
-
     }
 
     @Transactional
-    public void deleteProductById(Long id){
-
+    public void deleteProductById(Long id) {
         productRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "))
             .deleted();
@@ -54,33 +48,29 @@ public class ProductService {
 
     @Transactional
     public void updateProduct(ProductUpdateRequest productUpdateRequest) {
-
-        Product originProduct =  productRepository.findById(productUpdateRequest.getId())
+        Product originProduct = productRepository.findById(productUpdateRequest.getId())
             .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
+        byte[] decodeImage;
 
-        byte [] decodeImage;
-
-        try{
-            if (productUpdateRequest.getFile().isEmpty()){
-                decodeImage = Base64.getDecoder().decode(productUpdateRequest.getBase64EncodeImage());
-            }else{
+        try {
+            if (productUpdateRequest.getFile().isEmpty()) {
+                decodeImage = Base64.getDecoder()
+                    .decode(productUpdateRequest.getBase64EncodeImage());
+            } else {
                 decodeImage = productUpdateRequest.getFile().getBytes();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        originProduct.updateProduct(productUpdateRequest,decodeImage);
-
+        originProduct.updateProduct(productUpdateRequest, decodeImage);
     }
-
 
     // 특정 상품명에 따른 상품 조회 (관리자/이미지X)
     @Transactional(readOnly = true)
     public Page<Product> readProductByName(String productName, Pageable pageable) {
-        Page<Product> resultProducts = productRepository.findNonDeletedProductsByName(
-            productName, pageable);
-        if (!resultProducts.hasContent()){
+        Page<Product> resultProducts = productRepository.findNonDeletedProductsByName(productName,
+            pageable);
+        if (!resultProducts.hasContent()) {
             throw new NoSuchElementException("상품을 찾을 수 없습니다.");
         }
         return resultProducts;
@@ -90,15 +80,12 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductSearchResponse> readAllProducts(Pageable pageable) {
         Page<Product> productPage = productRepository.findNonDeletedProducts(pageable);
-
         return productPage.map(ProductMapper::toProductSearchResponse);
-
     }
 
     @Transactional(readOnly = true)
     public Page<ProductListResponse> getAllProductsWithImage(Pageable pageable) {
         Page<Product> productPage = productRepository.findAll(pageable);
-
         return ProductMapper.toProductListResponse(productPage);
     }
 }

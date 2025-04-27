@@ -13,8 +13,7 @@ public class OrderProductMapper {
     public static OrderProduct fromCreateOrdersProductDto(
         CreateOrdersProductDto dto,
         Orders orders,
-        Product product
-    ) {
+        Product product) {
         return OrderProduct.builder()
             .orders(orders)
             .product(product)

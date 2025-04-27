@@ -17,15 +17,12 @@ import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
-import java.util.List;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -46,7 +43,6 @@ class OrderServiceTests {
     @Test
     @DisplayName("주문 상세 조회 테스트 - 여러 상품")
     void test_find_orderDetails_multipleProducts() throws Exception {
-
         // given: 두 개의 상품 생성 및 저장
         byte[] dummyImage1 = "dummy-image-1".getBytes();
         byte[] dummyImage2 = "dummy-image-2".getBytes();
@@ -59,6 +55,7 @@ class OrderServiceTests {
             .contentType("image/jpeg")
             .image(dummyImage1)
             .build();
+
         Product product2 = Product.builder()
             .name("사바하 커피2")
             .price(1500)
@@ -67,6 +64,7 @@ class OrderServiceTests {
             .contentType("image/jpeg")
             .image(dummyImage2)
             .build();
+
         productRepository.save(product1);
         productRepository.save(product2);
 
@@ -87,15 +85,16 @@ class OrderServiceTests {
             .quantity(2)
             .orders(order)
             .build();
+
         OrderProduct op2 = OrderProduct.builder()
             .product(product2)
             .price(product2.getPrice())
             .quantity(3)
             .orders(order)
             .build();
+
         orderProductRepository.save(op1);
         orderProductRepository.save(op2);
-
         // when
         OrderDetailResponse response = ordersService.getOrderDetail(order.getId());
 
@@ -105,12 +104,10 @@ class OrderServiceTests {
         assertThat(response.getOrderProducts())
             .extracting(OrderProductDetailResponse::getProductName)
             .containsExactlyInAnyOrder("사바하 커피1", "사바하 커피2");
-
         // 총 수량 = 2 + 3 = 5
         assertThat(response.getTotalQuantity()).isEqualTo(5);
         // 총 가격 = (1000 * 2) + (1500 * 3) = 2000 + 4500 = 6500
         assertThat(response.getTotalPrice()).isEqualTo(6500);
-
         assertThat(response.getAddress()).isEqualTo("서울");
         assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.PROCESSING);
     }
@@ -119,20 +116,17 @@ class OrderServiceTests {
     @DisplayName("주문 상세 조회 테스트 - 존재하지 않는 주문 ID 예외 발생")
     void test_find_orderDetails_nonExistingOrder_throwsException() {
         Long nonExistingOrderId = 999L;
-
         // when, then
         OrderNotFoundException ex = assertThrows(
             OrderNotFoundException.class,
             () -> ordersService.getOrderDetail(nonExistingOrderId)
         );
-
         assertThat(ex.getMessage()).isEqualTo("주문 정보를 조회할 수 없습니다.");
     }
 
     @Test
     @DisplayName("주문 수정 테스트")
     void test_updateOrder() {
-
         // given: 주문 생성
         Orders order = Orders.builder()
             .email("Yuhan@example.com")
@@ -147,10 +141,8 @@ class OrderServiceTests {
             .address("서울특별시 용산구 사바하아파트 444동 444호")
             .zipcode("12345")
             .build();
-
         // when
         ordersService.updateOrder(order.getId(), updateDto);
-
         // then
         Orders updated = ordersRepository.findById(order.getId())
             .orElseThrow();
@@ -170,10 +162,8 @@ class OrderServiceTests {
             .orderStatus(OrderStatus.PROCESSING)
             .build();
         ordersRepository.save(order);
-
         // when: 주문 취소
         ordersService.cancelOrder(order.getId());
-
         // then: 주문 취소 상태 확인
         Orders canceledOrder = ordersRepository.findById(order.getId()).orElseThrow();
         assertThat(canceledOrder.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
@@ -187,7 +177,6 @@ class OrderServiceTests {
         @Test
         @DisplayName("특정 주문 ID로 주문 목록 조회 테스트 (관리자)")
         void test_readOrderById() throws Exception {
-
             // given
             byte[] dummyImage1 = "dummy-image-1".getBytes();
 
@@ -220,34 +209,24 @@ class OrderServiceTests {
             orderProductRepository.save(op2);
 
             Long orderId = order.getId();
-
             // when
             OrdersSearchResponse response = ordersService.readOrderById(orderId);
-
             // then
-
             assertThat(response.getOrderId()).isEqualTo(orderId);
             assertThat(response.getProducts()).hasSize(1);
             assertThat(response.getProducts().get(0).getProductName()).isEqualTo("사바하 커피1");
             assertThat(response.getProducts().get(0).getQuantity()).isEqualTo(2);
-
-
         }
 
         @Test
         @DisplayName("존재하지 않는 주문 ID로 주문 목록 조회 시 예외 발생 테스트 (관리자)")
         void test_readOrderById_notFound() throws Exception {
-
             // given
             Long nonExistentOrderId = 99999L; // 존재하지 않는 주문 ID
-
             // when & then
             assertThatThrownBy(() -> ordersService.readOrderById(nonExistentOrderId))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("해당 주문은 존재 하지 않습니다.");
-
         }
-
     }
-
 }

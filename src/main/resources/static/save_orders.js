@@ -24,6 +24,7 @@ function addToCart(button) {
 
     const cartProductHTML = document.createElement('div');
     cartProductHTML.setAttribute('id', `cart-item-${id}`); // 삭제할 때 필요
+
     cartProductHTML.innerHTML = `
       <div class="row align-items-center mb-2">
         <div class="col-6">
@@ -40,8 +41,7 @@ function addToCart(button) {
   }
 
   document.getElementById(
-      'totalPrice').innerText = calculateTotalAmount().toLocaleString()
-      + '원';
+      'totalPrice').innerText = calculateTotalAmount().toLocaleString() + '원';
 }
 
 function updateQuantity(id, price) {
@@ -57,9 +57,7 @@ function updateQuantity(id, price) {
     input.value = 999;
     newQuantity = 999;
   }
-
   cart.set(id, {quantity: newQuantity, price: price});
-
   // 총 금액 수정
   document.getElementById(
       'totalPrice').innerText = calculateTotalAmount().toLocaleString() + '원';
@@ -67,13 +65,11 @@ function updateQuantity(id, price) {
 
 function removeFromCart(id) {
   cart.delete(id);
-
   // UI에서도 삭제
   const cartItem = document.getElementById(`cart-item-${id}`);
   if (cartItem) {
     cartItem.remove();
   }
-
   // 총 금액 업데이트
   document.getElementById(
       'totalPrice').innerText = calculateTotalAmount().toLocaleString()
@@ -131,7 +127,6 @@ async function payment() {
         "주문이 완료되었습니다!\n" +
         "당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다."
     );
-
     window.location.replace("/orders/" + data.ordersId);
   });
 }
@@ -144,7 +139,6 @@ function checkForm() {
   const paymentButton = document.getElementById("paymentButton");
 
   let isValid = true;
-
   // 이메일 유효성 검사
   if (!email.value || !email.checkValidity()) {
     email.classList.add("is-invalid");
@@ -178,7 +172,6 @@ function checkForm() {
     cartError.classList.remove("is-invalid");
     cartError.style.display = "none";
   }
-
   // 폼이 유효하면 결제 버튼 활성화
   paymentButton.disabled = !isValid;
 }

@@ -37,5 +37,4 @@ public class ProductCreateRequest {
         this.price = price;
         this.file = file;
     }
-
 }
