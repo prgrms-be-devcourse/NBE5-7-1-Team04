@@ -20,8 +20,7 @@ public class OrdersMapper {
         Orders order,
         List<OrderProduct> products,
         int totalQuantity,
-        int totalPrice
-    ) {
+        int totalPrice) {
         List<OrderProductDetailResponse> orderProducts = products.stream()
             .map(OrdersMapper::toOrderProductDetailResponse)
             .toList();
@@ -62,7 +61,6 @@ public class OrdersMapper {
             .build();
     }
 
-    // 주문 조회(관리자용)
     public static OrdersSearchResponse toOrdersSearchResponse(Orders order,
         List<OrderProduct> orderProducts) {
         List<OrderProductDetailResponse> productInfoList = orderProducts.stream()
@@ -80,6 +78,4 @@ public class OrdersMapper {
             .products(productInfoList)
             .build();
     }
-
-
 }

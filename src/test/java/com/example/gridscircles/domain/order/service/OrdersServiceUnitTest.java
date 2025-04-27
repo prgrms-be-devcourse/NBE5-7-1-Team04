@@ -30,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class OrdersServiceUnitTest {
+
     @Mock
     private OrdersRepository ordersRepository;
 
@@ -45,6 +46,7 @@ class OrdersServiceUnitTest {
     @Nested
     @DisplayName("주문 생성 테스트")
     class saveOrders {
+
         @Test
         @DisplayName("성공")
         void order_success() {
@@ -64,15 +66,12 @@ class OrdersServiceUnitTest {
                 .price(100)
                 .build();
 
-
             Orders orders = OrdersMapper.fromCreateOrdersRequest(createOrdersRequest);
 
             when(productRepository.findById(any())).thenReturn(Optional.of(dummyProduct));
             when(ordersRepository.save(any())).thenReturn(orders);
-
             // when
             CreateOrdersResponse response = ordersService.saveOrders(createOrdersRequest);
-
             // then
             assertNotNull(response);
             assertThat(response.getOrdersId()).isEqualTo(orders.getId());
@@ -93,16 +92,11 @@ class OrdersServiceUnitTest {
                     new CreateOrdersProductDto(1L, 100)
                 )
             );
-
             when(productRepository.findById(any())).thenReturn(Optional.empty());
-
             // when & then
             assertThatThrownBy(() -> ordersService.saveOrders(createOrdersRequest))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("존재하지 않는 상품입니다.");
         }
     }
-
-
-
 }

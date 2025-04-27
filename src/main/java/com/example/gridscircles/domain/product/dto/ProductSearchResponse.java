@@ -19,7 +19,7 @@ public class ProductSearchResponse {
 
     @Builder
     public ProductSearchResponse(Long id, String name, String description,
-        Integer price, String del_yn,Category category) {
+        Integer price, String del_yn, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -27,6 +27,4 @@ public class ProductSearchResponse {
         this.del_yn = del_yn;
         this.category = category;
     }
-
-
 }

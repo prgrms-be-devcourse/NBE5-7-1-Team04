@@ -13,7 +13,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -33,9 +32,9 @@ class ProductServiceTests {
     @Test
     @DisplayName("상품 등록 테스트")
     void saveProductTest() throws Exception {
-
         MockMultipartFile mockFile =
-            new MockMultipartFile("image_name","origin_image.jpg" ,"image/jpeg", "image.jpg".getBytes());
+            new MockMultipartFile("image_name", "origin_image.jpg", "image/jpeg",
+                "image.jpg".getBytes());
 
         ProductCreateRequest productCreateRequest = ProductCreateRequest.builder()
             .name("상품명")
@@ -59,38 +58,9 @@ class ProductServiceTests {
     @Test
     @DisplayName("상품 상세 조회 테스트")
     void findByIdProductTest() throws Exception {
-
         MockMultipartFile mockFile =
-            new MockMultipartFile("image_name","origin_image.jpg" ,"image/jpeg", "image.jpg".getBytes());
-
-        Product product = Product.builder()
-                            .name("상품명")
-                            .description("상품설명")
-                            .price(1000)
-                            .category(Category.DRINK)
-                            .image(mockFile.getBytes())
-                            .contentType(mockFile.getContentType())
-                            .del_yn("N")
-                            .build();
-
-        productRepository.save(product);
-
-        ProductResponse productResponse = productService.findProductById(product.getId());
-
-        assertThat(productResponse.getName()).isEqualTo(product.getName());
-        assertThat(productResponse.getDescription()).isEqualTo(product.getDescription());
-        assertThat(productResponse.getPrice()).isEqualTo("1,000");
-        assertThat(productResponse.getCategory()).isEqualTo(product.getCategory());
-        assertThat(productResponse.getBase64EncodeImage()).isEqualTo(Base64.getEncoder().encodeToString(product.getImage()));
-        assertThat(productResponse.getContentType()).isEqualTo(product.getContentType());
-    }
-
-    @Test
-    @DisplayName("상품 삭제 테스트")
-    void deleteProductByIdTest() throws Exception {
-
-        MockMultipartFile mockFile =
-            new MockMultipartFile("image_name","origin_image.jpg" ,"image/jpeg", "image.jpg".getBytes());
+            new MockMultipartFile("image_name", "origin_image.jpg", "image/jpeg",
+                "image.jpg".getBytes());
 
         Product product = Product.builder()
             .name("상품명")
@@ -101,7 +71,35 @@ class ProductServiceTests {
             .contentType(mockFile.getContentType())
             .del_yn("N")
             .build();
+        productRepository.save(product);
 
+        ProductResponse productResponse = productService.findProductById(product.getId());
+
+        assertThat(productResponse.getName()).isEqualTo(product.getName());
+        assertThat(productResponse.getDescription()).isEqualTo(product.getDescription());
+        assertThat(productResponse.getPrice()).isEqualTo("1,000");
+        assertThat(productResponse.getCategory()).isEqualTo(product.getCategory());
+        assertThat(productResponse.getBase64EncodeImage()).isEqualTo(
+            Base64.getEncoder().encodeToString(product.getImage()));
+        assertThat(productResponse.getContentType()).isEqualTo(product.getContentType());
+    }
+
+    @Test
+    @DisplayName("상품 삭제 테스트")
+    void deleteProductByIdTest() throws Exception {
+        MockMultipartFile mockFile =
+            new MockMultipartFile("image_name", "origin_image.jpg", "image/jpeg",
+                "image.jpg".getBytes());
+
+        Product product = Product.builder()
+            .name("상품명")
+            .description("상품설명")
+            .price(1000)
+            .category(Category.DRINK)
+            .image(mockFile.getBytes())
+            .contentType(mockFile.getContentType())
+            .del_yn("N")
+            .build();
         productRepository.save(product);
 
         productService.deleteProductById(product.getId());
@@ -127,7 +125,6 @@ class ProductServiceTests {
         @Test
         @DisplayName("상품 수정 테스트- 이미지 업로드 x")
         void updateProductTestWithoutImage() throws Exception {
-
             MockMultipartFile mockFile =
                 new MockMultipartFile("image_name", "origin_image.jpg", "image/jpeg",
                     "image.jpg".getBytes());
@@ -141,10 +138,10 @@ class ProductServiceTests {
                 .contentType(mockFile.getContentType())
                 .del_yn("N")
                 .build();
-
             productRepository.save(product);
 
-            MockMultipartFile emptyFile = new MockMultipartFile("file", "", "image/jpeg", new byte[0]);
+            MockMultipartFile emptyFile = new MockMultipartFile("file", "", "image/jpeg",
+                new byte[0]);
 
             ProductUpdateRequest productUpdateRequest = ProductUpdateRequest.builder()
                 .id(product.getId())
@@ -156,7 +153,6 @@ class ProductServiceTests {
                 .base64EncodeImage(Base64.getEncoder().encodeToString(emptyFile.getBytes()))
                 .contentType(emptyFile.getContentType())
                 .build();
-
             productService.updateProduct(productUpdateRequest);
 
             Optional<Product> optionalProduct = productRepository.findById(product.getId());
@@ -167,17 +163,18 @@ class ProductServiceTests {
             assertThat(updatedProduct.getName()).isEqualTo(productUpdateRequest.getName());
             assertThat(updatedProduct.getCategory()).isEqualTo(productUpdateRequest.getCategory());
             assertThat(updatedProduct.getPrice()).isEqualTo(2000);
-            assertThat(updatedProduct.getDescription()).isEqualTo(productUpdateRequest.getDescription());
-            assertThat(updatedProduct.getImage()).isEqualTo(Base64.getDecoder().decode(productUpdateRequest.getBase64EncodeImage()));
-            assertThat(updatedProduct.getContentType()).isEqualTo(productUpdateRequest.getContentType());
+            assertThat(updatedProduct.getDescription()).isEqualTo(
+                productUpdateRequest.getDescription());
+            assertThat(updatedProduct.getImage()).isEqualTo(
+                Base64.getDecoder().decode(productUpdateRequest.getBase64EncodeImage()));
+            assertThat(updatedProduct.getContentType()).isEqualTo(
+                productUpdateRequest.getContentType());
             assertThat(updatedProduct.getDel_yn()).isEqualTo("N");
-
         }
 
         @Test
         @DisplayName("상품 수정 테스트 - 이미지 업로드 o")
         void updateProductTestWithImage() throws Exception {
-
             MockMultipartFile mockFile =
                 new MockMultipartFile("image_name", "origin_image.jpg", "image/jpeg",
                     "image.jpg".getBytes());
@@ -191,12 +188,10 @@ class ProductServiceTests {
                 .contentType(mockFile.getContentType())
                 .del_yn("N")
                 .build();
-
             productRepository.save(product);
 
-            MockMultipartFile updatedFile =
-                new MockMultipartFile("updated_name", "updated_image.png", "image/png",
-                    "image.jpg".getBytes() );
+            MockMultipartFile updatedFile = new MockMultipartFile("updated_name",
+                "updated_image.png", "image/png", "image.jpg".getBytes());
 
             ProductUpdateRequest productUpdateRequest = ProductUpdateRequest.builder()
                 .id(product.getId())
@@ -208,7 +203,6 @@ class ProductServiceTests {
                 .base64EncodeImage(Base64.getEncoder().encodeToString(mockFile.getBytes()))
                 .contentType(mockFile.getContentType())
                 .build();
-
             productService.updateProduct(productUpdateRequest);
 
             Optional<Product> optionalProduct = productRepository.findById(product.getId());
@@ -219,11 +213,13 @@ class ProductServiceTests {
             assertThat(updatedProduct.getName()).isEqualTo(productUpdateRequest.getName());
             assertThat(updatedProduct.getCategory()).isEqualTo(productUpdateRequest.getCategory());
             assertThat(updatedProduct.getPrice()).isEqualTo(2000);
-            assertThat(updatedProduct.getDescription()).isEqualTo(productUpdateRequest.getDescription());
-            assertThat(updatedProduct.getImage()).isEqualTo(productUpdateRequest.getFile().getBytes());
-            assertThat(updatedProduct.getContentType()).isEqualTo(productUpdateRequest.getFile().getContentType());
+            assertThat(updatedProduct.getDescription()).isEqualTo(
+                productUpdateRequest.getDescription());
+            assertThat(updatedProduct.getImage()).isEqualTo(
+                productUpdateRequest.getFile().getBytes());
+            assertThat(updatedProduct.getContentType()).isEqualTo(
+                productUpdateRequest.getFile().getContentType());
             assertThat(updatedProduct.getDel_yn()).isEqualTo("N");
         }
     }
-
 }

@@ -2,9 +2,7 @@ package com.example.gridscircles.domain.product.controller;
 
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
-import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.service.ProductService;
-import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,14 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
+
     private final ProductService productService;
 
     @GetMapping
     public String viewListProducts(
         Model model,
         @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size
-    ) {
+        @RequestParam(defaultValue = "5") int size) {
         Page<ProductListResponse> responseDtoPage
             = productService.getAllProductsWithImage(PageRequest.of(page, size));
 
@@ -43,12 +41,11 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public String findProductById(@PathVariable Long productId, Model model) {
-
         ProductResponse findProduct = productService.findProductById(productId);
 
         model.addAttribute("productResponse", findProduct);
         model.addAttribute("isAdmin", false);
 
-        return "view_find_products";
+        return "admin/view_find_products";
     }
 }

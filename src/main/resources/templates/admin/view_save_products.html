@@ -68,44 +68,47 @@
     }
   </style>
 </head>
-<body>
 
+<body>
 <div class="form-wrapper">
   <h2 th:text="${isNew} ? '상품 등록' : '상품 수정'">상품 등록</h2>
 
-  <form  th:action="${isNew} ? @{/admin/products} : @{/admin/products/{id}(id=${productForm.id})}"
-         th:object="${productForm}"
-         method="post" enctype="multipart/form-data">
+  <form th:action="${isNew} ? @{/admin/products} : @{/admin/products/{id}(id=${productForm.id})}"
+        th:object="${productForm}"
+        method="post" enctype="multipart/form-data">
     <div th:if="${!isNew}">
-      <input type="hidden" id="productId"  th:value="${productForm.id}" name="id"  />
-      <input type="hidden" name="base64EncodeImage" th:value="${productForm.base64EncodeImage}" />
-      <input type="hidden" name="contentType" th:value="${productForm.contentType}" />
+      <input type="hidden" id="productId" th:value="${productForm.id}" name="id"/>
+      <input type="hidden" name="base64EncodeImage" th:value="${productForm.base64EncodeImage}"/>
+      <input type="hidden" name="contentType" th:value="${productForm.contentType}"/>
     </div>
     <table>
       <tr>
         <td>상품명</td>
         <td>
-          <input type="text" name="name" th:field="*{name}" />
-          <div id="nameError" class="errorMsg" th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="padding-top:5px;color:red">
+          <input type="text" name="name" th:field="*{name}"/>
+          <div id="nameError" class="errorMsg" th:if="${#fields.hasErrors('name')}"
+               th:errors="*{name}" style="padding-top:5px;color:red">
           </div>
         </td>
       </tr>
       <tr>
         <td>카테고리</td>
         <td>
-          <select name="category" th:field="*{category}" >
+          <select name="category" th:field="*{category}">
             <option th:each="category : ${categories}"
                     th:value="${category}"
                     th:text="${category}"></option>
           </select>
-          <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}" style="color:red"></div>
+          <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}"
+               style="color:red"></div>
         </td>
       </tr>
       <tr>
         <td>상품 설명</td>
         <td>
           <input type="text" name="description" th:value="${productForm.description}"/>
-          <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" style="padding-top:5px;color:red"></div>
+          <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+               style="padding-top:5px;color:red"></div>
         </td>
       </tr>
       <tr>
@@ -115,9 +118,10 @@
                    oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');"
                    name="price"
                    style="width: 70%; margin-right: 5px;"
-                   th:value="${productForm.price}" />
+                   th:value="${productForm.price}"/>
           <span>원</span>
-          <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" style="padding-top:5px;color:red"></div>
+          <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"
+               style="padding-top:5px;color:red"></div>
         </td>
       </tr>
       <tr>
@@ -125,21 +129,26 @@
         <td>
           <div th:if="${!isNew}">
             <div th:if="${productForm.base64EncodeImage != null}">
-              <img id="productImage" th:src="'data:' + ${productForm.contentType} + ';base64,'  + ${productForm.base64EncodeImage}" alt="이미지" width="200px"><br>
+              <img id="productImage"
+                   th:src="'data:' + ${productForm.contentType} + ';base64,'  + ${productForm.base64EncodeImage}"
+                   alt="이미지" width="200px"><br>
             </div>
           </div>
           <input type="file" name="file" id="fileInput"/>
           <p id="fileNameDisplay"></p>
-          <p th:if="${imageReuploadNotice}" th:text="${imageReuploadNotice}" style="color:blue;"></p>
+          <p th:if="${imageReUploadNotice}" th:text="${imageReUploadNotice}"
+             style="color:blue;"></p>
 
-          <div th:if="${isNew and #fields.hasErrors('file')}" th:errors="*{file}" style="color:red"></div>
+          <div th:if="${isNew and #fields.hasErrors('file')}" th:errors="*{file}"
+               style="color:red"></div>
         </td>
       </tr>
     </table>
 
     <div class="button-group">
-      <button type="button" th:onclick="|window.location.href='@{/admin/products/list}'|">목록으로</button>
-      <button type="submit" >
+      <button type="button" th:onclick="|window.location.href='@{/admin/products/list}'|">목록으로
+      </button>
+      <button type="submit">
         <span th:text="${isNew} ? '상품 등록' : '상품 수정'"></span>
       </button>
     </div>

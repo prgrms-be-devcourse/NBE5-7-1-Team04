@@ -42,7 +42,7 @@ public class Product extends BaseEntity {
     private Integer price;
 
     @Lob
-    @Column(columnDefinition = "LONGBLOB" ,nullable = false)
+    @Column(columnDefinition = "LONGBLOB", nullable = false)
     private byte[] image;
 
     @Column(nullable = false)
@@ -51,34 +51,54 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private String del_yn;
 
-    public void deleted(){
+    public void deleted() {
         this.del_yn = "Y";
     }
 
-    public void updateProduct(ProductUpdateRequest productUpdateRequest , byte [] image) {
+    public void updateProduct(ProductUpdateRequest productUpdateRequest, byte[] image) {
+        int formatPrice = Integer.parseInt(productUpdateRequest.getPrice().replace(",", ""));
 
-        int formatPrice =
-            Integer.parseInt(productUpdateRequest.getPrice().replace(",",""));
+        updateNameIfChanged(productUpdateRequest.getName());
+        updateCategoryIfChanged(productUpdateRequest.getCategory());
+        updateDescriptionIfChanged(productUpdateRequest.getDescription());
+        updatePriceIfChanged(formatPrice);
+        updateImageIfChanged(image);
+        updateContentTypeIfChanged(productUpdateRequest.getFile().getContentType());
+    }
 
-        if(!Objects.equals(this.name, productUpdateRequest.getName())) {
-            this.name = productUpdateRequest.getName();
+    private void updateNameIfChanged(String newName) {
+        if (!Objects.equals(this.name, newName)) {
+            this.name = newName;
         }
-        if(this.category != productUpdateRequest.getCategory() ){
-            this.category = productUpdateRequest.getCategory();
-        }
-        if(!Objects.equals(this.description, productUpdateRequest.getDescription())) {
-            this.description = productUpdateRequest.getDescription();
-        }
-        if (!Objects.equals(this.price, formatPrice)) {
-            this.price = formatPrice;
-        }
+    }
 
-        if (!Arrays.equals(this.image, image)) {
-            this.image = image;
+    private void updateCategoryIfChanged(Category newCategory) {
+        if (this.category != newCategory) {
+            this.category = newCategory;
         }
+    }
 
-        if(!Objects.equals(this.contentType, productUpdateRequest.getFile().getContentType())) {
-            this.contentType = productUpdateRequest.getFile().getContentType();
+    private void updateDescriptionIfChanged(String newDescription) {
+        if (!Objects.equals(this.description, newDescription)) {
+            this.description = newDescription;
+        }
+    }
+
+    private void updatePriceIfChanged(Integer newPrice) {
+        if (!Objects.equals(this.price, newPrice)) {
+            this.price = newPrice;
+        }
+    }
+
+    private void updateImageIfChanged(byte[] newImage) {
+        if (!Arrays.equals(this.image, newImage)) {
+            this.image = newImage;
+        }
+    }
+
+    private void updateContentTypeIfChanged(String newContentType) {
+        if (!Objects.equals(this.contentType, newContentType)) {
+            this.contentType = newContentType;
         }
     }
 

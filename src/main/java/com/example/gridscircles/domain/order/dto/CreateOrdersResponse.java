@@ -8,5 +8,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class CreateOrdersResponse {
+
     private Long ordersId;
 }

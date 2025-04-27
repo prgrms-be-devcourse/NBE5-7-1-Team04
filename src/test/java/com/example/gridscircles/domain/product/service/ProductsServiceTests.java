@@ -1,8 +1,8 @@
 package com.example.gridscircles.domain.product.service;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
@@ -75,25 +75,17 @@ public class ProductsServiceTests {
             // then
             assertThat(result.getTotalElements()).isEqualTo(2);
             assertThat(result.getContent()).hasSize(2);
-
         }
 
         @Test
         @DisplayName("존재하지 않는 상품명인 경우 예외 처리")
-        void test_readProductByName_notFound () throws Exception {
-
-
+        void test_readProductByName_notFound() throws Exception {
             String nonExistentProductName = "없는상품";
-
             // when & then: 상품명을 조회했을 때 예외 발생
-            assertThatThrownBy(() -> productService.readProductByName(nonExistentProductName, PageRequest.of(0, 2)))
+            assertThatThrownBy(() -> productService.readProductByName(nonExistentProductName,
+                PageRequest.of(0, 2)))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining("상품을 찾을 수 없습니다.");
-        
         }
-        
-        
     }
-
-
 }

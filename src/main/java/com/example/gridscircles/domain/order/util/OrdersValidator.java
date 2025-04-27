@@ -12,7 +12,7 @@ public class OrdersValidator {
         }
     }
 
-    public static void validateUpdateable(OrderStatus status) {
+    public static void validateUpdatable(OrderStatus status) {
         if (isStatusCompletedOrCanceled(status)) {
             throw new OrderUpdateException("배송이 완료되거나 주문이 취소된 상태면 주문을 수정하실 수 없습니다.");
         }

@@ -3,7 +3,6 @@ package com.example.gridscircles.domain.product.dto;
 import com.example.gridscircles.domain.product.enums.Category;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class ProductResponse {

@@ -2,7 +2,6 @@ package com.example.gridscircles.domain.order.entity;
 
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.global.entity.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

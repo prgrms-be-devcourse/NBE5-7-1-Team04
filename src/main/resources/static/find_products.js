@@ -1,18 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-
   const deleteBtn = document.getElementById("deleteBtn");
 
-  deleteBtn.addEventListener('click', function(){
+  deleteBtn.addEventListener('click', function () {
     const id = document.getElementById("productId").value;
-
     deleteProduct(id);
-
   })
 });
 
 function deleteProduct(id) {
   if (confirm('정말 삭제하시겠습니까?')) {
-    fetch('/admin/products/'+id, {
+    fetch('/admin/products/' + id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

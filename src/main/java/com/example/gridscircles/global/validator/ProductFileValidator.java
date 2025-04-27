@@ -7,12 +7,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ProductFileValidator implements ConstraintValidator<ProductValidFile, MultipartFile> {
 
-    private static final long MAX_FILE_SIZE = 1 * 1024 * 1024; //1MB
+    private static final long MAX_FILE_SIZE = 1024 * 1024; //1MB
 
     @Override
     public boolean isValid(MultipartFile multipartFile,
         ConstraintValidatorContext constraintValidatorContext) {
-
-        return multipartFile!=null && !multipartFile.isEmpty();
+        return multipartFile != null && !multipartFile.isEmpty();
     }
 }

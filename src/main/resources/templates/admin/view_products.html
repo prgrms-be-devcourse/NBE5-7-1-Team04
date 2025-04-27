@@ -86,10 +86,9 @@
     }
   </style>
 </head>
+
 <body>
-
 <div class="container">
-
   <div th:if="${errorMessage != null}">
     <script th:inline="javascript">
       alert([[${errorMessage}]]);
@@ -127,13 +126,13 @@
     </thead>
     <tbody>
     <tr th:each="product : ${products_list}"
-        th:onclick="|location.href='/admin/products/${product.id}'|"
+        th:onclick="|location.href='/admin/products/${product.getId()}'|"
         style="cursor: pointer;">
-      <td th:text="${product.id}"></td>
-      <td th:text="${product.name}"></td>
-      <td th:text="${product.description}"></td>
-      <td th:text="${product.price}"></td>
-      <td th:text="${product.category}"></td>
+      <td th:text="${product.getId()}"></td>
+      <td th:text="${product.getName()}"></td>
+      <td th:text="${product.getDescription()}"></td>
+      <td th:text="${product.getPrice()}"></td>
+      <td th:text="${product.getCategory()}"></td>
     </tr>
     </tbody>
   </table>
@@ -166,8 +165,6 @@
          th:href="@{/admin/products/list(page=${totalPages - 1}, size=${pageSize})}">&raquo;</a>
     </div>
   </div>
-
 </div>
-
 </body>
 </html>

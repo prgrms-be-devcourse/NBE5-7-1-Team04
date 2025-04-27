@@ -42,7 +42,7 @@ public class OrdersController {
     }
 
     @GetMapping("/search")
-    public String searchForm() {
+    public String viewSearchForm() {
         return "email_form";
     }
 
@@ -86,7 +86,7 @@ public class OrdersController {
     }
 
     @GetMapping("/{orderId}/edit")
-    public String updateOrderForm(@PathVariable Long orderId, Model model) {
+    public String viewUpdateOrderForm(@PathVariable Long orderId, Model model) {
         OrderDetailResponse orderDetail = ordersService.getOrderDetail(orderId);
         model.addAttribute("orderDetail", orderDetail);
         return "view_update_order";
@@ -104,8 +104,7 @@ public class OrdersController {
     @ResponseBody
     public ResponseEntity<Void> updateOrder(
         @PathVariable Long orderId,
-        @Valid @RequestBody OrderUpdateRequest orderUpdateRequest
-    ) {
+        @Valid @RequestBody OrderUpdateRequest orderUpdateRequest) {
         ordersService.updateOrder(orderId, orderUpdateRequest);
         return ResponseEntity.noContent().build();
     }

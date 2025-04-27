@@ -20,5 +20,4 @@ public interface OrderProductRepository extends JpaRepository<OrderProduct, Long
     );
 
     List<OrderProduct> findByOrdersId(Long orderId);
-
 }
