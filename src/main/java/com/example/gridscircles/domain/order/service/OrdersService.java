@@ -120,7 +120,7 @@ public class OrdersService {
             createOrders);
 
         int totalPrice = orderProducts.stream()
-            .mapToInt(OrderProduct::getPrice)
+            .mapToInt(orderProduct -> orderProduct.getPrice() * orderProduct.getQuantity())
             .sum();
 
         createOrders.updateTotalPrice(totalPrice);
