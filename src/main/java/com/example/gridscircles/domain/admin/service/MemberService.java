@@ -1,7 +1,6 @@
 package com.example.gridscircles.domain.admin.service;
 
 import com.example.gridscircles.domain.admin.dto.MemberDetails;
-import com.example.gridscircles.domain.admin.entitiy.Member;
 import com.example.gridscircles.domain.admin.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +18,13 @@ public class MemberService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email)
+        return memberRepository.findByEmail(email)
+            .map(m -> MemberDetails.builder()
+                .email(m.getEmail())
+                .password(m.getPassword())
+                .role(m.getRole())
+                .build()
+            )
             .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
-        return new MemberDetails(member);
     }
 }
