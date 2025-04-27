@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="ko">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -159,6 +161,11 @@
             th:if="${orderDetail.getEditable()}">
           주문 취소
         </button>
+        <a sec:authorize="hasAuthority('ADMIN')"
+           th:href="@{/admin/orders/list}"
+           class="btn btn-dark bg-danger border-0">
+          관리자 주문 목록
+        </a>
       </div>
     </div>
   </div>
