@@ -109,7 +109,7 @@ public class AdminProductController {
             return "view_save_products";
         }
 
-        productService.updateProduct(productUpdateRequest, ProductId);
+        productService.updateProduct(productUpdateRequest);
 
         return "redirect:/admin/products/" + ProductId;
     }

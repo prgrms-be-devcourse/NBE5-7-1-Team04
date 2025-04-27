@@ -53,9 +53,9 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(ProductUpdateRequest productUpdateRequest, Long id) {
+    public void updateProduct(ProductUpdateRequest productUpdateRequest) {
 
-        Product originProduct =  productRepository.findById(id)
+        Product originProduct =  productRepository.findById(productUpdateRequest.getId())
             .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
 
         byte [] decodeImage;
@@ -72,7 +72,6 @@ public class ProductService {
 
         originProduct.updateProduct(productUpdateRequest,decodeImage);
 
-        return originProduct;
     }
 
 
