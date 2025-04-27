@@ -1,8 +1,8 @@
 package com.example.gridscircles.domain.product.entity;
 
+import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.global.entity.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +10,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import java.util.Arrays;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,16 +41,76 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private Integer price;
 
+    @Lob
+    @Column(columnDefinition = "LONGBLOB", nullable = false)
+    private byte[] image;
+
     @Column(nullable = false)
-    private String image;
+    private String contentType;
+
+    @Column(nullable = false)
+    private String del_yn;
+
+    public void deleted() {
+        this.del_yn = "Y";
+    }
+
+    public void updateProduct(ProductUpdateRequest productUpdateRequest, byte[] image) {
+        int formatPrice = Integer.parseInt(productUpdateRequest.getPrice().replace(",", ""));
+
+        updateNameIfChanged(productUpdateRequest.getName());
+        updateCategoryIfChanged(productUpdateRequest.getCategory());
+        updateDescriptionIfChanged(productUpdateRequest.getDescription());
+        updatePriceIfChanged(formatPrice);
+        updateImageIfChanged(image);
+        updateContentTypeIfChanged(productUpdateRequest.getFile().getContentType());
+    }
+
+    private void updateNameIfChanged(String newName) {
+        if (!Objects.equals(this.name, newName)) {
+            this.name = newName;
+        }
+    }
+
+    private void updateCategoryIfChanged(Category newCategory) {
+        if (this.category != newCategory) {
+            this.category = newCategory;
+        }
+    }
+
+    private void updateDescriptionIfChanged(String newDescription) {
+        if (!Objects.equals(this.description, newDescription)) {
+            this.description = newDescription;
+        }
+    }
+
+    private void updatePriceIfChanged(Integer newPrice) {
+        if (!Objects.equals(this.price, newPrice)) {
+            this.price = newPrice;
+        }
+    }
+
+    private void updateImageIfChanged(byte[] newImage) {
+        if (!Arrays.equals(this.image, newImage)) {
+            this.image = newImage;
+        }
+    }
+
+    private void updateContentTypeIfChanged(String newContentType) {
+        if (!Objects.equals(this.contentType, newContentType)) {
+            this.contentType = newContentType;
+        }
+    }
 
     @Builder
-    public Product(String name, Category category, String description, Integer price,
-        String image) {
+    public Product(String name, Category category, String description, Integer price, byte[] image,
+        String contentType, String del_yn) {
         this.name = name;
         this.category = category;
         this.description = description;
         this.price = price;
         this.image = image;
+        this.contentType = contentType;
+        this.del_yn = del_yn;
     }
 }

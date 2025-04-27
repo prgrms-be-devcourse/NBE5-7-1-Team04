@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 목록</title>
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f8f9fa;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-bar {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 8px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .search-bar button {
+      padding: 8px 12px;
+      background-color: #343a40;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f1f3f5;
+    }
+
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .pagination a {
+      min-width: 30px;
+      padding: 6px 10px;
+      margin: 0 2px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: black;
+    }
+
+    .pagination a.button {
+      background-color: #339af0;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <div th:if="${errorMessage != null}">
+    <script th:inline="javascript">
+      alert([[${errorMessage}]]);
+    </script>
+  </div>
+
+  <h2>상품 목록</h2>
+
+  <div class="search-bar">
+    <form th:action="@{/admin/products/list}" method="get">
+      <input type="text" name="productName" placeholder="상품명 입력">
+      <button type="submit">검색</button>
+      <button type="button" th:onclick="|location.href='@{/admin/products/new}'|">상품 등록</button>
+      <button type="button" th:onclick="|location.href='@{/admin/orders/list}'|">주문 내역</button>
+      <button
+          type="button"
+          onclick="document.getElementById('logoutForm').submit()"
+          style="margin-left: 5px; background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;"
+      >
+        로그아웃
+      </button>
+    </form>
+    <form id="logoutForm" th:action="@{/admin/logout}" method="post" style="display: none;"></form>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>상품 ID</th>
+      <th>상품명</th>
+      <th>설명</th>
+      <th>가격</th>
+      <th>카테고리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products_list}"
+        th:onclick="|location.href='/admin/products/${product.getId()}'|"
+        style="cursor: pointer;">
+      <td th:text="${product.getId()}"></td>
+      <td th:text="${product.getName()}"></td>
+      <td th:text="${product.getDescription()}"></td>
+      <td th:text="${product.getPrice()}"></td>
+      <td th:text="${product.getCategory()}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 데이터 없을 때 -->
+  <div th:if="${not hasData}" style="text-align: center; margin-top: 40px;">
+    <p>등록된 상품이 없습니다</p>
+  </div>
+
+  <!-- 페이징 영역 -->
+  <div class="pagination"
+       th:if="${hasData and totalPages > 1}">
+    <div style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;">
+      <a th:if="${currentPage > 0}"
+         th:href="@{/admin/products/list(page=0, size=${pageSize})}">&laquo;</a>
+      <a th:if="${currentPage > 0}"
+         th:href="@{/admin/products/list(page=${currentPage - 1}, size=${pageSize})}">&lt;</a>
+
+      <a th:each="i : ${#numbers.sequence(
+          totalPages <= 3 ? 0 : (currentPage <= 1 ? 0 : (currentPage + 1 >= totalPages ? totalPages - 3 : currentPage - 1)),
+          totalPages <= 3 ? (totalPages == 0 ? 0 : totalPages - 1) : (currentPage <= 1 ? 2 : (currentPage + 1 >= totalPages ? totalPages - 1 : currentPage + 1)))}"
+         th:href="@{/admin/products/list(page=${i}, size=${pageSize})}"
+         th:text="${i + 1}"
+         th:classappend="${i == currentPage} ? ' button' : ''"></a>
+
+
+      <a th:if="${currentPage < totalPages - 1}"
+         th:href="@{/admin/products/list(page=${currentPage + 1}, size=${pageSize})}">&gt;</a>
+      <a th:if="${currentPage < totalPages - 1}"
+         th:href="@{/admin/products/list(page=${totalPages - 1}, size=${pageSize})}">&raquo;</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

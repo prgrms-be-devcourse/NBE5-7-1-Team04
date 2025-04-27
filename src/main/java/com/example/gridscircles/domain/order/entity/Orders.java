@@ -1,8 +1,8 @@
 package com.example.gridscircles.domain.order.entity;
 
+import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import com.example.gridscircles.global.entity.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -49,5 +49,22 @@ public class Orders extends BaseEntity {
         this.zipcode = zipcode;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
+    }
+
+    public void updateStatusComplete() {
+        this.orderStatus = OrderStatus.COMPLETED;
+    }
+
+    public void updateOrder(OrderUpdateRequest orderUpdateRequest) {
+        this.address = orderUpdateRequest.getAddress();
+        this.zipcode = orderUpdateRequest.getZipcode();
+    }
+
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCELED;
+    }
+
+    public void updateTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

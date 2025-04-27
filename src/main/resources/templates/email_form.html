@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>주문 조회</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: #eeeeee;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 500px;
+    }
+
+    .form-container h1 {
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+
+    .form-container input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .form-container button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      cursor: pointer;
+      color: white;
+    }
+
+    .btn-submit {
+      background-color: #444444;
+    }
+
+    .btn-submit:hover {
+      background-color: #2f2f2f;
+    }
+
+    .btn-back {
+      background-color: #888888;
+    }
+
+    .btn-back:hover {
+      background-color: #666666;
+    }
+  </style>
+</head>
+
+<body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const error = document.getElementById("errorMessage");
+    if (error) {
+      setTimeout(() => {
+        error.style.display = 'none';
+      }, 3000); // 3초 후 메시지 숨김
+    }
+  });
+</script>
+
+<div class="form-container">
+  <h1>주문 내역 조회</h1>
+  <form th:action="@{/orders/email}" method="get">
+    <label for="email">이메일</label><br/>
+    <input type="email" id="email" name="email" required><br/>
+
+    <div class="button-group">
+      <button type="button" class="btn-back" onclick="location.href='/orders'">돌아가기</button>
+      <button type="submit" class="btn-submit">조회하기</button>
+    </div>
+  </form>
+  <p id="errorMessage" th:if="${error}" th:text="${error}" style="color:red;"></p>
+</div>
+</body>
+</html>

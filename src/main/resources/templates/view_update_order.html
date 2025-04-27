@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>주문 내역 수정</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+        crossorigin="anonymous">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+
+    .card {
+      margin: auto;
+      max-width: 950px;
+      width: 90%;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.19);
+      border-radius: 1rem;
+      border: none;
+    }
+
+    .summary {
+      background-color: #f8f9fa;
+      border-top-right-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+      color: #414141;
+    }
+
+    .row.no-gutters {
+      margin-right: 0;
+      margin-left: 0;
+    }
+
+    .btn-group .btn {
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 767px) {
+      .summary {
+        border-top-right-radius: unset;
+        border-bottom-left-radius: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="container-fluid">
+<div class="row justify-content-center my-4">
+  <h1 class="text-center">주문 내역 수정</h1>
+</div>
+
+<div class="card mb-4"
+     th:attr="data-order-id=${orderDetail.getId()}">
+  <div class="row no-gutters">
+    <div class="col-md-8 p-4">
+      <h5><b>상품 목록</b></h5>
+      <table class="table mt-3">
+        <thead>
+        <tr>
+          <th>상품</th>
+          <th>가격</th>
+          <th>수량</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="prod : ${orderDetail.getOrderProducts()}">
+          <td th:text="${prod.getProductName()}">상품명</td>
+          <td th:text="${prod.getPrice()} + '원'">10000원</td>
+          <td th:text="${prod.getQuantity()}">1</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td><b>총합계</b></td>
+          <td th:text="${orderDetail.getTotalPrice()} + '원'">20000원</td>
+          <td th:text="${orderDetail.getTotalQuantity()}">2</td>
+        </tr>
+        </tfoot>
+      </table>
+
+      <h5 class="mt-4"><b>배송지 수정</b></h5>
+      <table class="table">
+        <tbody>
+        <tr>
+          <th>수정할 주소</th>
+          <td>
+            <input type="text" class="form-control" name="address"
+                   th:value="${orderDetail.getAddress()}" id="address">
+          </td>
+        </tr>
+        <tr>
+          <th>수정할 우편번호</th>
+          <td>
+            <input type="text" class="form-control" name="zipcode"
+                   th:value="${orderDetail.getZipcode()}" id="zipcode">
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-end mt-3">
+        <button type="button" class="btn btn-dark" onclick="updateOrder()">주문 수정</button>
+      </div>
+    </div>
+
+    <div class="col-md-4 summary p-4 d-flex flex-column justify-content-between">
+      <div>
+        <h5><b>Summary</b></h5>
+        <hr>
+        <div class="mb-3">
+          <strong>총 상품 수량:</strong>
+          <span th:text="${orderDetail.getTotalQuantity()} + '개'">2개</span>
+        </div>
+        <div class="mb-3">
+          <strong>총 금액:</strong>
+          <span th:text="${orderDetail.getTotalPrice()} + '원'">20000원</span>
+        </div>
+      </div>
+      <div class="btn-group text-end">
+        <a th:href="@{/orders/email(email=${orderDetail.getEmail()})}"
+           class="btn btn-dark">
+          목록으로
+        </a>
+
+        <a th:if="${orderDetail.getEditable()}"
+           th:href="@{/orders/{orderId}/edit(orderId=${orderDetail.getId()})}"
+           class="btn btn-dark">
+          주문 수정
+        </a>
+
+        <button
+            type="button"
+            class="btn btn-dark"
+            onclick="cancelOrder()"
+            th:if="${orderDetail.getEditable()}">
+          주문 취소
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/update_order.js"></script>
+<script src="/cancel.js"></script>
+</body>
+</html>

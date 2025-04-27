@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>주문 내역</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 900px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .search-form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      gap: 10px;
+    }
+
+    .search-form input[type="number"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 200px;
+    }
+
+    .search-form button {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .search-form button:hover {
+      background-color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .order-status {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 0.25rem;
+    }
+
+    .order-status.PROCESSING {
+      background-color: #f0ad4e;
+    }
+
+    .order-status.COMPLETED {
+      background-color: #5cb85c;
+    }
+
+    .order-status.CANCELED {
+      background-color: #d9534f;
+    }
+
+    a.button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #444;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    a.button:hover {
+      background-color: #333;
+    }
+
+    .pagination a {
+      margin: 0 5px;
+      text-decoration: none;
+      color: #444;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    .pagination a.button {
+      background-color: #444;
+      color: white;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <h1 th:text="${email != null} ? ${email} + '님의 주문 내역' : '주문 내역'">주문 내역</h1>
+
+  <form class="search-form" th:action="@{/orders/orderId}" method="get">
+    <input type="number" name="orderId" placeholder="주문 ID" required>
+    <input type="hidden" name="email" th:value="${email}"/>
+    <button type="submit">조회</button>
+  </form>
+
+  <table>
+    <thead>
+    <tr>
+      <th>주문 ID</th>
+      <th>주소</th>
+      <th>우편번호</th>
+      <th>총 가격</th>
+      <th>주문 상태</th>
+      <th>주문일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}"
+        th:onclick="|location.href='/orders/${order.getId()}'|"
+        style="cursor: pointer;">
+
+      <td th:text="${order.getId()}"></td>
+      <td th:text="${order.getAddress()}"></td>
+      <td th:text="${order.getZipcode()}"></td>
+      <td th:text="${order.getTotalPrice()}"></td>
+      <td style="text-align: center; vertical-align: middle; padding: 4px 2px;">
+        <span th:class="'order-status ' + ${order.getOrderStatus()}"
+              th:text="${order.getOrderStatus()}"></span>
+      </td>
+      <td th:text="${order.getCreatedAt()}"></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination" th:if="${totalPages > 1}" style="text-align: center; margin-top: 20px;">
+    <div
+        style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
+
+      <!-- 첫 페이지로 이동 -->
+      <a th:href="@{/orders/email(email=${email}, page=0)}"
+         th:style="${currentPage > 0} ? 'visibility: visible; min-width: 30px;' : 'visibility: hidden; min-width: 30px;'"
+         style="text-align: center;">&laquo;</a>
+
+      <!-- 이전 페이지로 이동 -->
+      <a th:href="@{/orders/email(email=${email}, page=${currentPage - 1})}"
+         th:style="${currentPage > 0} ? 'visibility: visible; min-width: 30px;' : 'visibility: hidden; min-width: 30px;'"
+         style="text-align: center;">&lt;</a>
+
+      <!-- 페이지 번호 슬라이딩 -->
+      <a th:each="i : ${#numbers.sequence(
+            currentPage <= 2 ? 0 : (currentPage + 2 >= totalPages ? totalPages - 5 : currentPage - 2),
+            currentPage <= 2 ? (totalPages < 5 ? totalPages - 1 : 4) : (currentPage + 2 >= totalPages ? totalPages - 1 : currentPage + 2))}"
+         th:href="@{/orders/email(email=${email}, page=${i})}"
+         th:text="${i + 1}"
+         th:classappend="${i == currentPage} ? ' button' : ''"
+         style="min-width: 30px; text-align: center;"></a>
+
+      <!-- 다음 페이지로 이동 -->
+      <a th:href="@{/orders/email(email=${email}, page=${currentPage + 1})}"
+         th:style="${currentPage < totalPages - 1} ? 'visibility: visible; min-width: 30px;' : 'visibility: hidden; min-width: 30px;'"
+         style="text-align: center;">&gt;</a>
+
+      <!-- 마지막 페이지로 이동 -->
+      <a th:href="@{/orders/email(email=${email}, page=${totalPages - 1})}"
+         th:style="${currentPage < totalPages - 1} ? 'visibility: visible; min-width: 30px;' : 'visibility: hidden; min-width: 30px;'"
+         style="text-align: center;">&raquo;</a>
+
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <a th:if="${request == 'email'}" href="/orders/search" class="button">돌아가기</a>
+    <a th:if="${request == 'id'}" th:href="@{/orders/email(email=${email})}" class="button">돌아가기</a>
+  </div>
+</div>
+</body>
+</html>
