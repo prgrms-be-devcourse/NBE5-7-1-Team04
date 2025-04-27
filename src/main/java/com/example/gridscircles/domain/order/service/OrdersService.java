@@ -19,7 +19,6 @@ import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -121,7 +120,7 @@ public class OrdersService {
             createOrders);
 
         int totalPrice = orderProducts.stream()
-            .mapToInt(OrderProduct::getPrice)
+            .mapToInt(orderProduct -> orderProduct.getPrice() * orderProduct.getQuantity())
             .sum();
 
         createOrders.updateTotalPrice(totalPrice);

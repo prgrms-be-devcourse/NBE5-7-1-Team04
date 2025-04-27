@@ -118,8 +118,9 @@
   <title>주문하기</title>
 </head>
 <body class="container-fluid">
-<div class="row justify-content-center m-4">
-  <h1 class="text-center">Grids & Circle</h1>
+<div class="position-relative m-4" style="height: 60px;">
+  <h1 class="position-absolute top-50 start-50 translate-middle" style="margin: 0;">Grids & Circle</h1>
+  <button class="position-absolute top-50 end-0 translate-middle-y button" style="height: 40px;" onclick="location.href='/admin/login'">관리자 페이지</button>
 </div>
 <div class="card">
   <div class="row">
@@ -137,13 +138,13 @@
             </div>
             <div class="col">
               <div class="row text-muted" th:text="${product.category}"></div>
-              <div class="row" th:text="${product.productName}"></div>
+              <div class="row" th:text="${#strings.length(product.productName) > 12 ? #strings.substring(product.productName, 0, 9) + '...' : product.productName}"></div>
             </div>
-            <div class="col text-center price" th:text="${product.price} + '원'"></div>
+            <div class="col text-center price" th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')} + '원'"></div>
             <div class="col text-end action">
               <a class="btn btn-small btn-outline-dark"
                  th:attr="product-id=${product.productId}, product-name=${product.productName}, product-price=${product.price}"
-                 onclick="event.stopPropagation(); addToCart(this);">
+                 onclick="event.stopPropagation(); addToCart(this); checkForm();">
                 추가
               </a>
             </div>
@@ -173,7 +174,8 @@
         <h5 class="m-0 p-0"><b>Summary</b></h5>
       </div>
       <hr>
-      <div id="cart">
+      <div id="cart" class="mb-3">
+        <div class="invalid-feedback" id="cart-error">상품을 추가해주세요.</div>
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">이메일</label>

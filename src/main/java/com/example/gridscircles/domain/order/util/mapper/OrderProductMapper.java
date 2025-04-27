@@ -19,7 +19,7 @@ public class OrderProductMapper {
             .orders(orders)
             .product(product)
             .quantity(dto.getQuantity())
-            .price(product.getPrice() * dto.getQuantity())
+            .price(product.getPrice())
             .build();
     }
 }
