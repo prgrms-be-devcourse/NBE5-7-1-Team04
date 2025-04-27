@@ -6,7 +6,6 @@ import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.service.ProductService;
-import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,7 +39,7 @@ public class AdminProductController {
         model.addAttribute("productForm", new ProductCreateRequest());
         model.addAttribute("isNew", true);
 
-        return "view_save_products";
+        return "admin/view_save_products";
     }
 
     @PostMapping
@@ -56,7 +54,7 @@ public class AdminProductController {
                 model.addAttribute("imageReuploadNotice", "다른 항목 오류로 인해 이미지는 다시 업로드해 주세요.");
             }
 
-            return "view_save_products";
+            return "admin/view_save_products";
         }
 
         Product product = productService.saveProduct(productCreateRequest);
@@ -90,7 +88,7 @@ public class AdminProductController {
         model.addAttribute("productForm", productService.findProductById(productId));
         model.addAttribute("isNew", false);
 
-        return "view_save_products";
+        return "admin/view_save_products";
     }
 
     @PostMapping("/{ProductId}")
@@ -106,7 +104,7 @@ public class AdminProductController {
                 model.addAttribute("imageReuploadNotice", "다른 항목 오류로 인해 이미지는 다시 업로드해 주세요.");
             }
 
-            return "view_save_products";
+            return "admin/view_save_products";
         }
 
         productService.updateProduct(productUpdateRequest);
