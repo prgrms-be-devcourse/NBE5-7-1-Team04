@@ -86,7 +86,6 @@ public class OrdersService {
         OrdersValidator.validateUpdatable(findOrder.getOrderStatus());
 
         findOrder.updateOrder(orderUpdateRequest);
-        ordersRepository.save(findOrder);
     }
 
     @Transactional
@@ -113,6 +112,7 @@ public class OrdersService {
             .sum();
 
         createOrders.updateTotalPrice(totalPrice);
+        ordersRepository.save(createOrders);
         orderProductRepository.saveAll(orderProducts);
 
         return OrdersMapper.toCreateOrdersResponse(createOrders);
