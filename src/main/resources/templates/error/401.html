@@ -1,0 +1,64 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+
+    .card {
+      margin: auto;
+      margin-top: 10vh;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      border-radius: 1rem;
+      border: transparent;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #444;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: #666;
+    }
+
+    .button {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 30px;
+    }
+
+    .button:hover {
+      background-color: #333;
+    }
+  </style>
+
+  <title>401</title>
+</head>
+
+<body class="container-fluid">
+<div class="card">
+  <h1>401</h1>
+  <p>로그인되지 않았습니다. 로그인 후 다시 시도해 주세요.</p>
+  <button class="button" onclick="window.history.back();">뒤로 가기</button>
+</div>
+</body>
+</html>
