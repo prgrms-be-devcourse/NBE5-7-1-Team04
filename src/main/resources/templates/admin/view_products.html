@@ -105,7 +105,15 @@
       <button type="submit">검색</button>
       <button type="button" th:onclick="|location.href='@{/admin/products/new}'|">상품 등록</button>
       <button type="button" th:onclick="|location.href='@{/admin/orders/list}'|">주문 내역</button>
+      <button
+          type="button"
+          onclick="document.getElementById('logoutForm').submit()"
+          style="margin-left: 5px; background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;"
+      >
+        로그아웃
+      </button>
     </form>
+    <form id="logoutForm" th:action="@{/admin/logout}" method="post" style="display: none;"></form>
   </div>
 
   <table>
