@@ -9,14 +9,14 @@ public class AlertDetailException extends RuntimeException {
     private final String message;
     private final String url;
 
-    public AlertDetailException(String message, String url) {
-        this.errorStatus = ErrorStatus.BAD_REQUEST;
+    public AlertDetailException(ErrorStatus errorStatus, String message, String url) {
+        this.errorStatus = errorStatus;
         this.message = message;
         this.url = url;
     }
 
-    public AlertDetailException(String message) {
-        this.errorStatus = ErrorStatus.BAD_REQUEST;
+    public AlertDetailException(ErrorStatus errorStatus, String message) {
+        this.errorStatus = errorStatus;
         this.message = message;
         this.url = null;
     }
