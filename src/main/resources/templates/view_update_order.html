@@ -10,12 +10,20 @@
         crossorigin="anonymous">
   <style>
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
       background: #f8f9fa;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
     }
 
     .card {
       margin: auto;
-      max-width: 950px;
+      max-width: 1200px;
       width: 90%;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.19);
       border-radius: 1rem;
@@ -34,8 +42,21 @@
       margin-left: 0;
     }
 
+    .btn-group {
+      display: flex;
+      flex-wrap: nowrap; /* 버튼 줄바꿈 허용 */
+      gap: 8px; /* 버튼 간격 */
+      justify-content: flex-end;
+    }
+
     .btn-group .btn {
-      margin-left: 0.5rem;
+      padding: 6px 14px; /* 살짝 줄임 */
+      font-size: 14px;
+      text-align: center;
+      border-radius: 6px !important;
+      line-height: 1.2;
+      min-width: auto; /* 강제 네모 방지 */
+      flex: 0 1 auto; /* 내용에 따라 크기 조정 */
     }
 
     @media (max-width: 767px) {
@@ -43,6 +64,15 @@
         border-top-right-radius: unset;
         border-bottom-left-radius: 1rem;
       }
+    }
+
+    .table th, .table td {
+      border: 1px solid #ccc;
+      background-color: #f8f9fa;
+    }
+
+    .table th {
+      background-color: #d6d6d6;
     }
   </style>
 </head>
@@ -56,7 +86,7 @@
 <div class="card mb-4"
      th:attr="data-order-id=${orderDetail.getId()}">
   <div class="row no-gutters">
-    <div class="col-md-8 p-4">
+    <div class="col-md-8 p-4" style="background-color: #eeeeee;">
       <h5><b>상품 목록</b></h5>
       <table class="table mt-3">
         <thead>
@@ -75,7 +105,7 @@
         </tbody>
         <tfoot>
         <tr>
-          <td><b>총합계</b></td>
+          <td><b>총 합계</b></td>
           <td th:text="${orderDetail.getTotalPrice()} + '원'">20000원</td>
           <td th:text="${orderDetail.getTotalQuantity()}">2</td>
         </tr>
