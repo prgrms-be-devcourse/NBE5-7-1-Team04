@@ -1,20 +1,22 @@
 package com.example.gridscircles.domain.order.util;
 
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_CANCELABLE_ORDER;
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_UPDATABLE_ORDER;
+
 import com.example.gridscircles.domain.order.enums.OrderStatus;
-import com.example.gridscircles.domain.order.exception.OrderCancelException;
-import com.example.gridscircles.domain.order.exception.OrderUpdateException;
+import com.example.gridscircles.global.exception.ErrorException;
 
 public class OrdersValidator {
 
     public static void validateCancelable(OrderStatus status) {
         if (isStatusCompletedOrCanceled(status)) {
-            throw new OrderCancelException("배송이 완료되거나 주문이 취소된 상태면 주문을 취소하실 수 없습니다.");
+            throw new ErrorException(NOT_CANCELABLE_ORDER);
         }
     }
 
     public static void validateUpdatable(OrderStatus status) {
         if (isStatusCompletedOrCanceled(status)) {
-            throw new OrderUpdateException("배송이 완료되거나 주문이 취소된 상태면 주문을 수정하실 수 없습니다.");
+            throw new ErrorException(NOT_UPDATABLE_ORDER);
         }
     }
 
