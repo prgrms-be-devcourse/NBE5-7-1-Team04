@@ -1,6 +1,7 @@
 package com.example.gridscircles.domain.order.service;
 
 import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_ORDERS;
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_PRODUCT;
 
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
@@ -133,7 +134,7 @@ public class OrdersService {
         return productsDto.stream()
             .map(dto -> {
                 Product product = productRepository.findById(dto.getId())
-                    .orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
+                    .orElseThrow(() -> new ErrorException(NOT_FOUND_PRODUCT));
 
                 return OrderProductMapper.fromCreateOrdersProductDto(dto, order, product);
             })
