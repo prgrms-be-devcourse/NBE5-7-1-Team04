@@ -1,5 +1,7 @@
 package com.example.gridscircles.domain.order.service;
 
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_ORDERS;
+
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
@@ -9,7 +11,6 @@ import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
-import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.order.util.OrdersValidator;
@@ -17,6 +18,7 @@ import com.example.gridscircles.domain.order.util.mapper.OrderProductMapper;
 import com.example.gridscircles.domain.order.util.mapper.OrdersMapper;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +62,7 @@ public class OrdersService {
         Orders findOrder = products.stream()
             .findFirst()
             .map(OrderProduct::getOrders)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 조회할 수 없습니다."));
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_ORDERS));
 
         return OrdersMapper.toOrderDetailResponse(findOrder, products, calculateQuantity(products),
             calculateTotalPrice(products));
@@ -81,7 +83,7 @@ public class OrdersService {
     @Transactional
     public void updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest) {
         Orders findOrder = ordersRepository.findById(orderId)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_ORDERS));
 
         OrdersValidator.validateUpdatable(findOrder.getOrderStatus());
 
@@ -98,7 +100,7 @@ public class OrdersService {
 
     private Orders getOrderById(Long orderId) {
         return ordersRepository.findById(orderId)
-            .orElseThrow(() -> new OrderNotFoundException("주문 정보를 찾을 수 없습니다."));
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_ORDERS));
     }
 
     @Transactional

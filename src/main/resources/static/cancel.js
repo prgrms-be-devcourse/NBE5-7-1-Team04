@@ -8,31 +8,30 @@ function cancelOrder() {
     alert('주문 정보를 찾을 수 없습니다.');
     return;
   }
-
-  const orderId = card.getAttribute('data-order-id');
-  const orderStatus = card.getAttribute('data-order-status');
+  const orderId = card.dataset.orderId;
+  const orderStatus = card.dataset.orderStatus;
 
   if (orderStatus === 'COMPLETED' || orderStatus === 'CANCELED') {
     alert('배송이 완료되거나 취소 상태인 주문은 취소하실 수 없습니다.');
     return;
   }
 
-  if (orderStatus === 'CANCELED') {
-    alert('이미 주문이 취소되었습니다.')
-    return;
-  }
-
-  fetch(`/orders/${orderId}/cancel`, {
-    method: 'PUT'
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('주문 취소에 실패했습니다.');
+  fetch(`/orders/${orderId}/cancel`, {method: 'PUT'})
+  .then(res =>
+      res
+      .json()
+      .catch(() => ({}))
+      .then(body => ({res, body}))
+  )
+  .then(({res, body}) => {
+    if (res.ok) {
+      alert('주문이 취소되었습니다.');
+      window.location.href = `/orders/${orderId}`;
+    } else {
+      alert(body.message || `주문 취소에 실패했습니다. (status: ${res.status})`);
     }
-    alert('주문이 취소되었습니다.');
-    window.location.href = `/orders/${orderId}`;
   })
   .catch(err => {
-    alert(err.message);
+    alert('에러가 발생했습니다: ' + err.message);
   });
 }
