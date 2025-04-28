@@ -45,4 +45,37 @@ public class ExceptionAdvice {
             return "error/alert";
         }
     }
+
+    @ExceptionHandler(AlertDetailException.class)
+    public Object handleAlertDetailException(
+        AlertDetailException e,
+        Model model,
+        HandlerMethod handlerMethod  // 현재 실행 중인 컨트롤러 메서드 정보
+    ) {
+        // @ResponseBody 또는 @RestController가 있는지 확인
+        boolean isApiRequest = AnnotatedElementUtils.hasAnnotation(handlerMethod.getMethod(), ResponseBody.class);
+        ErrorCode errorCode = e.getErrorCode();
+
+        // 에러 로깅
+        log.error(errorCode.getMessage(), e);
+
+        // API 요청인 경우 JSON 응답
+        if (isApiRequest) {
+            HttpStatus httpStatus = switch (errorCode.getErrorStatus()) {
+                case BAD_REQUEST -> HttpStatus.BAD_REQUEST;
+                case FORBIDDEN -> HttpStatus.FORBIDDEN;
+                case NOT_FOUND -> HttpStatus.NOT_FOUND;
+                case CONFLICT -> HttpStatus.CONFLICT;
+            };
+
+            return ResponseEntity.status(httpStatus)
+                .body(new ErrorResponse(errorCode.getCode(), e.getMessage()));
+        }
+        // 웹 요청인 경우 HTML 응답
+        else {
+            model.addAttribute("message", e.getMessage());
+            model.addAttribute("url", e.getUrl());
+            return "error/alert";
+        }
+    }
 }
