@@ -5,18 +5,18 @@ import lombok.Getter;
 @Getter
 public class AlertDetailException extends RuntimeException {
 
-    private final ErrorStatus errorStatus;
+    private final ErrorCode errorCode;
     private final String message;
     private final String url;
 
-    public AlertDetailException(ErrorStatus errorStatus, String message, String url) {
-        this.errorStatus = errorStatus;
+    public AlertDetailException(ErrorCode errorCode, String message, String url) {
+        this.errorCode = errorCode;
         this.message = message;
         this.url = url;
     }
 
-    public AlertDetailException(ErrorStatus errorStatus, String message) {
-        this.errorStatus = errorStatus;
+    public AlertDetailException(ErrorCode errorCode, String message) {
+        this.errorCode = errorCode;
         this.message = message;
         this.url = null;
     }

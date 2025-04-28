@@ -54,13 +54,14 @@ public class ExceptionAdvice {
     ) {
         // @ResponseBody 또는 @RestController가 있는지 확인
         boolean isApiRequest = AnnotatedElementUtils.hasAnnotation(handlerMethod.getMethod(), ResponseBody.class);
+        ErrorCode errorCode = e.getErrorCode();
 
         // 에러 로깅
-        log.error(e.getMessage(), e);
+        log.error(errorCode.getMessage(), e);
 
         // API 요청인 경우 JSON 응답
         if (isApiRequest) {
-            HttpStatus httpStatus = switch (e.getErrorStatus()) {
+            HttpStatus httpStatus = switch (errorCode.getErrorStatus()) {
                 case BAD_REQUEST -> HttpStatus.BAD_REQUEST;
                 case FORBIDDEN -> HttpStatus.FORBIDDEN;
                 case NOT_FOUND -> HttpStatus.NOT_FOUND;
@@ -68,7 +69,7 @@ public class ExceptionAdvice {
             };
 
             return ResponseEntity.status(httpStatus)
-                .body(new ErrorResponse("ALERT-ERROR", e.getMessage()));
+                .body(new ErrorResponse(errorCode.getCode(), e.getMessage()));
         }
         // 웹 요청인 경우 HTML 응답
         else {
