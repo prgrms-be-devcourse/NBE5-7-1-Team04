@@ -16,6 +16,7 @@ import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.AlertDetailException;
 import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -320,8 +321,9 @@ class OrdersServiceTests {
         void test_readOrderById_notFound() throws Exception {
             Long nonExistentOrderId = 99999L;
             assertThatThrownBy(() -> ordersService.readOrderById(nonExistentOrderId))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("해당 주문은 존재 하지 않습니다.");
+                .isInstanceOf(AlertDetailException.class)
+                .hasMessageContaining(String.format("주문 ID %d는 존재하지 않습니다.", nonExistentOrderId));
+
         }
     }
 }

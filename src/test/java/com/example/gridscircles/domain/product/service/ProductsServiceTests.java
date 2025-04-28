@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.AlertDetailException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
@@ -84,8 +85,8 @@ public class ProductsServiceTests {
             // when & then: 상품명을 조회했을 때 예외 발생
             assertThatThrownBy(() -> productService.readProductByName(nonExistentProductName,
                 PageRequest.of(0, 2)))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("상품을 찾을 수 없습니다.");
+                .isInstanceOf(AlertDetailException.class)
+                .hasMessageContaining(String.format("%s는 존재하지 않습니다.", nonExistentProductName));
         }
     }
 }
