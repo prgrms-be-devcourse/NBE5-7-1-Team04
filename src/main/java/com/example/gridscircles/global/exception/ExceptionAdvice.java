@@ -1,7 +1,6 @@
 package com.example.gridscircles.global.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +9,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
-
+@Slf4j
 @ControllerAdvice
 public class ExceptionAdvice {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionAdvice.class);
     @ExceptionHandler(ErrorException.class)
     public Object handleErrorException(
         ErrorException e,
@@ -26,7 +24,7 @@ public class ExceptionAdvice {
         ErrorCode errorCode = e.getErrorCode();
 
         // 에러 로깅
-        logger.error("ErrorException: {}", errorCode.getMessage(), e);
+        log.error(errorCode.getMessage(), e);
 
         // API 요청인 경우 JSON 응답
         if (isApiRequest) {
