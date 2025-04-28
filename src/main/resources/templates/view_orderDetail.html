@@ -20,6 +20,7 @@
 
     .container {
       margin-top: 20px;
+      max-width: 1400px;
     }
 
     h1 {
@@ -29,7 +30,7 @@
 
     .card {
       margin: auto;
-      max-width: 1100px;
+      max-width: 1400px;
       width: 90%;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.19);
       border-radius: 1rem;
@@ -134,7 +135,7 @@
           </tbody>
           <tfoot>
           <tr>
-            <td><b>총합계</b></td>
+            <td><b>총 합계</b></td>
             <td th:text="${orderDetail.getTotalPrice()} + '원'">20000원</td>
             <td th:text="${orderDetail.getTotalQuantity()}">2</td>
           </tr>
