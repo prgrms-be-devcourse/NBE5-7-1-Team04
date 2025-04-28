@@ -1,5 +1,7 @@
 package com.example.gridscircles.domain.product.service;
 
+import static com.example.gridscircles.global.exception.ErrorCode.*;
+
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
@@ -8,6 +10,9 @@ import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
 import com.example.gridscircles.domain.product.util.mapper.ProductMapper;
+import com.example.gridscircles.global.exception.AlertDetailException;
+import com.example.gridscircles.global.exception.ErrorCode;
+import com.example.gridscircles.global.exception.ErrorException;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.NoSuchElementException;
@@ -28,13 +33,14 @@ public class ProductService {
     @Transactional
     public Product saveProduct(ProductCreateRequest productCreateRequest) {
         Product product = ProductMapper.productCreateRequestToEntity(productCreateRequest);
+
         return productRepository.save(product);
     }
 
     @Transactional(readOnly = true)
     public ProductResponse findProductById(Long id) {
         Product product = productRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_PRODUCT));
 
         return ProductMapper.entityToProductResponse(product);
     }
@@ -42,14 +48,14 @@ public class ProductService {
     @Transactional
     public void deleteProductById(Long id) {
         productRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "))
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_PRODUCT))
             .deleted();
     }
 
     @Transactional
     public void updateProduct(ProductUpdateRequest productUpdateRequest) {
         Product originProduct = productRepository.findById(productUpdateRequest.getId())
-            .orElseThrow(() -> new NoSuchElementException("상품 없음 오류 ! "));
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_PRODUCT));
         byte[] decodeImage;
 
         try {
@@ -71,7 +77,10 @@ public class ProductService {
         Page<Product> resultProducts = productRepository.findNonDeletedProductsByName(productName,
             pageable);
         if (!resultProducts.hasContent()) {
-            throw new NoSuchElementException("상품을 찾을 수 없습니다.");
+            throw new AlertDetailException(
+                ErrorCode.NOT_FOUND_ORDERS, String.format(" %s는 존재하지 않습니다.", productName),
+                "/admin/products/list");
+
         }
         return resultProducts;
     }

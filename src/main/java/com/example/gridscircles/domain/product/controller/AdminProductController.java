@@ -112,7 +112,6 @@ public class AdminProductController {
         @RequestParam(defaultValue = "5") int size,
         RedirectAttributes redirectAttributes) {
         if (productName != null && !productName.trim().isEmpty()) {
-            try {
                 Page<Product> responseName = productService.readProductByName(productName,
                     PageRequest.of(page, size));
 
@@ -121,11 +120,6 @@ public class AdminProductController {
                 model.addAttribute("currentPage", responseName.getNumber());
                 model.addAttribute("totalPages", responseName.getTotalPages());
                 model.addAttribute("pageSize", size);
-            } catch (NoSuchElementException e) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                    "검색한 상품  " + productName + "  은 존재하지 않는 상품입니다.");
-                return "redirect:/admin/products/list";
-            }
         } else {
             Page<ProductSearchResponse> responseList = productService.readAllProducts(
                 PageRequest.of(page, size));

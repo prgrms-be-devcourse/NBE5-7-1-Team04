@@ -5,6 +5,8 @@ import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.entity.Product;
+import com.example.gridscircles.global.exception.ErrorCode;
+import com.example.gridscircles.global.exception.ErrorException;
 import java.io.IOException;
 import java.util.Base64;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,7 @@ public class ProductMapper {
                 .del_yn("N")
                 .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ErrorException(ErrorCode.NOT_READABLE_FILE);
         }
     }
 
