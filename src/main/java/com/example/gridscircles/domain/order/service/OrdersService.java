@@ -41,7 +41,8 @@ public class OrdersService {
     @Transactional(readOnly = true)
     public OrdersSearchResponse readOrderById(Long orderId) {
         Orders orders = ordersRepository.findById(orderId)
-              .orElseThrow(() -> new AlertDetailException(ErrorCode.NOT_FOUND_ORDERS, String.format("주문 ID %d는 존재하지 않습니다.", orderId),"/admin/orders/list"));
+            .orElseThrow(() -> new AlertDetailException(ErrorCode.NOT_FOUND_ORDERS,
+                String.format("주문 ID %d는 존재하지 않습니다.", orderId), "/admin/orders/list"));
         List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 
         return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
