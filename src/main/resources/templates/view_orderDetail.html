@@ -12,9 +12,19 @@
         crossorigin="anonymous">
   <style>
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
       background: #f8f9fa;
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
     }
 
     .card {
@@ -24,6 +34,7 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.19);
       border-radius: 1rem;
       border: none;
+      background-color: #ffffff;
     }
 
     .summary {
@@ -40,22 +51,20 @@
 
     .btn-group {
       display: flex;
-      flex-wrap: nowrap;   /* 버튼 줄바꿈 허용 */
-      gap: 8px;          /* 버튼 간격 */
+      flex-wrap: nowrap; /* 버튼 줄바꿈 허용 */
+      gap: 8px; /* 버튼 간격 */
       justify-content: flex-end;
     }
 
     .btn-group .btn {
-      padding: 6px 14px;  /* 살짝 줄임 */
+      padding: 6px 14px; /* 살짝 줄임 */
       font-size: 14px;
       text-align: center;
-      border-radius: 6px;
+      border-radius: 6px !important;
       line-height: 1.2;
-      min-width: auto;    /* 강제 네모 방지 */
-      flex: 0 1 auto;     /* 내용에 따라 크기 조정 */
-      border-radius: 6px !important;  /* 모든 버튼 둥글게 */
+      min-width: auto; /* 강제 네모 방지 */
+      flex: 0 1 auto; /* 내용에 따라 크기 조정 */
     }
-
 
     @media (max-width: 1200px) {
       .summary {
@@ -70,7 +79,6 @@
       font-size: 0.9em;
       font-weight: 600;
       border-radius: 0.25rem;
-      color: #fff;
       white-space: nowrap;
     }
 
@@ -85,111 +93,122 @@
     .order-status.CANCELED {
       background-color: #d9534f;
     }
+
+    .table th, .table td {
+      border: 1px solid #ccc;
+      background-color: #f8f9fa;
+    }
+
+    .table th {
+      background-color: #d6d6d6;
+    }
   </style>
 </head>
 
 <body>
 <div th:replace="fragment/header :: header"></div>
-<div class="row justify-content-center my-4">
-  <h1 class="text-center">주문 상세 조회</h1>
-</div>
 
-<div class="card mb-4"
-     th:attr="data-order-id=${orderDetail.getId()},data-order-status=${orderDetail.getOrderStatus().name()}">
-  <div class="row no-gutters">
-    <div class="col-md-8 p-4">
-      <h5><b>상품 목록</b></h5>
-      <table class="table mt-3">
-        <thead>
-        <tr>
-          <th>상품</th>
-          <th>가격</th>
-          <th>수량</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="prod : ${orderDetail.getOrderProducts()}">
-          <td th:text="${prod.getProductName()}">상품명</td>
-          <td th:text="${prod.getPrice()} + '원'">10000원</td>
-          <td th:text="${prod.getQuantity()}">1</td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-          <td><b>총합계</b></td>
-          <td th:text="${orderDetail.getTotalPrice()} + '원'">20000원</td>
-          <td th:text="${orderDetail.getTotalQuantity()}">2</td>
-        </tr>
-        </tfoot>
-      </table>
+<div class="container">
+  <div class="row justify-content-center my-4">
+    <h1 class="text-center">주문 상세 조회</h1>
+  </div>
+  <div class="card mb-4"
+       th:attr="data-order-id=${orderDetail.getId()},data-order-status=${orderDetail.getOrderStatus().name()}">
+    <div class="row no-gutters">
+      <div class="col-md-8 p-4" style="background-color: #eeeeee;">
+        <h5><b>상품 목록</b></h5>
+        <table class="table mt-3">
+          <thead>
+          <tr>
+            <th>상품</th>
+            <th>가격</th>
+            <th>수량</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="prod : ${orderDetail.getOrderProducts()}">
+            <td th:text="${prod.getProductName()}">상품명</td>
+            <td th:text="${prod.getPrice()} + '원'">10000원</td>
+            <td th:text="${prod.getQuantity()}">1</td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td><b>총합계</b></td>
+            <td th:text="${orderDetail.getTotalPrice()} + '원'">20000원</td>
+            <td th:text="${orderDetail.getTotalQuantity()}">2</td>
+          </tr>
+          </tfoot>
+        </table>
 
-      <h5 class="mt-4"><b>배송 정보</b></h5>
-      <table class="table">
-        <tbody>
-        <tr>
-          <th>주소</th>
-          <td th:text="${orderDetail.getAddress()} ?: '-'">-</td>
-        </tr>
-        <tr>
-          <th>우편번호</th>
-          <td th:text="${orderDetail.getZipcode()} ?: '-'">-</td>
-        </tr>
-        <tr>
-          <th>주문 상태</th>
-          <td>
+        <h5 class="mt-4"><b>배송 정보</b></h5>
+        <table class="table">
+          <tbody>
+          <tr>
+            <th>주소</th>
+            <td th:text="${orderDetail.getAddress()} ?: '-'">-</td>
+          </tr>
+          <tr>
+            <th>우편번호</th>
+            <td th:text="${orderDetail.getZipcode()} ?: '-'">-</td>
+          </tr>
+          <tr>
+            <th>주문 상태</th>
+            <td>
             <span
                 th:class="'order-status ' + ${orderDetail.getOrderStatus().name()}"
                 th:text="${orderDetail.getOrderStatus().name()}">
               PROCESSING
             </span>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="col-md-4 summary p-4 d-flex flex-column justify-content-between">
-      <div>
-        <h5><b>Summary</b></h5>
-        <hr>
-        <div class="mb-3">
-          <strong>총 상품 수량:</strong>
-          <span th:text="${orderDetail.getTotalQuantity()} + '개'">2개</span>
-        </div>
-        <div class="mb-3">
-          <strong>총 금액:</strong>
-          <span th:text="${orderDetail.getTotalPrice()} + '원'">20000원</span>
-        </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
-      <div class="btn-group text-end">
-        <a th:href="@{/orders/email(email=${orderDetail.getEmail()})}"
-           class="btn btn-dark"
-           th:text="${#authorization.expression('isAuthenticated()')} ? '사용자 주문 목록' : '내 주문 목록'">
-        </a>
 
-        <a th:if="${orderDetail.getEditable()}"
-           th:href="@{/orders/{orderId}/edit(orderId=${orderDetail.getId()})}"
-           class="btn btn-dark">
-          주문 수정
-        </a>
+      <div class="col-md-4 summary p-4 d-flex flex-column justify-content-between">
+        <div>
+          <h5><b>Summary</b></h5>
+          <hr>
+          <div class="mb-3">
+            <strong>총 상품 수량:</strong>
+            <span th:text="${orderDetail.getTotalQuantity()} + '개'">2개</span>
+          </div>
+          <div class="mb-3">
+            <strong>총 금액:</strong>
+            <span th:text="${orderDetail.getTotalPrice()} + '원'">20000원</span>
+          </div>
+        </div>
+        <div class="btn-group text-end">
+          <a th:href="@{/orders/email(email=${orderDetail.getEmail()})}"
+             class="btn btn-dark"
+             th:text="${#authorization.expression('isAuthenticated()')} ? '사용자 주문 목록' : '내 주문 목록'">
+          </a>
 
-        <button
-            type="button"
-            class="btn btn-dark"
-            onclick="cancelOrder()"
-            th:if="${orderDetail.getEditable()}">
-          주문 취소
-        </button>
-        <a sec:authorize="hasAuthority('ADMIN')"
-           th:href="@{/admin/orders/list}"
-           class="btn btn-dark bg-danger border-0">
-          관리자 주문 목록
-        </a>
+          <a th:if="${orderDetail.getEditable()}"
+             th:href="@{/orders/{orderId}/edit(orderId=${orderDetail.getId()})}"
+             class="btn btn-dark">
+            주문 수정
+          </a>
+
+          <button
+              type="button"
+              class="btn btn-dark"
+              onclick="cancelOrder()"
+              th:if="${orderDetail.getEditable()}">
+            주문 취소
+          </button>
+          <a sec:authorize="hasAuthority('ADMIN')"
+             th:href="@{/admin/orders/list}"
+             class="btn btn-dark bg-danger border-0">
+            관리자 주문 목록
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 <script src="/cancel.js"></script>
 </body>
 </html>
