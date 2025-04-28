@@ -1,7 +1,10 @@
 package com.example.gridscircles.domain.admin.service;
 
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_MEMBER;
+
 import com.example.gridscircles.domain.admin.dto.MemberDetails;
 import com.example.gridscircles.domain.admin.repository.MemberRepository;
+import com.example.gridscircles.global.exception.ErrorException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +26,6 @@ public class MemberService implements UserDetailsService {
                 .role(m.getRole())
                 .build()
             )
-            .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
+            .orElseThrow(() -> new ErrorException(NOT_FOUND_MEMBER));
     }
 }
