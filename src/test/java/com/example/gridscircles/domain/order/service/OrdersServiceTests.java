@@ -1,23 +1,24 @@
 package com.example.gridscircles.domain.order.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
+import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
-import com.example.gridscircles.domain.order.exception.OrderCancelException;
-import com.example.gridscircles.domain.order.exception.OrderNotFoundException;
-import com.example.gridscircles.domain.order.exception.OrderUpdateException;
 import com.example.gridscircles.domain.order.repository.OrderProductRepository;
 import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -118,7 +119,7 @@ class OrdersServiceTests {
         @DisplayName("유효하지 않은 주문 ID 예외 발생")
         void invalidIdThrows(long invalidId) {
             assertThrows(
-                OrderNotFoundException.class,
+                ErrorException.class,
                 () -> ordersService.getOrderDetail(invalidId),
                 "주문 정보를 조회할 수 없습니다."
             );
@@ -166,7 +167,7 @@ class OrdersServiceTests {
                 .build();
 
             assertThrows(
-                OrderUpdateException.class,
+                ErrorException.class,
                 () -> ordersService.updateOrder(order.getId(), req),
                 "배송이 완료되거나 주문이 취소된 상태면 주문을 수정하실 수 없습니다."
             );
@@ -205,7 +206,7 @@ class OrdersServiceTests {
             );
 
             assertThrows(
-                OrderCancelException.class,
+                ErrorException.class,
                 () -> ordersService.cancelOrder(order.getId()),
                 "배송이 완료되거나 주문이 취소된 상태면 주문을 취소하실 수 없습니다."
             );
@@ -261,6 +262,66 @@ class OrdersServiceTests {
             assertThat(result).hasSize(1);
             assertThat(result.getFirst().getId()).isEqualTo(savedOrder.getId());
             assertThat(result.getFirst().getEmail()).isEqualTo(email);
+        }
+    }
+
+
+    @Nested
+    @Transactional
+    @DisplayName("주문 내역 조회 테스트 (관리자)")
+    class GetOrdersAdminTests {
+
+        @Test
+        @DisplayName("특정 주문 ID로 주문 목록 조회 테스트 (관리자)")
+        void test_readOrderById() throws Exception {
+            // given
+            byte[] dummyImage1 = "dummy-image-1".getBytes();
+
+            Product product = Product.builder()
+                .name("사바하 커피1")
+                .price(1000)
+                .category(Category.DRINK)
+                .description("맛있어요!")
+                .contentType("image/jpeg")
+                .image(dummyImage1)
+                .del_yn("Y")
+                .build();
+            productRepository.save(product);
+
+            Orders order = Orders.builder()
+                .email("Yuhan@example.com")
+                .address("서울특별시 강남구 사바하아파트 444동 444호")
+                .zipcode("44444")
+                .totalPrice(0)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+            ordersRepository.save(order);
+
+            OrderProduct op2 = OrderProduct.builder()
+                .product(product)
+                .price(product.getPrice())
+                .quantity(2)
+                .orders(order)
+                .build();
+            orderProductRepository.save(op2);
+
+            Long orderId = order.getId();
+            // when
+            OrdersSearchResponse response = ordersService.readOrderById(orderId);
+            // then
+            assertThat(response.getOrderId()).isEqualTo(orderId);
+            assertThat(response.getProducts()).hasSize(1);
+            assertThat(response.getProducts().get(0).getProductName()).isEqualTo("사바하 커피1");
+            assertThat(response.getProducts().get(0).getQuantity()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 주문 ID로 주문 목록 조회 시 예외 발생 테스트 (관리자)")
+        void test_readOrderById_notFound() throws Exception {
+            Long nonExistentOrderId = 99999L;
+            assertThatThrownBy(() -> ordersService.readOrderById(nonExistentOrderId))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining("해당 주문은 존재 하지 않습니다.");
         }
     }
 }

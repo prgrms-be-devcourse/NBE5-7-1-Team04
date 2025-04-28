@@ -1,5 +1,6 @@
 package com.example.gridscircles.domain.order.service;
 
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,8 +18,8 @@ import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.order.util.mapper.OrdersMapper;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -95,8 +96,11 @@ class OrdersServiceUnitTest {
             when(productRepository.findById(any())).thenReturn(Optional.empty());
             // when & then
             assertThatThrownBy(() -> ordersService.saveOrders(createOrdersRequest))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("존재하지 않는 상품입니다.");
+                .isInstanceOf(ErrorException.class)
+                .satisfies(exception -> {
+                    ErrorException errorException = (ErrorException) exception;
+                    assertThat(errorException.getErrorCode()).isEqualTo(NOT_FOUND_PRODUCT);
+                });
         }
     }
 }
