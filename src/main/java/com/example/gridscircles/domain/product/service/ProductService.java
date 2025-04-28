@@ -85,7 +85,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductListResponse> getAllProductsWithImage(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAll(pageable);
+        Page<Product> productPage = productRepository.findNonDeletedProducts(pageable);
         return ProductMapper.toProductListResponse(productPage);
     }
 }
