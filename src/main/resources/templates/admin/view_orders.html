@@ -101,7 +101,6 @@
   <form th:action="@{/admin/orders/list}" method="get" class="search">
     <input type="text" name="orderId" placeholder="주문번호 입력"/>
     <button type="submit">검색</button>
-    <button type="button" th:onclick="|location.href='@{/admin/products/list}'|">상품 목록</button>
   </form>
 
   <table>

@@ -12,6 +12,8 @@
         crossorigin="anonymous">
   <style>
     body {
+      margin: 0;
+      padding: 0;
       background: #f8f9fa;
     }
 
@@ -36,9 +38,24 @@
       margin-left: 0;
     }
 
-    .btn-group .btn {
-      margin-left: 0.5rem;
+    .btn-group {
+      display: flex;
+      flex-wrap: nowrap;   /* 버튼 줄바꿈 허용 */
+      gap: 8px;          /* 버튼 간격 */
+      justify-content: flex-end;
     }
+
+    .btn-group .btn {
+      padding: 6px 14px;  /* 살짝 줄임 */
+      font-size: 14px;
+      text-align: center;
+      border-radius: 6px;
+      line-height: 1.2;
+      min-width: auto;    /* 강제 네모 방지 */
+      flex: 0 1 auto;     /* 내용에 따라 크기 조정 */
+      border-radius: 6px !important;  /* 모든 버튼 둥글게 */
+    }
+
 
     @media (max-width: 1200px) {
       .summary {
@@ -71,7 +88,7 @@
   </style>
 </head>
 
-<body class="container-fluid">
+<body>
 <div th:replace="fragment/header :: header"></div>
 <div class="row justify-content-center my-4">
   <h1 class="text-center">주문 상세 조회</h1>
@@ -146,8 +163,8 @@
       </div>
       <div class="btn-group text-end">
         <a th:href="@{/orders/email(email=${orderDetail.getEmail()})}"
-           class="btn btn-dark">
-          목록으로
+           class="btn btn-dark"
+           th:text="${#authorization.expression('isAuthenticated()')} ? '사용자 주문 목록' : '내 주문 목록'">
         </a>
 
         <a th:if="${orderDetail.getEditable()}"
