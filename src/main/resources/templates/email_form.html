@@ -9,10 +9,17 @@
       padding: 0;
       font-family: 'Arial', sans-serif;
       background-color: #f8f9fa;
+      /*display: flex;*/
+      /*justify-content: center;*/
+      /*align-items: center;*/
+      /*height: 100vh;*/
+    }
+
+    .main-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      height: calc(100vh - 60px);
     }
 
     .form-container {
@@ -74,6 +81,7 @@
 </head>
 
 <body>
+<div th:replace="fragment/header :: header"></div>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const error = document.getElementById("errorMessage");
@@ -85,18 +93,20 @@
   });
 </script>
 
-<div class="form-container">
-  <h1>주문 내역 조회</h1>
-  <form th:action="@{/orders/email}" method="get">
-    <label for="email">이메일</label><br/>
-    <input type="email" id="email" name="email" required><br/>
+<div class="main-container">
+  <div class="form-container">
+    <h1>주문 내역 조회</h1>
+    <form th:action="@{/orders/email}" method="get">
+      <label for="email">이메일</label><br/>
+      <input type="email" id="email" name="email" required><br/>
 
-    <div class="button-group">
-      <button type="button" class="btn-back" onclick="location.href='/orders'">돌아가기</button>
-      <button type="submit" class="btn-submit">조회하기</button>
-    </div>
-  </form>
-  <p id="errorMessage" th:if="${error}" th:text="${error}" style="color:red;"></p>
+      <div class="button-group">
+        <button type="button" class="btn-back" onclick="location.href='/orders'">돌아가기</button>
+        <button type="submit" class="btn-submit">조회하기</button>
+      </div>
+    </form>
+    <p id="errorMessage" th:if="${error}" th:text="${error}" style="color:red;"></p>
+  </div>
 </div>
 </body>
 </html>

@@ -8,7 +8,7 @@
       background-color: #f8f9fa;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 50px 0;
+      padding: 0;
     }
 
     td:first-child {
@@ -20,7 +20,7 @@
 
     .form-wrapper {
       width: 600px;
-      margin: 0 auto;
+      margin: 50px auto 0 auto;
       background-color: white;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -80,6 +80,7 @@
 </head>
 
 <body>
+<div th:replace="fragment/header :: header"></div>
 <div class="form-wrapper">
   <h2>상품 상세 조회</h2>
 

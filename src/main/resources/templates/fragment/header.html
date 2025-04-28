@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" >
+<head>
+  <meta charset="UTF-8">
+  <title>Header</title>
+
+</head>
+<body>
+<div th:fragment="header" class="header">
+  <style>
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #767575;
+      color: #fff;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+    .nav-links a {
+      padding-top: 9px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+    }
+    .nav-links a:hover {
+      color: #ddd;
+    }
+    .button {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+  <a href="/" class="logo" th:href="@{/}">CoffeeShop</a>
+  <div class="nav-links">
+
+    <span sec:authorize="isAuthenticated()">
+      <a href="/" th:href="@{/}">홈</a>
+      <a href="/" th:href="@{/admin/products/list}">상품 목록</a>
+      <a href="/" th:href="@{/admin/products/new}">상품 등록</a>
+      <a href="/" th:href="@{/admin/orders/list}">주문 목록</a>
+      <a href="/logout" th:href="@{/logout}">로그아웃</a>
+      <form id="logoutForm" th:action="@{/admin/logout}" method="post" style="display: none;">
+      </form>
+    </span>
+
+    <span sec:authorize="isAnonymous()">
+      <a href="/" th:href="@{/}">홈</a>
+      <a href="/products" th:href="@{/orders/search}">주문 내역</a>
+      <button class="button" style="height: 40px;"
+              onclick="location.href='/admin'">관리자 로그인
+      </button>
+    </span>
+  </div>
+  <script>
+    function logout() {
+      document.getElementById('logoutForm').submit();
+    }
+  </script>
+</div>
+</body>
+</html>
