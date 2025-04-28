@@ -121,7 +121,7 @@
 </head>
 <body>
 <div th:replace="fragment/header :: header"></div>
-<div class="position-relative m-4" style="height: 60px;">
+<div class="position-relative m-4" style="height: 20px;">
 </div>
 <div class="card">
   <div class="row">
@@ -157,7 +157,8 @@
       <div th:if="${isPaged}" class="mt-3">
         <div class="pagination"
              style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 40px;">
-          <a th:if="${currentPage > 0}" th:onclick="|goProductPage(${currentPage})|" class="active">&lt;</a>
+          <a th:if="${currentPage > 0}" th:onclick="|goProductPage(${currentPage})|"
+             class="active">&lt;</a>
           <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
              th:onclick="|goProductPage(${i + 1})|"
              th:text="${i + 1}"
