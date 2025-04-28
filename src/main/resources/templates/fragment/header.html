@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" >
+<head>
+  <meta charset="UTF-8">
+  <title>Header</title>
+
+</head>
+<body>
+<div th:fragment="header" class="header">
+  <style>
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #767575;
+      color: #fff;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;  /* 간격 좁힘 */
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+      padding: 0 10px;
+      position: relative;
+    }
+
+    .nav-links a:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 14px;
+      width: 1px;
+      background: #bbb;
+    }
+
+
+    .nav-links a:hover {
+      color: #ddd;
+    }
+
+    .divider {
+      color: #ccc;
+    }
+
+    .button:hover {
+      background-color: #333;
+    }
+  </style>
+  <a href="/" class="logo" th:href="@{/}">CoffeeShop</a>
+  <div class="nav-links">
+
+    <span sec:authorize="isAuthenticated()">
+      <a href="/" th:href="@{/}">홈</a>
+      <a href="/" th:href="@{/admin/products/list}">상품 목록</a>
+      <a href="/" th:href="@{/admin/products/new}">상품 등록</a>
+      <a href="/" th:href="@{/admin/orders/list}">주문 목록</a>
+      <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;">로그아웃</a>
+      <form id="logoutForm" th:action="@{/admin/logout}" method="post" style="display: none;">
+      </form>
+    </span>
+
+    <span sec:authorize="isAnonymous()">
+      <a href="/" th:href="@{/}">홈</a>
+      <a href="/products" th:href="@{/orders/search}">주문 내역</a>
+      <a href="/admin" th:href="@{/admin}">관리자 로그인</a>
+    </span>
+  </div>
+  <script>
+    function logout() {
+      document.getElementById('logoutForm').submit();
+    }
+  </script>
+</div>
+</body>
+</html>
