@@ -321,7 +321,8 @@ class OrdersServiceTests {
             Long nonExistentOrderId = 99999L;
             assertThatThrownBy(() -> ordersService.readOrderById(nonExistentOrderId))
                 .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("해당 주문은 존재 하지 않습니다.");
+                .hasMessageContaining(String.format("주문 ID %d는 존재하지 않습니다.", nonExistentOrderId));
+
         }
     }
 }
