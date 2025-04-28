@@ -1,5 +1,6 @@
 package com.example.gridscircles.domain.order.service;
 
+import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_EMAIL;
 import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_ORDERS;
 import static com.example.gridscircles.global.exception.ErrorCode.NOT_FOUND_PRODUCT;
 
@@ -123,11 +124,19 @@ public class OrdersService {
     }
 
     public Page<Orders> getOrdersByEmail(String email, Pageable pageable) {
-        return ordersRepository.findByEmailOrderByCreatedAtDesc(email, pageable);
+        Page<Orders> orders = ordersRepository.findByEmailOrderByCreatedAtDesc(email, pageable);
+        if (orders.isEmpty()) {
+            throw new ErrorException(NOT_FOUND_EMAIL);
+        }
+        return orders;
     }
 
     public List<Orders> getOrderById(Long id, String email) {
-        return ordersRepository.findByIdAndEmailOrderByCreatedAt(id, email);
+        List<Orders> orders = ordersRepository.findByIdAndEmailOrderByCreatedAt(id, email);
+        if (orders.isEmpty()) {
+            throw new ErrorException(NOT_FOUND_ORDERS);
+        }
+        return orders;
     }
 
     private List<OrderProduct> createOrderProducts(List<CreateOrdersProductDto> productsDto,
