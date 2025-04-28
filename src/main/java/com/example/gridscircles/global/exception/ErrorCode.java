@@ -17,8 +17,10 @@ public enum ErrorCode {
         "배송이 완료되었거나 주문이 취소된 상태는 수정할 수 없습니다."),
 
     // Product
-    NOT_FOUND_PRODUCT(NOT_FOUND, "PRODUCT-001", "존재하지 않는 상품입니다.")
-    ;
+    NOT_FOUND_PRODUCT(NOT_FOUND, "PRODUCT-001", "존재하지 않는 상품입니다."),
+
+    // admin
+    NOT_FOUND_MEMBER(NOT_FOUND, "AUTH-001", "존재하지 않는 회원입니다.");
 
 
     private final ErrorStatus errorStatus;
