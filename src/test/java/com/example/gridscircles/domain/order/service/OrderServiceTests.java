@@ -17,6 +17,7 @@ import com.example.gridscircles.domain.order.repository.OrdersRepository;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.AlertDetailException;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -225,8 +226,8 @@ class OrderServiceTests {
             Long nonExistentOrderId = 99999L; // 존재하지 않는 주문 ID
             // when & then
             assertThatThrownBy(() -> ordersService.readOrderById(nonExistentOrderId))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("해당 주문은 존재 하지 않습니다.");
+                .isInstanceOf(AlertDetailException.class)
+                .hasMessageContaining(String.format("주문 ID %d는 존재하지 않습니다.", nonExistentOrderId));
         }
     }
 }

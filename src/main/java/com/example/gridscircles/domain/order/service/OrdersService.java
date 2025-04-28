@@ -17,6 +17,9 @@ import com.example.gridscircles.domain.order.util.mapper.OrderProductMapper;
 import com.example.gridscircles.domain.order.util.mapper.OrdersMapper;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
+import com.example.gridscircles.global.exception.AlertDetailException;
+import com.example.gridscircles.global.exception.ErrorCode;
+import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +39,7 @@ public class OrdersService {
     @Transactional(readOnly = true)
     public OrdersSearchResponse readOrderById(Long orderId) {
         Orders orders = ordersRepository.findById(orderId)
-            .orElseThrow(() -> new NoSuchElementException("해당 주문은 존재 하지 않습니다."));
+              .orElseThrow(() -> new AlertDetailException(ErrorCode.NOT_FOUND_ORDERS, String.format("주문 ID %d는 존재하지 않습니다.", orderId),"/admin/orders/list"));
         List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 
         return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
