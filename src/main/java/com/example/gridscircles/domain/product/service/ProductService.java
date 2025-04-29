@@ -5,7 +5,6 @@ import static com.example.gridscircles.global.exception.ErrorCode.*;
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
-import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResult;
 import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
 import com.example.gridscircles.domain.product.entity.Product;
@@ -16,7 +15,6 @@ import com.example.gridscircles.global.exception.ErrorCode;
 import com.example.gridscircles.global.exception.ErrorException;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -72,23 +70,12 @@ public class ProductService {
         originProduct.updateProduct(productUpdateRequest, decodeImage);
     }
 
-//    // 특정 상품명에 따른 상품 조회 (관리자/이미지X)
-//    @Transactional(readOnly = true)
-//    public Page<Product> readProductByName(String productName, Pageable pageable) {
-//        Page<Product> resultProducts = productRepository.findNonDeletedProductsByName(productName,
-//            pageable);
-//        if (!resultProducts.hasContent()) {
-//            throw new AlertDetailException(
-//                ErrorCode.NOT_FOUND_ORDERS, String.format(" %s는 존재하지 않습니다.", productName),
-//                "/admin/products/list");
-//
-//        }
-//        return resultProducts;
-//    }
+
     @Transactional(readOnly = true)
     public ProductSearchResult productResult(String productName, Pageable pageable) {
         if (productName != null && !productName.isBlank()) {
-            Page<Product> productsByName = productRepository.findNonDeletedProductsByName(productName, pageable);
+            Page<Product> productsByName = productRepository.findNonDeletedProductsByName(
+                productName, pageable);
             if (!productsByName.hasContent()) {
                 throw new AlertDetailException(
                     ErrorCode.NOT_FOUND_PRODUCT,
@@ -96,18 +83,15 @@ public class ProductService {
                     "/admin/products/list"
                 );
             }
-            return ProductMapper.fromPageProductSearchResult(productsByName.map(ProductMapper::toProductSearchResponse));
+            return ProductMapper.fromPageProductSearchResult(
+                productsByName.map(ProductMapper::toProductSearchResponse));
         } else {
             Page<Product> allProducts = productRepository.findNonDeletedProducts(pageable);
-            return ProductMapper.fromPageProductSearchResult(allProducts.map(ProductMapper::toProductSearchResponse));
+            return ProductMapper.fromPageProductSearchResult(
+                allProducts.map(ProductMapper::toProductSearchResponse));
         }
     }
-//    // 전체 상품 조회 (관리자/이미지X)
-//    @Transactional(readOnly = true)
-//    public Page<ProductSearchResponse> readAllProducts(Pageable pageable) {
-//        Page<Product> productPage = productRepository.findNonDeletedProducts(pageable);
-//        return productPage.map(ProductMapper::toProductSearchResponse);
-//    }
+
 
     @Transactional(readOnly = true)
     public Page<ProductListResponse> getAllProductsWithImage(Pageable pageable) {

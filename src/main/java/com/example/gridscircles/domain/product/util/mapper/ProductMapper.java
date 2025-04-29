@@ -75,7 +75,8 @@ public class ProductMapper {
             .build();
     }
 
-    public static ProductSearchResult fromPageProductSearchResult(Page<ProductSearchResponse> responsePage){
+    public static ProductSearchResult fromPageProductSearchResult(
+        Page<ProductSearchResponse> responsePage) {
         return ProductSearchResult.builder()
             .productsList(responsePage.getContent())
             .hasData(responsePage.hasContent())

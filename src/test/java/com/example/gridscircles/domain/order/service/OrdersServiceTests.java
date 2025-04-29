@@ -20,7 +20,6 @@ import com.example.gridscircles.domain.product.repository.ProductRepository;
 import com.example.gridscircles.global.exception.AlertDetailException;
 import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
