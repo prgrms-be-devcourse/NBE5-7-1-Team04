@@ -1,20 +1,14 @@
 package com.example.gridscircles.domain.order.controller;
 
 
-import static java.util.List.of;
 
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
-import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.order.service.OrdersService;
-import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,22 +29,13 @@ public class AdminOrderController {
         RedirectAttributes redirectAttributes,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size) {
-        if (orderId != null) {
-                OrdersSearchResponse response = ordersService.readOrderById(orderId);
-                List<OrdersSearchResponse> responselist = of(response);
+        OrderSearchResult searchResult = ordersService.searchResult(orderId, page, size);
 
-                model.addAttribute("orders_list", responselist);
-                model.addAttribute("hasData", true);
-        } else {
-            Page<OrdersSearchResponse> responseDtoPage = ordersService
-                .getAllOrders(PageRequest.of(page, size));
-
-            model.addAttribute("orders_list", responseDtoPage.getContent());
-            model.addAttribute("hasData", responseDtoPage.hasContent());
-            model.addAttribute("currentPage", responseDtoPage.getNumber());
-            model.addAttribute("totalPages", responseDtoPage.getTotalPages());
-            model.addAttribute("pageSize", size);
-        }
+        model.addAttribute("orders_list", searchResult.getOrdersList());
+        model.addAttribute("hasData", searchResult.isHasData());
+        model.addAttribute("currentPage", searchResult.getCurrentPage());
+        model.addAttribute("totalPages", searchResult.getTotalPages());
+        model.addAttribute("pageSize", searchResult.getSize());
         return "admin/view_orders";
     }
 

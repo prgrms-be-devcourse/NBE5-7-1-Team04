@@ -8,6 +8,7 @@ import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
@@ -25,7 +26,9 @@ import com.example.gridscircles.global.exception.ErrorCode;
 import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,8 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
+    @Lazy
+    private final OrdersService ordersService;
 
     @Transactional(readOnly = true)
     public OrdersSearchResponse readOrderById(Long orderId) {
@@ -46,6 +51,17 @@ public class OrdersService {
         List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 
         return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderSearchResult searchResult (Long orderId, int page ,int size){
+        if(orderId != null){
+            OrdersSearchResponse response = ordersService.readOrderById(orderId);
+            return OrdersMapper.fromSingleOrderSearchResult(response);
+        }else {
+            Page<OrdersSearchResponse> responsePage = ordersService.getAllOrders(PageRequest.of(page,size));
+            return OrdersMapper.fromPageOrderSearchResult(responsePage);
+        }
     }
 
     @Transactional(readOnly = true)

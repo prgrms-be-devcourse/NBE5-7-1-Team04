@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
@@ -285,7 +286,7 @@ class OrdersServiceTests {
                 .description("맛있어요!")
                 .contentType("image/jpeg")
                 .image(dummyImage1)
-                .delYN("Y")
+                .delYN("N")
                 .build();
             productRepository.save(product);
 
@@ -310,10 +311,101 @@ class OrdersServiceTests {
             // when
             OrdersSearchResponse response = ordersService.readOrderById(orderId);
             // then
+            // then
             assertThat(response.getOrderId()).isEqualTo(orderId);
+            assertThat(response.getEmail()).isEqualTo(order.getEmail());
             assertThat(response.getProducts()).hasSize(1);
-            assertThat(response.getProducts().get(0).getProductName()).isEqualTo("사바하 커피1");
+            assertThat(response.getProducts().get(0).getProductName()).isEqualTo(product.getName());
             assertThat(response.getProducts().get(0).getQuantity()).isEqualTo(2);
+        }
+
+        @Test
+        @DisplayName("searchResult - 주문 ID로 단건 조회 성공 테스트")
+        void test_searchResult_singleOrder() {
+            // given
+            byte[] dummyImage = "dummy-image-2".getBytes();
+
+            Product product = Product.builder()
+                .name("사바하 커피2")
+                .price(1500)
+                .category(Category.DRINK)
+                .description("또 맛있어요!")
+                .contentType("image/jpeg")
+                .image(dummyImage)
+                .delYN("N")
+                .build();
+            productRepository.save(product);
+
+            Orders order = Orders.builder()
+                .email("yuna@example.com")
+                .address("서울특별시 서초구 어딘가")
+                .zipcode("55555")
+                .totalPrice(3000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+            ordersRepository.save(order);
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                .product(product)
+                .price(product.getPrice())
+                .quantity(2)
+                .orders(order)
+                .build();
+            orderProductRepository.save(orderProduct);
+
+            Long orderId = order.getId();
+
+            // when
+            OrderSearchResult result = ordersService.searchResult(orderId, 0, 5);
+
+            // then
+            assertThat(result.getOrdersList()).hasSize(1);
+            assertThat(result.getOrdersList().get(0).getOrderId()).isEqualTo(orderId);
+            assertThat(result.isHasData()).isTrue();
+            assertThat(result.getSize()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("searchResult - 전체 주문 목록 조회 성공 테스트")
+        void test_searchResult_allOrders() {
+            // given
+            byte[] dummyImage = "dummy-image-3".getBytes();
+
+            Product product = Product.builder()
+                .name("사바하 커피3")
+                .price(2000)
+                .category(Category.DRINK)
+                .description("또또 맛있어요!")
+                .contentType("image/jpeg")
+                .image(dummyImage)
+                .delYN("N")
+                .build();
+            productRepository.save(product);
+
+            Orders order = Orders.builder()
+                .email("junho@example.com")
+                .address("서울특별시 마포구 어딘가")
+                .zipcode("66666")
+                .totalPrice(4000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+            ordersRepository.save(order);
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                .product(product)
+                .price(product.getPrice())
+                .quantity(2)
+                .orders(order)
+                .build();
+            orderProductRepository.save(orderProduct);
+
+            // when
+            OrderSearchResult result = ordersService.searchResult(null, 0, 10);
+
+            // then
+            assertThat(result.getOrdersList()).isNotEmpty();
+            assertThat(result.isHasData()).isTrue();
+            assertThat(result.getCurrentPage()).isEqualTo(0);
         }
 
         @Test

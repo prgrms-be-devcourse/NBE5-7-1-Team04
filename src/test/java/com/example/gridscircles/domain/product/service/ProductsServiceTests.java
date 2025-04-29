@@ -3,6 +3,8 @@ package com.example.gridscircles.domain.product.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
+import com.example.gridscircles.domain.product.dto.ProductSearchResult;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.repository.ProductRepository;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 
 @SpringBootTest
@@ -32,61 +35,83 @@ public class ProductsServiceTests {
     class GetProductsAdminTests {
 
         @Test
-        @DisplayName("상품명으로 상품 목록 조회 (관리자)")
-        void test_getProductsByName() throws Exception {
+        @DisplayName("상품명으로 검색하여 상품 조회 성공 테스트")
+        void test_searchProducts_byName_success() {
+            // given
+            byte[] dummyImage = "dummy-image-1".getBytes();
 
+            Product product = Product.builder()
+                .name("테스트 커피1")
+                .price(1000)
+                .category(Category.DRINK)
+                .description("맛있는 커피입니다")
+                .contentType("image/jpeg")
+                .image(dummyImage)
+                .delYN("N")
+                .build();
+            productRepository.save(product);
+
+            Pageable pageable = PageRequest.of(0, 5);
+
+            // when
+            ProductSearchResult result = productService.productResult("테스트 커피1", pageable);
+
+            // then
+            assertThat(result.getProductsList()).hasSize(1);
+            assertThat(result.isHasData()).isTrue();
+            assertThat(result.getProductsList().get(0).getName()).isEqualTo("테스트 커피1");
+        }
+
+        @Test
+        @DisplayName("상품명으로 검색했으나 결과가 없는 경우 예외 발생 테스트")
+        void test_searchProducts_byName_notFound() {
+            // given
+            Pageable pageable = PageRequest.of(0, 5);
+
+            // when & then
+            assertThatThrownBy(() -> productService.productResult("존재하지 않는 상품명", pageable))
+                .isInstanceOf(AlertDetailException.class)
+                .hasMessageContaining("존재하지 않습니다.");
+        }
+
+        @Test
+        @DisplayName("전체 상품 목록 조회 성공 테스트")
+        void test_searchProducts_all_success() {
             // given
             byte[] dummyImage1 = "dummy-image-1".getBytes();
             byte[] dummyImage2 = "dummy-image-2".getBytes();
-            byte[] dummyImage3 = "dummy-image-3".getBytes();
 
             Product product1 = Product.builder()
-                .name("딸기라떼")
-                .price(1000)
+                .name("테스트 커피2")
+                .price(1200)
                 .category(Category.DRINK)
-                .description("맛있어요!")
+                .description("또 다른 커피입니다")
                 .contentType("image/jpeg")
                 .image(dummyImage1)
                 .delYN("N")
                 .build();
+
             Product product2 = Product.builder()
-                .name("초코라떼")
-                .price(2000)
-                .category(Category.DRINK)
-                .description("맛있어요!!")
+                .name("테스트 브레드")
+                .price(1500)
+                .category(Category.BREAD)
+                .description("맛있는 빵입니다")
                 .contentType("image/jpeg")
                 .image(dummyImage2)
                 .delYN("N")
                 .build();
-            Product product3 = Product.builder()
-                .name("아메리카노")
-                .price(3000)
-                .category(Category.DRINK)
-                .description("맛있어요!!!")
-                .contentType("image/jpeg")
-                .image(dummyImage3)
-                .delYN("Y")
-                .build();
-            productRepository.saveAll(List.of(product1, product2, product3));
+
+            productRepository.save(product1);
+            productRepository.save(product2);
+
+            Pageable pageable = PageRequest.of(0, 5);
 
             // when
-            PageRequest pageable = PageRequest.of(0, 2);
-            Page<Product> result = productService.readProductByName("라떼", pageable);
+            ProductSearchResult result = productService.productResult(null, pageable);
 
             // then
-            assertThat(result.getTotalElements()).isEqualTo(2);
-            assertThat(result.getContent()).hasSize(2);
-        }
-
-        @Test
-        @DisplayName("존재하지 않는 상품명인 경우 예외 처리")
-        void test_readProductByName_notFound() throws Exception {
-            String nonExistentProductName = "없는상품";
-            // when & then: 상품명을 조회했을 때 예외 발생
-            assertThatThrownBy(() -> productService.readProductByName(nonExistentProductName,
-                PageRequest.of(0, 2)))
-                .isInstanceOf(AlertDetailException.class)
-                .hasMessageContaining(String.format("%s는 존재하지 않습니다.", nonExistentProductName));
+            assertThat(result.getProductsList()).hasSizeGreaterThanOrEqualTo(2);
+            assertThat(result.isHasData()).isTrue();
         }
     }
 }
