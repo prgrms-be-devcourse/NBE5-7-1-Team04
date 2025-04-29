@@ -230,7 +230,54 @@
 
 작성한 API는 아래에서 확인할 수 있습니다.
 
-👉🏻 [API 바로보기](/backend/APIs.md)
+<details>
+<summary> 👉🏻 API 바로보기 </summary>
+<div markdown="1">
+
+
+<table>
+  <thead>
+    <tr>
+      <th>화면</th>
+      <th>URL</th>
+      <th>Method</th>
+      <th>Page</th>
+      <th>Response<br>Code</th>
+      <th>담당</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>상품 등록 페이지</td><td>/admin/products/new</td><td>GET</td><td>view_save_products.html</td><td>200</td><td>황세희</td></tr>
+    <tr><td>상품 등록</td><td>/admin/products/</td><td>POST</td><td></td><td>200</td><td>황세희</td></tr>
+    <tr><td>상품 조회</td><td>/admin/products/{productId}</td><td>GET</td><td>view_find_products.html</td><td>200</td><td>황세희</td></tr>
+    <tr><td>상품 수정 페이지</td><td>/admin/products/edit/{productId}</td><td>GET</td><td></td><td>200</td><td>황세희</td></tr>
+    <tr><td>상품 수정</td><td>/admin/products/{productId}</td><td>POST</td><td></td><td>200</td><td>황세희</td></tr>
+    <tr><td>상품 삭제</td><td>/admin/products/{productId}</td><td>Delete</td><td></td><td>204</td><td>황세희</td></tr>
+    <tr><td>상품 목록 조회</td><td>/admin/products/list</td><td>GET</td><td>view_products.html</td><td>200</td><td>이승태</td></tr>
+    <tr><td>상품 상세 페이지 이동</td><td>/admin/products/{productId}</td><td>GET</td><td></td><td>200</td><td>이승태</td></tr>
+    <tr><td>전체 상품 조회</td><td>/products</td><td>GET</td><td>view_save_orders.html</td><td>200</td><td>김건우</td></tr>
+    <tr><td>주문 생성 view</td><td>/orders</td><td>GET</td><td>view_save_orders.html</td><td>200</td><td>김건우</td></tr>
+    <tr><td>주문 생성</td><td>/orders</td><td>POST</td><td></td><td>200</td><td>김건우</td></tr>
+    <tr><td>주문 내역 조회 <br>이메일 입력폼(사용자)</td><td>/orders/search</td><td>GET</td><td>email_form</td><td>200</td><td>곽지원</td></tr>
+    <tr><td>전체 주문 내역 조회(사용자)</td><td>/orders/email?{email}</td><td>GET</td><td>view_orders</td><td>200</td><td>곽지원</td></tr>
+    <tr><td>전체 주문 내역에서<br> 주문 ID로 조회(사용자)</td><td>/orders/id?{orderId}&{email}</td><td>GET</td><td>view_orders</td><td>200</td><td>곽지원</td></tr>
+    <tr><td>주문 상세 조회(사용자)</td><td>/orders/{orderId}</td><td>GET</td><td>view_orderDetail.html</td><td>200</td><td>박유한</td></tr>
+    <tr><td>주문 수정 페이지</td><td>/orders/{orderId}/edit</td><td>GET</td><td>view_update_order.html</td><td>200</td><td>박유한</td></tr>
+    <tr><td>주문 수정</td><td>/orders/{orderId}</td><td>PUT</td><td></td><td>204</td><td>박유한</td></tr>
+    <tr><td>주문 취소</td><td>/orders/{orderId}/cancel</td><td>PUT</td><td></td><td>204, 200</td><td>박유한</td></tr>
+    <tr><td>관리자 로그인</td><td>/admin/login</td><td>GET</td><td>view_login.html</td><td>200</td><td>박유한</td></tr>
+    <tr><td>로그인 요청</td><td>/admin/login</td><td>POST</td><td></td><td>200</td><td>박유한</td></tr>
+    <tr><td>로그아웃 요청</td><td>/admin/logout</td><td>POST</td><td></td><td>200</td><td>박유한</td></tr>
+    <tr><td>주문 상세 조회(관리자)</td><td>/orders/admin/{orderId}</td><td>GET</td><td></td><td>200</td><td>박유한</td></tr>
+    <tr><td>주문 목록 조회</td><td>/admin/orders/list</td><td>GET</td><td>view_orders.html</td><td>200</td><td>이승태</td></tr>
+    <tr><td>주문 상세 페이지 이동</td><td>/admin/orders/{orderId}</td><td>GET</td><td></td><td>200</td><td>이승태</td></tr>
+  </tbody>
+</table>
+
+
+  
+</div>
+</details>
 
 
 
