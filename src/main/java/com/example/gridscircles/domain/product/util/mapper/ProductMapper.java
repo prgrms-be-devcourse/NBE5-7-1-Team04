@@ -24,7 +24,7 @@ public class ProductMapper {
                 .price(price)
                 .image(productCreateRequest.getFile().getBytes())
                 .contentType(productCreateRequest.getFile().getContentType())
-                .del_yn("N")
+                .delYN("N")
                 .build();
         } catch (IOException e) {
             throw new ErrorException(ErrorCode.NOT_READABLE_FILE);
@@ -68,7 +68,7 @@ public class ProductMapper {
             .name(product.getName())
             .description(product.getDescription())
             .price(product.getPrice())
-            .del_yn(product.getDel_yn())
+            .delYN(product.getDelYN())
             .category(product.getCategory())
             .build();
     }

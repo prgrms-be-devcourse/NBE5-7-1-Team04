@@ -48,11 +48,11 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private String contentType;
 
-    @Column(nullable = false)
-    private String del_yn;
+    @Column(name = "del_yn" ,nullable = false)
+    private String delYN;
 
     public void deleted() {
-        this.del_yn = "Y";
+        this.delYN = "Y";
     }
 
     public void updateProduct(ProductUpdateRequest productUpdateRequest, byte[] image) {
@@ -104,13 +104,13 @@ public class Product extends BaseEntity {
 
     @Builder
     public Product(String name, Category category, String description, Integer price, byte[] image,
-        String contentType, String del_yn) {
+        String contentType, String delYN) {
         this.name = name;
         this.category = category;
         this.description = description;
         this.price = price;
         this.image = image;
         this.contentType = contentType;
-        this.del_yn = del_yn;
+        this.delYN = delYN;
     }
 }
