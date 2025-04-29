@@ -44,6 +44,7 @@
 > ✅ 본 프로젝트는 **역할 기반 권한 제어**, **RESTful API 설계**, **스케줄링 처리** 등 실무 중심 기능을 반영하여 설계되었습니다.
 
 ## ⚙ 기술 스택
+### 언어 
 <table>
   <tr>
     <td align="center">
@@ -51,6 +52,16 @@
       <sub><b>Java 23</b></sub>
     </td>
     <td align="center">
+      <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/HTMLCSS.png?raw=true" width="80" alt="HTMLCSS"/><br/>
+      <sub><b></b></sub>
+    </td>
+  </tr>
+</table>
+
+### 프레임 워크 및 라이브러리 
+<table>
+  <tr>
+     <td align="center">
       <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringBoot.png?raw=true" width="80" alt="Spring Boot"/><br/>
       <sub><b>Spring Boot 3.4.4</b></sub>
     </td>
@@ -63,23 +74,35 @@
       <sub><b></b></sub>
     </td>
     <td align="center">
-      <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" width="80" alt="MySQL"/><br/>
-      <sub><b></b></sub>
-    </td>
-    <td align="center">
       <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Thymeleaf.png?raw=true" width="80" alt="Thymeleaf"/><br/>
       <sub><b></b></sub>
     </td>
   </tr>
 </table>
 
-### Infra
+### 데이터 베이스 
+<table>
+  <tr>
+    <td align="center">
+       <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" width="80" alt="MySQL"/><br/>
+      <sub><b></b></sub>
+    </td>
+  </tr>
+</table>
 
-### Tools
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Notion.png?raw=true" width="80">
-</div>
+### 협업 도구 
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" width="80" alt="GitHub"/><br/>
+      <sub><b></b></sub>
+    </td>
+    <td align="center">
+      <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Notion.png?raw=true" width="80" alt="Notion"/><br/>
+      <sub><b></b></sub>
+    </td>
+  </tr>
+</table>
 
 <br />
 
@@ -144,6 +167,8 @@
 
 ## 🛠️ 프로젝트 아키텍쳐
 
+## 시스템 아키텍처
+![image](https://github.com/user-attachments/assets/cdc68cb9-14cd-461e-95d4-0670aa327f72)
 
 ## ERD
 
