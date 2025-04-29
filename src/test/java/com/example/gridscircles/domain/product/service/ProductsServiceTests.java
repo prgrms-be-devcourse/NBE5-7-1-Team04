@@ -47,7 +47,7 @@ public class ProductsServiceTests {
                 .description("맛있어요!")
                 .contentType("image/jpeg")
                 .image(dummyImage1)
-                .del_yn("N")
+                .delYN("N")
                 .build();
             Product product2 = Product.builder()
                 .name("초코라떼")
@@ -56,7 +56,7 @@ public class ProductsServiceTests {
                 .description("맛있어요!!")
                 .contentType("image/jpeg")
                 .image(dummyImage2)
-                .del_yn("N")
+                .delYN("N")
                 .build();
             Product product3 = Product.builder()
                 .name("아메리카노")
@@ -65,7 +65,7 @@ public class ProductsServiceTests {
                 .description("맛있어요!!!")
                 .contentType("image/jpeg")
                 .image(dummyImage3)
-                .del_yn("Y")
+                .delYN("Y")
                 .build();
             productRepository.saveAll(List.of(product1, product2, product3));
 

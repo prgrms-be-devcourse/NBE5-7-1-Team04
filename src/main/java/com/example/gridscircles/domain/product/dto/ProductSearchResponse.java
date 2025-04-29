@@ -14,17 +14,17 @@ public class ProductSearchResponse {
     private String name;
     private String description;
     private Integer price;
-    private String del_yn;
+    private String delYN;
     private Category category;
 
     @Builder
     public ProductSearchResponse(Long id, String name, String description,
-        Integer price, String del_yn, Category category) {
+        Integer price, String delYN, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
-        this.del_yn = del_yn;
+        this.delYN = delYN;
         this.category = category;
     }
 }
