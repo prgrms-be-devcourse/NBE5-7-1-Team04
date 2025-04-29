@@ -57,7 +57,7 @@ class ProductServiceTests {
         assertThat(savedProduct.getDescription()).isEqualTo(productCreateRequest.getDescription());
         assertThat(savedProduct.getImage()).isEqualTo(mockFile.getBytes());
         assertThat(savedProduct.getContentType()).isEqualTo(mockFile.getContentType());
-        assertThat(savedProduct.getDel_yn()).isEqualTo("N");
+        assertThat(savedProduct.getDelYN()).isEqualTo("N");
     }
 
     @Test
@@ -98,7 +98,7 @@ class ProductServiceTests {
             .category(Category.DRINK)
             .image(mockFile.getBytes())
             .contentType(mockFile.getContentType())
-            .del_yn("N")
+            .delYN("N")
             .build();
         productRepository.save(product);
 
@@ -147,7 +147,7 @@ class ProductServiceTests {
             .category(Category.DRINK)
             .image(mockFile.getBytes())
             .contentType(mockFile.getContentType())
-            .del_yn("N")
+            .delYN("N")
             .build();
         productRepository.save(product);
 
@@ -164,7 +164,7 @@ class ProductServiceTests {
         assertThat(deletedProduct.getCategory()).isEqualTo(product.getCategory());
         assertThat(deletedProduct.getImage()).isEqualTo(product.getImage());
         assertThat(deletedProduct.getContentType()).isEqualTo(product.getContentType());
-        assertThat(deletedProduct.getDel_yn()).isEqualTo("Y");
+        assertThat(deletedProduct.getDelYN()).isEqualTo("Y");
     }
 
     @Nested
@@ -185,7 +185,7 @@ class ProductServiceTests {
                 .category(Category.DRINK)
                 .image(mockFile.getBytes())
                 .contentType(mockFile.getContentType())
-                .del_yn("N")
+                .delYN("N")
                 .build();
             productRepository.save(product);
 
@@ -218,7 +218,7 @@ class ProductServiceTests {
                 Base64.getDecoder().decode(productUpdateRequest.getBase64EncodeImage()));
             assertThat(updatedProduct.getContentType()).isEqualTo(
                 productUpdateRequest.getContentType());
-            assertThat(updatedProduct.getDel_yn()).isEqualTo("N");
+            assertThat(updatedProduct.getDelYN()).isEqualTo("N");
         }
 
         @Test
@@ -235,7 +235,7 @@ class ProductServiceTests {
                 .category(Category.DRINK)
                 .image(mockFile.getBytes())
                 .contentType(mockFile.getContentType())
-                .del_yn("N")
+                .delYN("N")
                 .build();
             productRepository.save(product);
 
@@ -268,7 +268,7 @@ class ProductServiceTests {
                 productUpdateRequest.getFile().getBytes());
             assertThat(updatedProduct.getContentType()).isEqualTo(
                 productUpdateRequest.getFile().getContentType());
-            assertThat(updatedProduct.getDel_yn()).isEqualTo("N");
+            assertThat(updatedProduct.getDelYN()).isEqualTo("N");
         }
 
         @Test
@@ -321,7 +321,7 @@ class ProductServiceTests {
                 .category(Category.DRINK)
                 .image(mockFile.getBytes())
                 .contentType(mockFile.getContentType())
-                .del_yn("N")
+                .delYN("N")
                 .build();
             productRepository.save(product);
 

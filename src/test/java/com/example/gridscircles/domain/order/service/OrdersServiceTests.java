@@ -64,7 +64,7 @@ class OrdersServiceTests {
             .description("사바하 커피는 진자 맛있어요!")
             .contentType("image/jpeg")
             .image((name + "-img").getBytes())
-            .del_yn("N")
+            .delYN("N")
             .build();
         return productRepository.save(product);
     }
@@ -285,7 +285,7 @@ class OrdersServiceTests {
                 .description("맛있어요!")
                 .contentType("image/jpeg")
                 .image(dummyImage1)
-                .del_yn("Y")
+                .delYN("Y")
                 .build();
             productRepository.save(product);
 
