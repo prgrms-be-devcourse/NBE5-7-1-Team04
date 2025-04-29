@@ -114,9 +114,63 @@
 ## 화면 구성
 
 
-## 협업 장식
+## 협업 방식
+### 🛠️ 브랜치 전략
 
-<br />
+1. **이슈 생성**
+    - GitHub 이슈를 통해 작업 항목 정의
+
+2. **브랜치 생성**
+    - `dev` 브랜치에서 이슈별 작업 브랜치 생성
+    - 브랜치 명명 규칙 예시: `feature/이슈번호-작업내용`
+
+3. **PR 및 코드 리뷰**
+    - 작업 완료 후 Pull Request(PR) 생성
+    - 팀원 간 코드 리뷰 진행
+
+4. **Merge 및 브랜치 정리**
+    - 리뷰 완료 후 `dev` 브랜치로 Merge
+    - Merge 후 이슈 브랜치 삭제
+    - `dev` 브랜치 최신 상태 유지
+
+---
+
+### 🧑‍💻 코딩 컨벤션
+
+### Git 컨벤션
+1. **Commit 메시지 형식**
+   - [이모지][타입] 커밋 메시지
+   - 예: `♻️ feat:사용자 로그인 기능 구현`
+
+2. **PR 제목 및 설명**
+   - 제목: `[타입] 이슈번호 - 작업 내용 요약`
+   - 본문: 작업 내용, 고려한 사항, 테스트 방법 등 기재
+
+3. **Branch 명명 규칙**
+   - `타입/이슈번호`
+   - 예:`feat/15`
+
+4. **Issue 제목 규칙**
+   - `[타입] 작업 내용 요약`
+
+---
+
+### 코드 스타일
+
+1. **스타일 가이드**
+   - [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) 적용
+
+2. **DTO 작성 기준**
+   - 요청(Request) / 응답(Response) DTO 분리
+   - `mapper`를 활용한 변환 로직 구성
+
+3. **이름 규칙**
+   - **클래스명**: 대문자로 시작, 명확한 의미 전달
+       - 예: `UserService`, `OrderController`
+   - **메서드명**: 동사 + 대상, camelCase 사용
+       - 예: `createUser()`, `getOrderList()`
+   - **변수명**: camelCase 사용, 명확하고 간결하게
+       - 예: `userId`, `orderRequest`
 
 ## 🗂️ APIs
 
