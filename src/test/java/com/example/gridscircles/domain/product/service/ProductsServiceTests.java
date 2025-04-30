@@ -50,7 +50,7 @@ public class ProductsServiceTests {
             Pageable pageable = PageRequest.of(0, 5);
 
             // when
-            ProductSearchResult result = productService.productResult("테스트 커피1", pageable);
+            ProductSearchResult result = productService.searchProductsByName("테스트 커피1", pageable);
 
             // then
             assertThat(result.getProductsList()).hasSize(1);
@@ -65,7 +65,7 @@ public class ProductsServiceTests {
             Pageable pageable = PageRequest.of(0, 5);
 
             // when & then
-            assertThatThrownBy(() -> productService.productResult("존재하지 않는 상품명", pageable))
+            assertThatThrownBy(() -> productService.searchProductsByName("존재하지 않는 상품명", pageable))
                 .isInstanceOf(AlertDetailException.class)
                 .hasMessageContaining("존재하지 않습니다.");
         }
@@ -103,7 +103,7 @@ public class ProductsServiceTests {
             Pageable pageable = PageRequest.of(0, 5);
 
             // when
-            ProductSearchResult result = productService.productResult(null, pageable);
+            ProductSearchResult result = productService.readAllProducts(pageable);
 
             // then
             assertThat(result.getProductsList()).hasSizeGreaterThanOrEqualTo(2);

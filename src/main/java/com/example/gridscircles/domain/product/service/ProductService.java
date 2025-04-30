@@ -70,28 +70,28 @@ public class ProductService {
         originProduct.updateProduct(productUpdateRequest, decodeImage);
     }
 
-
+    // 전체 조회
     @Transactional(readOnly = true)
-    public ProductSearchResult productResult(String productName, Pageable pageable) {
-        if (productName != null && !productName.isBlank()) {
-            Page<Product> productsByName = productRepository.findNonDeletedProductsByName(
-                productName, pageable);
-            if (!productsByName.hasContent()) {
-                throw new AlertDetailException(
-                    ErrorCode.NOT_FOUND_PRODUCT,
-                    String.format("상품명 '%s'에 해당하는 상품이 존재하지 않습니다.", productName),
-                    "/admin/products/list"
-                );
-            }
-            return ProductMapper.fromPageProductSearchResult(
-                productsByName.map(ProductMapper::toProductSearchResponse));
-        } else {
-            Page<Product> allProducts = productRepository.findNonDeletedProducts(pageable);
-            return ProductMapper.fromPageProductSearchResult(
-                allProducts.map(ProductMapper::toProductSearchResponse));
-        }
+    public ProductSearchResult readAllProducts(Pageable pageable) {
+        Page<Product> page = productRepository.findNonDeletedProducts(pageable);
+        return ProductMapper.fromPageProductResult(
+            page.map(ProductMapper::toProductSearchResponse));
     }
 
+    // 상품명으로 검색
+    @Transactional(readOnly = true)
+    public ProductSearchResult searchProductsByName(String name, Pageable pageable) {
+        Page<Product> page = productRepository.findNonDeletedProductsByName(name, pageable);
+        if (!page.hasContent()) {
+            throw new AlertDetailException(
+                ErrorCode.NOT_FOUND_PRODUCT,
+                String.format("상품명 '%s'에 해당하는 상품이 존재하지 않습니다.", name),
+                "/admin/products/list"
+            );
+        }
+        return ProductMapper.fromPageProductResult(
+            page.map(ProductMapper::toProductSearchResponse));
+    }
 
     @Transactional(readOnly = true)
     public Page<ProductListResponse> getAllProductsWithImage(Pageable pageable) {

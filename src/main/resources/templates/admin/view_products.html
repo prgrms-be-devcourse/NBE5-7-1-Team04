@@ -13,7 +13,7 @@
     }
 
     .container {
-      margin: 40px auto 0 auto;  /* 헤더와 간격 줌 */
+      margin: 40px auto 0 auto; /* 헤더와 간격 줌 */
       max-width: 1200px;
       background-color: white;
       padding: 30px;
@@ -93,22 +93,28 @@
 <div th:replace="fragment/header :: header"></div>
 <div style="height: 60px;"></div>
 <div class="container">
-  <div th:if="${errorMessage != null}">
-    <script th:inline="javascript">
-      alert([[${errorMessage}]]);
-    </script>
-  </div>
 
   <h2>상품 목록</h2>
 
   <div class="search-bar">
-    <form th:action="@{/admin/products/list}" method="get">
-      <input type="text" name="productName" placeholder="상품명 입력">
+    <form th:action="@{/admin/products/search}" method="get" id="searchForm" style="display: inline-block;>
+      <input type="text" name="productName" id="productInput" placeholder="상품명 입력">
       <button type="submit">검색</button>
       <button type="button" th:onclick="|location.href='@{/admin/products/new}'|">상품 등록</button>
     </form>
     <form id="logoutForm" th:action="@{/admin/logout}" method="post" style="display: none;"></form>
   </div>
+
+  <script>
+    // 공백 입력 시 alert 띄우고 요청 막기
+    document.getElementById("searchForm").addEventListener("submit", function (e) {
+      const input = document.getElementById("productInput").value.trim();
+      if (!input) {
+        alert("검색어를 입력해주세요.");
+        e.preventDefault();
+      }
+    });
+  </script>
 
   <table>
     <thead>
@@ -121,7 +127,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="product : ${products_list}"
+    <tr th:each="product : ${products_list}"  th:if="${hasData}"
         th:onclick="|location.href='/admin/products/${product.getId()}'|"
         style="cursor: pointer;">
       <td th:text="${product.getId()}"></td>

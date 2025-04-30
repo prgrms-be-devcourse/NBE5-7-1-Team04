@@ -43,35 +43,30 @@ public class OrdersService {
     @Lazy
     private final OrdersService ordersService;
 
+    // 주문 ID로 검색
     @Transactional(readOnly = true)
-    public OrdersSearchResponse readOrderById(Long orderId) {
+    public OrderSearchResult readOrderById(Long orderId) {
         Orders orders = ordersRepository.findById(orderId)
             .orElseThrow(() -> new AlertDetailException(ErrorCode.NOT_FOUND_ORDERS,
                 String.format("주문 ID %d는 존재하지 않습니다.", orderId), "/admin/orders/list"));
+
         List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
+        OrdersSearchResponse response = OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
 
-        return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
+        return OrdersMapper.fromSingleOrderSearchResult(response);
     }
 
+    // 전체 조회
     @Transactional(readOnly = true)
-    public OrderSearchResult searchResult (Long orderId, int page ,int size){
-        if(orderId != null){
-            OrdersSearchResponse response = ordersService.readOrderById(orderId);
-            return OrdersMapper.fromSingleOrderSearchResult(response);
-        }else {
-            Page<OrdersSearchResponse> responsePage = ordersService.getAllOrders(PageRequest.of(page,size));
-            return OrdersMapper.fromPageOrderSearchResult(responsePage);
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public Page<OrdersSearchResponse> getAllOrders(Pageable pageable) {
+    public OrderSearchResult readAllOrders(Pageable pageable) {
         Page<Orders> ordersPage = ordersRepository.findAllByOrderByCreatedAtDesc(pageable);
 
-        return ordersPage.map(order -> {
-            List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(order.getId());
-            return OrdersMapper.toOrdersSearchResponse(order, orderProducts);
+        Page<OrdersSearchResponse> responsePage = ordersPage.map(order -> {
+            List<OrderProduct> products = orderProductRepository.findByOrdersId(order.getId());
+            return OrdersMapper.toOrdersSearchResponse(order, products);
         });
+
+        return OrdersMapper.fromPageOrderSearchResult(responsePage);
     }
 
     @Transactional(readOnly = true)

@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -272,53 +273,7 @@ class OrdersServiceTests {
     @DisplayName("주문 내역 조회 테스트 (관리자)")
     class GetOrdersAdminTests {
 
-        @Test
-        @DisplayName("특정 주문 ID로 주문 목록 조회 테스트 (관리자)")
-        void test_readOrderById() throws Exception {
-            // given
-            byte[] dummyImage1 = "dummy-image-1".getBytes();
-
-            Product product = Product.builder()
-                .name("사바하 커피1")
-                .price(1000)
-                .category(Category.DRINK)
-                .description("맛있어요!")
-                .contentType("image/jpeg")
-                .image(dummyImage1)
-                .delYN("N")
-                .build();
-            productRepository.save(product);
-
-            Orders order = Orders.builder()
-                .email("Yuhan@example.com")
-                .address("서울특별시 강남구 사바하아파트 444동 444호")
-                .zipcode("44444")
-                .totalPrice(0)
-                .orderStatus(OrderStatus.PROCESSING)
-                .build();
-            ordersRepository.save(order);
-
-            OrderProduct op2 = OrderProduct.builder()
-                .product(product)
-                .price(product.getPrice())
-                .quantity(2)
-                .orders(order)
-                .build();
-            orderProductRepository.save(op2);
-
-            Long orderId = order.getId();
-            // when
-            OrdersSearchResponse response = ordersService.readOrderById(orderId);
-            // then
-            // then
-            assertThat(response.getOrderId()).isEqualTo(orderId);
-            assertThat(response.getEmail()).isEqualTo(order.getEmail());
-            assertThat(response.getProducts()).hasSize(1);
-            assertThat(response.getProducts().get(0).getProductName()).isEqualTo(product.getName());
-            assertThat(response.getProducts().get(0).getQuantity()).isEqualTo(2);
-        }
-
-        @Test
+                @Test
         @DisplayName("searchResult - 주문 ID로 단건 조회 성공 테스트")
         void test_searchResult_singleOrder() {
             // given
@@ -353,9 +308,8 @@ class OrdersServiceTests {
             orderProductRepository.save(orderProduct);
 
             Long orderId = order.getId();
-
             // when
-            OrderSearchResult result = ordersService.searchResult(orderId, 0, 5);
+            OrderSearchResult result = ordersService.readOrderById(orderId);
 
             // then
             assertThat(result.getOrdersList()).hasSize(1);
@@ -397,9 +351,9 @@ class OrdersServiceTests {
                 .orders(order)
                 .build();
             orderProductRepository.save(orderProduct);
-
+            Pageable pageable = PageRequest.of(0, 5);
             // when
-            OrderSearchResult result = ordersService.searchResult(null, 0, 10);
+            OrderSearchResult result = ordersService.readAllOrders(pageable);
 
             // then
             assertThat(result.getOrdersList()).isNotEmpty();

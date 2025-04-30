@@ -101,22 +101,40 @@ public class AdminProductController {
         return "redirect:/admin/products/" + ProductId;
     }
 
+    // 전체 상품 조회
     @GetMapping("/list")
     public String viewProducts(
-        @RequestParam(required = false) String productName,
         Model model,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size
-        ) {
+    ) {
 
-        ProductSearchResult searchResult = productService.productResult(productName,
-            PageRequest.of(page, size));
-        model.addAttribute("products_list", searchResult.getProductsList());
-        model.addAttribute("hasData", searchResult.isHasData());
-        model.addAttribute("currentPage", searchResult.getCurrentPage());
-        model.addAttribute("totalPages", searchResult.getTotalPages());
+        ProductSearchResult resultAll = productService.readAllProducts(PageRequest.of(page, size));
+        model.addAttribute("products_list", resultAll.getProductsList());
+        model.addAttribute("hasData", resultAll.isHasData());
+        model.addAttribute("currentPage", resultAll.getCurrentPage());
+        model.addAttribute("totalPages", resultAll.getTotalPages());
         model.addAttribute("pageSize", size);
 
+        return "admin/view_products";
+    }
+
+    // 상품명으로 검색
+    @GetMapping("/search")
+    public String searchProducts(
+        @RequestParam("product") String productName,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        Model model
+    ) {
+        ProductSearchResult resultSearch = productService.searchProductsByName(productName,
+            PageRequest.of(page, size));
+
+        model.addAttribute("products_list", resultSearch.getProductsList());
+        model.addAttribute("hasData", resultSearch.isHasData());
+        model.addAttribute("currentPage", resultSearch.getCurrentPage());
+        model.addAttribute("totalPages", resultSearch.getTotalPages());
+        model.addAttribute("pageSize", size);
         return "admin/view_products";
     }
 }
