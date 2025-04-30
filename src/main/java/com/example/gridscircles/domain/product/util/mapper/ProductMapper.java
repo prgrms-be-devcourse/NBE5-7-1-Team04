@@ -1,9 +1,11 @@
 package com.example.gridscircles.domain.product.util.mapper;
 
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
 import com.example.gridscircles.domain.product.dto.ProductListResponse;
 import com.example.gridscircles.domain.product.dto.ProductResponse;
 import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
+import com.example.gridscircles.domain.product.dto.ProductSearchResult;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.global.exception.ErrorCode;
 import com.example.gridscircles.global.exception.ErrorException;
@@ -72,4 +74,16 @@ public class ProductMapper {
             .category(product.getCategory())
             .build();
     }
+
+    public static ProductSearchResult fromPageProductResult(
+        Page<ProductSearchResponse> responsePage) {
+        return ProductSearchResult.builder()
+            .productsList(responsePage.getContent())
+            .hasData(responsePage.hasContent())
+            .currentPage(responsePage.getNumber())
+            .totalPages(responsePage.getTotalPages())
+            .size(responsePage.getSize())
+            .build();
+    }
+
 }

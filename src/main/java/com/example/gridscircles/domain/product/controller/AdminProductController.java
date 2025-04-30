@@ -1,14 +1,12 @@
 package com.example.gridscircles.domain.product.controller;
 
 import com.example.gridscircles.domain.product.dto.ProductCreateRequest;
-import com.example.gridscircles.domain.product.dto.ProductSearchResponse;
+import com.example.gridscircles.domain.product.dto.ProductSearchResult;
 import com.example.gridscircles.domain.product.dto.ProductUpdateRequest;
 import com.example.gridscircles.domain.product.entity.Product;
 import com.example.gridscircles.domain.product.enums.Category;
 import com.example.gridscircles.domain.product.service.ProductService;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -104,32 +101,40 @@ public class AdminProductController {
         return "redirect:/admin/products/" + ProductId;
     }
 
+    // 전체 상품 조회
     @GetMapping("/list")
     public String viewProducts(
-        @RequestParam(required = false) String productName,
         Model model,
         @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size
+    ) {
+
+        ProductSearchResult resultAll = productService.readAllProducts(PageRequest.of(page, size));
+        model.addAttribute("products_list", resultAll.getProductsList());
+        model.addAttribute("hasData", resultAll.isHasData());
+        model.addAttribute("currentPage", resultAll.getCurrentPage());
+        model.addAttribute("totalPages", resultAll.getTotalPages());
+        model.addAttribute("pageSize", size);
+
+        return "admin/view_products";
+    }
+
+    // 상품명으로 검색
+    @GetMapping("/search")
+    public String searchProducts(
+        @RequestParam("product") String productName,
+        @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "5") int size,
-        RedirectAttributes redirectAttributes) {
-        if (productName != null && !productName.trim().isEmpty()) {
-                Page<Product> responseName = productService.readProductByName(productName,
-                    PageRequest.of(page, size));
+        Model model
+    ) {
+        ProductSearchResult resultSearch = productService.searchProductsByName(productName,
+            PageRequest.of(page, size));
 
-                model.addAttribute("products_list", responseName);
-                model.addAttribute("hasData", responseName.hasContent());
-                model.addAttribute("currentPage", responseName.getNumber());
-                model.addAttribute("totalPages", responseName.getTotalPages());
-                model.addAttribute("pageSize", size);
-        } else {
-            Page<ProductSearchResponse> responseList = productService.readAllProducts(
-                PageRequest.of(page, size));
-
-            model.addAttribute("products_list", responseList);
-            model.addAttribute("hasData", responseList.hasContent());
-            model.addAttribute("currentPage", responseList.getNumber());
-            model.addAttribute("totalPages", responseList.getTotalPages());
-            model.addAttribute("pageSize", size);
-        }
+        model.addAttribute("products_list", resultSearch.getProductsList());
+        model.addAttribute("hasData", resultSearch.isHasData());
+        model.addAttribute("currentPage", resultSearch.getCurrentPage());
+        model.addAttribute("totalPages", resultSearch.getTotalPages());
+        model.addAttribute("pageSize", size);
         return "admin/view_products";
     }
 }

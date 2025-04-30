@@ -8,6 +8,7 @@ import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersRequest.CreateOrdersProductDto;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
@@ -25,7 +26,9 @@ import com.example.gridscircles.global.exception.ErrorCode;
 import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,25 +40,33 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
+    @Lazy
+    private final OrdersService ordersService;
 
+    // 주문 ID로 검색
     @Transactional(readOnly = true)
-    public OrdersSearchResponse readOrderById(Long orderId) {
+    public OrderSearchResult readOrderById(Long orderId) {
         Orders orders = ordersRepository.findById(orderId)
             .orElseThrow(() -> new AlertDetailException(ErrorCode.NOT_FOUND_ORDERS,
                 String.format("주문 ID %d는 존재하지 않습니다.", orderId), "/admin/orders/list"));
-        List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
 
-        return OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
+        List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(orderId);
+        OrdersSearchResponse response = OrdersMapper.toOrdersSearchResponse(orders, orderProducts);
+
+        return OrdersMapper.fromSingleOrderSearchResult(response);
     }
 
+    // 전체 조회
     @Transactional(readOnly = true)
-    public Page<OrdersSearchResponse> getAllOrders(Pageable pageable) {
+    public OrderSearchResult readAllOrders(Pageable pageable) {
         Page<Orders> ordersPage = ordersRepository.findAllByOrderByCreatedAtDesc(pageable);
 
-        return ordersPage.map(order -> {
-            List<OrderProduct> orderProducts = orderProductRepository.findByOrdersId(order.getId());
-            return OrdersMapper.toOrdersSearchResponse(order, orderProducts);
+        Page<OrdersSearchResponse> responsePage = ordersPage.map(order -> {
+            List<OrderProduct> products = orderProductRepository.findByOrdersId(order.getId());
+            return OrdersMapper.toOrdersSearchResponse(order, products);
         });
+
+        return OrdersMapper.fromPageOrderSearchResult(responsePage);
     }
 
     @Transactional(readOnly = true)

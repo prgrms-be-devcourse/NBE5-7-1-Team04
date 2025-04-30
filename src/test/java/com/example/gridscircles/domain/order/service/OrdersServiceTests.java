@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.order.dto.OrderUpdateRequest;
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
@@ -19,7 +20,6 @@ import com.example.gridscircles.domain.product.repository.ProductRepository;
 import com.example.gridscircles.global.exception.AlertDetailException;
 import com.example.gridscircles.global.exception.ErrorException;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -272,48 +273,92 @@ class OrdersServiceTests {
     @DisplayName("주문 내역 조회 테스트 (관리자)")
     class GetOrdersAdminTests {
 
-        @Test
-        @DisplayName("특정 주문 ID로 주문 목록 조회 테스트 (관리자)")
-        void test_readOrderById() throws Exception {
+                @Test
+        @DisplayName("searchResult - 주문 ID로 단건 조회 성공 테스트")
+        void test_searchResult_singleOrder() {
             // given
-            byte[] dummyImage1 = "dummy-image-1".getBytes();
+            byte[] dummyImage = "dummy-image-2".getBytes();
 
             Product product = Product.builder()
-                .name("사바하 커피1")
-                .price(1000)
+                .name("사바하 커피2")
+                .price(1500)
                 .category(Category.DRINK)
-                .description("맛있어요!")
+                .description("또 맛있어요!")
                 .contentType("image/jpeg")
-                .image(dummyImage1)
-                .delYN("Y")
+                .image(dummyImage)
+                .delYN("N")
                 .build();
             productRepository.save(product);
 
             Orders order = Orders.builder()
-                .email("Yuhan@example.com")
-                .address("서울특별시 강남구 사바하아파트 444동 444호")
-                .zipcode("44444")
-                .totalPrice(0)
+                .email("yuna@example.com")
+                .address("서울특별시 서초구 어딘가")
+                .zipcode("55555")
+                .totalPrice(3000)
                 .orderStatus(OrderStatus.PROCESSING)
                 .build();
             ordersRepository.save(order);
 
-            OrderProduct op2 = OrderProduct.builder()
+            OrderProduct orderProduct = OrderProduct.builder()
                 .product(product)
                 .price(product.getPrice())
                 .quantity(2)
                 .orders(order)
                 .build();
-            orderProductRepository.save(op2);
+            orderProductRepository.save(orderProduct);
 
             Long orderId = order.getId();
             // when
-            OrdersSearchResponse response = ordersService.readOrderById(orderId);
+            OrderSearchResult result = ordersService.readOrderById(orderId);
+
             // then
-            assertThat(response.getOrderId()).isEqualTo(orderId);
-            assertThat(response.getProducts()).hasSize(1);
-            assertThat(response.getProducts().get(0).getProductName()).isEqualTo("사바하 커피1");
-            assertThat(response.getProducts().get(0).getQuantity()).isEqualTo(2);
+            assertThat(result.getOrdersList()).hasSize(1);
+            assertThat(result.getOrdersList().get(0).getOrderId()).isEqualTo(orderId);
+            assertThat(result.isHasData()).isTrue();
+            assertThat(result.getSize()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("searchResult - 전체 주문 목록 조회 성공 테스트")
+        void test_searchResult_allOrders() {
+            // given
+            byte[] dummyImage = "dummy-image-3".getBytes();
+
+            Product product = Product.builder()
+                .name("사바하 커피3")
+                .price(2000)
+                .category(Category.DRINK)
+                .description("또또 맛있어요!")
+                .contentType("image/jpeg")
+                .image(dummyImage)
+                .delYN("N")
+                .build();
+            productRepository.save(product);
+
+            Orders order = Orders.builder()
+                .email("junho@example.com")
+                .address("서울특별시 마포구 어딘가")
+                .zipcode("66666")
+                .totalPrice(4000)
+                .orderStatus(OrderStatus.PROCESSING)
+                .build();
+            ordersRepository.save(order);
+
+            OrderProduct orderProduct = OrderProduct.builder()
+                .product(product)
+                .price(product.getPrice())
+                .quantity(2)
+                .orders(order)
+                .build();
+            orderProductRepository.save(orderProduct);
+            Pageable pageable = PageRequest.of(0, 5);
+            // when
+            OrderSearchResult result = ordersService.readAllOrders(pageable);
+
+            // then
+            assertThat(result.getOrdersList()).isNotEmpty();
+            assertThat(result.isHasData()).isTrue();
+            assertThat(result.getCurrentPage()).isEqualTo(0);
         }
 
         @Test

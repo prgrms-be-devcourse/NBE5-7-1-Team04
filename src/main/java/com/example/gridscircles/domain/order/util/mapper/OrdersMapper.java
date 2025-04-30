@@ -4,12 +4,14 @@ import com.example.gridscircles.domain.order.dto.CreateOrdersRequest;
 import com.example.gridscircles.domain.order.dto.CreateOrdersResponse;
 import com.example.gridscircles.domain.order.dto.OrderDetailResponse;
 import com.example.gridscircles.domain.order.dto.OrderProductDetailResponse;
+import com.example.gridscircles.domain.order.dto.OrderSearchResult;
 import com.example.gridscircles.domain.order.dto.OrdersSearchResponse;
 import com.example.gridscircles.domain.order.entity.OrderProduct;
 import com.example.gridscircles.domain.order.entity.Orders;
 import com.example.gridscircles.domain.order.enums.OrderStatus;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class OrdersMapper {
 
@@ -78,4 +80,25 @@ public class OrdersMapper {
             .products(productInfoList)
             .build();
     }
+
+    public static OrderSearchResult fromSingleOrderSearchResult(OrdersSearchResponse response){
+        return OrderSearchResult.builder()
+            .ordersList(List.of(response))
+            .hasData(true)
+            .currentPage(0)
+            .totalPages(1)
+            .size(1)
+            .build();
+    }
+
+    public static OrderSearchResult fromPageOrderSearchResult(Page<OrdersSearchResponse> responsePage){
+        return OrderSearchResult.builder()
+            .ordersList(responsePage.getContent())
+            .hasData(responsePage.hasContent())
+            .currentPage(responsePage.getNumber())
+            .totalPages(responsePage.getTotalPages())
+            .size(responsePage.getSize())
+            .build();
+    }
+
 }
